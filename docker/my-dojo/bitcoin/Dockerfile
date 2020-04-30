@@ -4,7 +4,7 @@ FROM    debian:buster
 #################################################################
 # INSTALL BITCOIN
 #################################################################
-EENV     BITCOIN_HOME        /home/bitcoin
+ENV     BITCOIN_HOME        /home/bitcoin
 ENV     BITCOIN_VERSION     0.19.1
 ENV     BITCOIN_URL         https://bitcoincore.org/bin/bitcoin-core-0.19.1/bitcoin-0.19.1-aarch64-linux-gnu.tar.gz
 ENV     BITCOIN_SHA256      3a80431717842672df682bdb619e66523b59541483297772a7969413be3502ff
