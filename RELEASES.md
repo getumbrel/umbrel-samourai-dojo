@@ -64,7 +64,7 @@ Upgrade to [addrindexrs](https://github.com/Samourai-Wallet/addrindexrs) v0.2.0
 
 - [#128](https://github.com/Samourai-Wallet/samourai-dojo/pull/128) drop unneeded reversebuffer util method
 - [#142](https://github.com/Samourai-Wallet/samourai-dojo/pull/142) modify results returned by dojo.sh onion
-- [#143](https://github.com/Samourai-Wallet/samourai-dojo/pull/143) improve display of dojo version 
+- [#143](https://github.com/Samourai-Wallet/samourai-dojo/pull/143) improve display of dojo version
 - [#144](https://github.com/Samourai-Wallet/samourai-dojo/pull/144) add dynamic switch of startup mode
 - [#147](https://github.com/Samourai-Wallet/samourai-dojo/pull/147) increase control over ports exposed by dojo
 - [#148](https://github.com/Samourai-Wallet/samourai-dojo/pull/148) upgrade explorer to btc-rpc-explorer 2.0.0
@@ -72,7 +72,8 @@ Upgrade to [addrindexrs](https://github.com/Samourai-Wallet/addrindexrs) v0.2.0
 - [#152](https://github.com/Samourai-Wallet/samourai-dojo/pull/152) add new optional whirlpool container
 - [#154](https://github.com/Samourai-Wallet/samourai-dojo/pull/154) manage all logs with docker log system
 - [#156](https://github.com/Samourai-Wallet/samourai-dojo/pull/156) upgrade indexer to addrindexrs v0.2.0
-- [#157](https://github.com/Samourai-Wallet/samourai-dojo/pull/157) clean-up of log files 
+- [#157](https://github.com/Samourai-Wallet/samourai-dojo/pull/157) clean-up of log files
+- [#158](https://github.com/Samourai-Wallet/samourai-dojo/pull/158) misc improvements in bitcoind rpc transactions class
 
 
 #### Bug fixes ####
@@ -155,7 +156,7 @@ Upgrade to Bitcoin Core v0.19.1
 
 - [#118](https://github.com/Samourai-Wallet/samourai-dojo/pull/118) add support of local indexers as the data source of imports and rescans
 - [#119](https://github.com/Samourai-Wallet/samourai-dojo/pull/119) improve performances of dojo upgrades
-- [#120](https://github.com/Samourai-Wallet/samourai-dojo/pull/120) upgrade btc-rpc-explorer to v1.1.8 
+- [#120](https://github.com/Samourai-Wallet/samourai-dojo/pull/120) upgrade btc-rpc-explorer to v1.1.8
 - [#121](https://github.com/Samourai-Wallet/samourai-dojo/pull/121) add controls and confirmations before reinstalls and uninstalls
 - [#124](https://github.com/Samourai-Wallet/samourai-dojo/pull/124) upgrade bitcoin v0.19.1
 - [#125](https://github.com/Samourai-Wallet/samourai-dojo/pull/125) improve support of --auto option in dojo.sh
@@ -211,13 +212,13 @@ This release removes automatic restarts of the bitcoind container when bitcoind 
 #### Bug fixes ####
 
 - [0ff045d](https://github.com/Samourai-Wallet/samourai-dojo/commit/0ff045d1495807902e9fd7dcfbd2fdb4dc21c608) keep bitcoind container up if bitcoind exits with an error
-- [bd43526](https://github.com/Samourai-Wallet/samourai-dojo/commit/bd43526bca1f36a1ada07ad799c87b11a897e873) fix for dojo hanging on shutdown 
+- [bd43526](https://github.com/Samourai-Wallet/samourai-dojo/commit/bd43526bca1f36a1ada07ad799c87b11a897e873) fix for dojo hanging on shutdown
 - [3ee85db](https://github.com/Samourai-Wallet/samourai-dojo/commit/3ee85db3bf69f4312204e502c98d414a4180dc53) force kill of docker exec used for testing bitcoind shutdown if command hangs more than 12s
 
 
 #### Misc. ####
 
-- [21925f7](https://github.com/Samourai-Wallet/samourai-dojo/commit/21925f7c321974ef7eb55c1ad897a5e02ef52bee) bump versions of dojo and bitcoind container 
+- [21925f7](https://github.com/Samourai-Wallet/samourai-dojo/commit/21925f7c321974ef7eb55c1ad897a5e02ef52bee) bump versions of dojo and bitcoind container
 - [08342e3](https://github.com/Samourai-Wallet/samourai-dojo/commit/08342e3995c473b589bb2a517e5bc30cf5f7dc9a) add trace in stop() function of dojo.sh
 
 
@@ -346,7 +347,7 @@ This version introduces a new "Blocks Rescan" feature accessible from the Mainte
 
 #### Add Esplora as the new external data source for testnet ####
 
-The testnet version of Dojo now relies on the Esplora API as its external data source for imports and rescans. 
+The testnet version of Dojo now relies on the Esplora API as its external data source for imports and rescans.
 
 Previously used API (BTC.COM and Insight) have been removed.
 
@@ -444,7 +445,7 @@ See [issue #59](https://github.com/Samourai-Wallet/samourai-dojo/issues/59).
 - [#46](https://github.com/Samourai-Wallet/samourai-dojo/pull/46) add testnet support to my-dojo
 - [#49](https://github.com/Samourai-Wallet/samourai-dojo/pull/49) add support of auth token passed through the authorization http header
 - [#54](https://github.com/Samourai-Wallet/samourai-dojo/pull/54) remove /dump/heap endpoint and dependency on heapdump package
-- [#55](https://github.com/Samourai-Wallet/samourai-dojo/pull/55) upgrade bitcoind to bitcoin core 0.18.1 
+- [#55](https://github.com/Samourai-Wallet/samourai-dojo/pull/55) upgrade bitcoind to bitcoin core 0.18.1
 - [#60](https://github.com/Samourai-Wallet/samourai-dojo/pull/55) fix for #59 (dojo with exposed bitcoind ports doesn't start)
 
 
@@ -539,7 +540,7 @@ Added a new [doc](./doc/DOCKER_mac_setup.MD) for MacOS users.
 - [#27](https://github.com/Samourai-Wallet/samourai-dojo/pull/27) rework external loop of Orchestrator
 - [#28](https://github.com/Samourai-Wallet/samourai-dojo/pull/28) rework RemoteImporter
 - [#32](https://github.com/Samourai-Wallet/samourai-dojo/pull/32) change the conditions switching the startup mode of the tracker
-- [#33](https://github.com/Samourai-Wallet/samourai-dojo/pull/33) check authentication with admin key 
+- [#33](https://github.com/Samourai-Wallet/samourai-dojo/pull/33) check authentication with admin key
 - [#37](https://github.com/Samourai-Wallet/samourai-dojo/pull/37) automatic redirect of onion address to maintenance tool
 - [#38](https://github.com/Samourai-Wallet/samourai-dojo/pull/38) dojo shutdown - replace sleep with static delay by docker wait
 
@@ -555,7 +556,7 @@ Added a new [doc](./doc/DOCKER_mac_setup.MD) for MacOS users.
 
 - [#13](https://github.com/Samourai-Wallet/samourai-dojo/pull/13) included Mac instructions
 - [92097d8](https://github.com/Samourai-Wallet/samourai-dojo/commit/92097d8ec7f9488ce0318c452356994315f4be72) doc
-- [de4c9b5](https://github.com/Samourai-Wallet/samourai-dojo/commit/de4c9b5e5078b673c7b199503d48e7ceca328285) doc - minor updates 
+- [de4c9b5](https://github.com/Samourai-Wallet/samourai-dojo/commit/de4c9b5e5078b673c7b199503d48e7ceca328285) doc - minor updates
 - [fead0bb](https://github.com/Samourai-Wallet/samourai-dojo/commit/fead0bb4b2b6174e637f5cb8c57edd9b55c3a1c7) doc - add link to MacOS install doc
 - [#42](https://github.com/Samourai-Wallet/samourai-dojo/pull/42) fix few typos, add backticks for config values
 - [#43](https://github.com/Samourai-Wallet/samourai-dojo/pull/43) add missing `d` in `docker-bitcoind.conf`
@@ -563,7 +564,7 @@ Added a new [doc](./doc/DOCKER_mac_setup.MD) for MacOS users.
 
 #### Misc ####
 
-- [a382e42](https://github.com/Samourai-Wallet/samourai-dojo/commit/a382e42469b884d2eda9fa6f5a3c8ce93a7cd39a) add sql scripts and config files to gitignore 
+- [a382e42](https://github.com/Samourai-Wallet/samourai-dojo/commit/a382e42469b884d2eda9fa6f5a3c8ce93a7cd39a) add sql scripts and config files to gitignore
 
 
 ### Credits ###
