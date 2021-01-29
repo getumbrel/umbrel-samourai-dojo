@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.8.1](#1_8_1)
 - [v1.8.0](#1_8_0)
 - [v1.7.0](#1_7_0)
 - [v1.6.0](#1_6_0)
@@ -12,6 +13,23 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+
+<a name="1_8_1"/>
+
+## Samourai Dojo v1.8.1 ##
+
+### Notable changes ###
+
+#### Upgrade of tor to v0.4.5.4-rc ####
+
+Upgrade to Tor v0.4.5.4-rc for a fix mitigating attacks on Tor v3 hidden services
+
+### Change log ###
+
+#### Security ####
+
+- [320f8cbf](https://code.samourai.io/dojo/samourai-dojo/-/commit/320f8cbfbe5b6a1e59f5154110216758ed08b9dc) upgrade tor to v0.4.5.4
 
 
 <a name="1_8_0"/>
