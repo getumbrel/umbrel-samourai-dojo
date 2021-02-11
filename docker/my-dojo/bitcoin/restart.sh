@@ -3,6 +3,9 @@ set -e
 
 echo "## Start bitcoind #############################"
 
+TOR_PROXY_IP=${TOR_PROXY_IP:-172.28.1.4}
+TOR_PROXY_PORT=${TOR_PROXY_PORT:-9050}
+
 bitcoind_options=(
   -datadir=/home/bitcoin/.bitcoin
   -printtoconsole=1
@@ -15,7 +18,7 @@ bitcoind_options=(
   -mempoolexpiry=$BITCOIND_MEMPOOL_EXPIRY
   -minrelaytxfee=$BITCOIND_MIN_RELAY_TX_FEE
   -port=8333
-  -proxy=172.28.1.4:9050
+  -proxy=$TOR_PROXY_IP:$TOR_PROXY_PORT
   -rpcallowip=0.0.0.0/0
   -rpcbind=172.28.1.5
   -rpcpassword=$BITCOIND_RPC_PASSWORD
