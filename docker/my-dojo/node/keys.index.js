@@ -22,6 +22,14 @@ if (process.env.EXPLORER_INSTALL == 'on') {
   } catch(e) {}
 }
 
+// Retrieve Tor proxy from environment variables or set to defaults
+let torIP = (process.env.TOR_PROXY_IP)
+  ? process.env.TOR_PROXY_IP
+  : '172.28.1.4'
+
+let torPort = (process.env.TOR_PROXY_PORT)
+  ? process.env.TOR_PROXY_PORT
+  : '9050'
 
 /**
  * Desired structure of /keys/index.js, which is ignored in the repository.
@@ -190,7 +198,7 @@ module.exports = {
       },
       // Use a SOCKS5 proxy for all communications with external services
       // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy
-      socks5Proxy: 'socks5h://172.28.1.4:9050',
+      socks5Proxy: `socks5h://${torIP}:${torPort}`,
       // OXT (mainnet)
       oxt: process.env.NODE_URL_OXT_API,
       // Esplora (testnet)
