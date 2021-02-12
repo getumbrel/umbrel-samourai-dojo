@@ -11,8 +11,8 @@ ENV     WHIRLPOOL_DIR                 /usr/local/whirlpool-cli
 RUN     set -ex && \
         apt-get update && \
         apt-get install -y libevent-dev zlib1g-dev libssl-dev gcc make automake ca-certificates autoconf musl-dev coreutils gpg wget default-jdk && \
-        addgroup --system -gid 1113 whirlpool && \
-        adduser --system --ingroup whirlpool -uid 1110 whirlpool && \
+        addgroup --system -gid 1000 whirlpool && \
+        adduser --system --ingroup whirlpool -uid 1000 whirlpool && \
         mkdir -p "$WHIRLPOOL_HOME/.whirlpool-cli" && \
         chown -Rv whirlpool:whirlpool "$WHIRLPOOL_HOME" && \
         chmod -R 750 "$WHIRLPOOL_HOME" && \
