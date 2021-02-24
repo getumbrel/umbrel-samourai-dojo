@@ -1,14 +1,5 @@
 const lib_msg = {
 
-  // Extracts jqxhr error message
-  extractJqxhrErrorMsg: function(jqxhr) {
-    let hasErrorMsg = ('responseJSON' in jqxhr) &&
-      (jqxhr['responseJSON'] != null) &&
-      ('error' in jqxhr['responseJSON'])
-
-    return hasErrorMsg ? jqxhr['responseJSON']['error'] : jqxhr.statusText
-  },
-
   // UI functions
   addTextinID: function(text, id){
     $(id).html(text.toUpperCase())

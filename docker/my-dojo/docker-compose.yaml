@@ -92,6 +92,7 @@ services:
       context: ./tor
     env_file:
       - ./.env
+      - ./conf/docker-bitcoind.conf
       - ./conf/docker-explorer.conf
       - ./conf/docker-whirlpool.conf
       - ./conf/docker-tor.conf

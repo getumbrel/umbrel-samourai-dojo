@@ -33,8 +33,7 @@ function login() {
       }
     },
     function (jqxhr) {
-      let msg = lib_msg.extractJqxhrErrorMsg(jqxhr)
-      lib_msg.displayErrors(msg)
+      lib_errors.processError(jqxhr)
     }
   )
 }

@@ -30,8 +30,7 @@ const screenAddressesToolsScript = {
     lib_api.getExplorerPairingInfo().then(explorerInfo => {
       this.explorerInfo = explorerInfo
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
     })
   },
 
@@ -68,14 +67,13 @@ const screenAddressesToolsScript = {
         this.showImportForm(false)
       }
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
       throw e
     })
   },
 
   importAddress: function() {
-    lib_msg.displayMessage('Processing address import...');
+    lib_msg.displayMessage('Processing address import. Please wait...');
     const jsonData = {'active': this.currentAddress}
     return lib_api.getWallet(jsonData)
       .then(result => {
@@ -83,13 +81,12 @@ const screenAddressesToolsScript = {
           lib_msg.displayInfo('Import complete')
         })
       }).catch(e => {
-        lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-        console.log(e)
+        lib_errors.processError(e)
       })
   },
 
   rescanAddress: function() {
-    lib_msg.displayMessage('Processing address rescan...');
+    lib_msg.displayMessage('Processing address rescan. Please wait...');
     return lib_api.getAddressRescan(this.currentAddress)
       .then(result => {
         this.hideRescanForm()
@@ -97,8 +94,7 @@ const screenAddressesToolsScript = {
           lib_msg.displayInfo('Rescan complete')
         })
       }).catch(e => {
-        lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-        console.log(e)
+        lib_errors.processError(e)
       })
   },
 

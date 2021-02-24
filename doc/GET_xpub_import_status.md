@@ -27,6 +27,17 @@ Status code 200 with JSON response:
 }
 ```
 
+```json
+{
+  "status": "ok",
+  "data": {
+    "import_in_progress": true,
+    "status": "rescan",
+    "hits": 1143
+  }
+}
+```
+
 #### Failure
 Status code 400 with JSON response:
 ```json

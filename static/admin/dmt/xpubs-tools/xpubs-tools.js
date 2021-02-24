@@ -3,6 +3,7 @@ const screenXpubsToolsScript = {
   explorerInfo: null,
   currentXpub: null,
   isReimport: false,
+  rescanStatusTimerId: null,
 
   initPage: function() {
     this.getExplorerInfo()
@@ -10,8 +11,11 @@ const screenXpubsToolsScript = {
     $('#btn-xpub-search-go').click(() => {this.searchXpub()})
     $('#btn-xpub-details-reset').click(() => {this.showSearchForm()})
     $('#btn-xpub-details-rescan').click(() => {this.showRescanForm()})
+    $('#btn-xpub-details-delete').click(() => {this.showDeletionForm()})
     $('#btn-xpub-rescan-go').click(() => {this.rescanXpub()})
     $('#btn-xpub-rescan-cancel').click(() => {this.hideRescanForm()})
+    $('#btn-xpub-delete-go').click(() => {this.deleteXpub()})
+    $('#btn-xpub-delete-cancel').click(() => {this.hideDeletionForm()})
     $('#btn-xpub-import-go').click(() => {this.importXpub()})
     $('#btn-xpub-details-retype').click(() => {this.showImportForm(true)})
     $('#btn-xpub-import-cancel').click(() => {this.hideImportForm(this.isReimport)})
@@ -24,6 +28,7 @@ const screenXpubsToolsScript = {
 
   preparePage: function() {
     this.hideRescanForm()
+    this.hideDeletionForm()
     this.showSearchForm()
     $("#xpub").focus()
   },
@@ -32,8 +37,7 @@ const screenXpubsToolsScript = {
     lib_api.getExplorerPairingInfo().then(explorerInfo => {
       this.explorerInfo = explorerInfo
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
     })
   },
 
@@ -70,14 +74,13 @@ const screenXpubsToolsScript = {
         this.showImportForm(false)
       }
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
       throw e
     })
   },
 
   importXpub: function() {
-    lib_msg.displayMessage('Processing xpub import...');
+    lib_msg.displayMessage('Processing xpub import. Please wait...');
 
     const jsonData = {
       'xpub': this.currentXpub,
@@ -95,33 +98,73 @@ const screenXpubsToolsScript = {
         jsonData['segwit'] = 'bip84'
     }
 
-    return lib_api.postXpub(jsonData)
-      .then(result => {
+    try {
+      lib_api.postXpub(jsonData)
+      // Wait for import completion and display progress
+      this.checkRescanStatus(() => {
         this._searchXpub(this.currentXpub).then(() => {
           lib_msg.displayInfo('Import complete')
         })
-      }).catch(e => {
-        lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-        console.log(e)
       })
+    } catch(e) {
+      lib_errors.processError(e)
+    }
   },
 
   rescanXpub: function() {
-    lib_msg.displayMessage('Processing xpub rescan...');
+    lib_msg.displayMessage('Processing xpub rescan. Please wait...');
     let startIdx = $('#rescan-start-idx').val()
     startIdx = (startIdx == null) ? 0 : parseInt(startIdx)
     let lookahead = $('#rescan-lookahead').val()
     lookahead = (lookahead == null) ? 100 : parseInt(lookahead)
-    return lib_api.getXpubRescan(this.currentXpub, lookahead, startIdx)
-      .then(result => {
+
+    try {
+      lib_api.getXpubRescan(this.currentXpub, lookahead, startIdx)
+      // Wait for rescan completion and display progress
+      this.checkRescanStatus(() => {
         this.hideRescanForm()
         this._searchXpub(this.currentXpub).then(() => {
           lib_msg.displayInfo('Rescan complete')
         })
-      }).catch(e => {
-        lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-        console.log(e)
       })
+    } catch(e) {
+      lib_errors.processError(e)
+    }
+  },
+
+  deleteXpub: function() {
+    lib_msg.displayMessage('Deleting a xpub. Please wait...')
+    return lib_api.getXpubDelete(this.currentXpub)
+      .then(result => {
+        this.currentXpub = null
+        this.preparePage()
+        lib_msg.displayInfo('Xpub successfully deleted')
+      }).catch(e => {
+        lib_errors.processError(e)
+      })
+  },
+
+  checkRescanStatus: function(callback) {
+    this.rescanStatusTimerId = setTimeout(() => {
+      lib_api.getXpubRescanStatus(this.currentXpub)
+        .then(result => {
+          const data = result['data']
+          if (data['import_in_progress']) {
+            const lblOp = (data['status'] == 'rescan') ? 'Rescan' : 'Import'
+            const lblHits = (data['status'] == 'rescan') ? 'hits detected' : 'transactions imported'
+            const msg = `${lblOp} in progress (${data['hits']} ${lblHits})`
+            lib_msg.displayMessage(msg)
+            return this.checkRescanStatus(callback)
+          } else {
+            clearTimeout(this.rescanStatusTimerId)
+            return callback()
+          }
+        }).catch(e => {
+          lib_errors.processError(e)
+          lib_msg.displayMessage('Rescan in progress. Please wait...')
+          return this.checkRescanStatus(callback)
+        })
+      }, 1000)
   },
 
   setXpubDetails: function(xpubInfo) {
@@ -251,6 +294,17 @@ const screenXpubsToolsScript = {
 
   hideRescanForm: function() {
     $('#xpubs-rescans-actions').hide()
+    $('#xpubs-tool-actions').show()
+  },
+
+  showDeletionForm: function() {
+    $('#xpubs-tool-actions').hide()
+    $('#xpubs-deletion-actions').show()
+    lib_msg.cleanMessagesUi()
+  },
+
+  hideDeletionForm: function() {
+    $('#xpubs-deletion-actions').hide()
     $('#xpubs-tool-actions').show()
   },
 

@@ -3,7 +3,7 @@ FROM    node:12-buster
 ENV     APP_DIR              /home/node/app
 
 ENV     EXPLORER_URL         https://github.com/janoside/btc-rpc-explorer/archive
-ENV     EXPLORER_VERSION     2.0.0
+ENV     EXPLORER_VERSION     2.1.0
 
 # Install netcat
 RUN     set -ex && \

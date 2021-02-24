@@ -32,8 +32,7 @@ const screenBlocksRescanScript = {
       const msg = `successfully rescanned blocks between height ${fromHeightRes} and height ${toHeightRes}`
       lib_msg.displayInfo(msg)
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
     }).then(() => {
       $('#rescan-from-height').val('')
       $('#rescan-to-height').val('')

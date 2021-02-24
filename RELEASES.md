@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.9.0](#1_9_0)
 - [v1.8.1](#1_8_1)
 - [v1.8.0](#1_8_0)
 - [v1.7.0](#1_7_0)
@@ -13,6 +14,151 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+
+<a name="1_9_0"/>
+
+## Samourai Dojo v1.9.0 ##
+
+
+### Notable changes ###
+
+
+#### Maintenance Tool: multiple UX improvements ####
+
+*Status screen*
+
+The status screen now displays information related to the Dojo database and to the data source used by Dojo for its imports and rescans. This screen provides a high level view of the state of the Dojo instance, that can be shared for support.
+
+*XPUB Tool*
+
+- Progress made is now displayed during an import or a rescan.
+- New feature allowing to delete a XPUB tracked by Dojo.
+- Improved management of timeouts by the authentication system.
+
+
+#### Dojo Shell Script: improvements ####
+
+- Script automatically stops if build fails during install/upgrade operation.
+- Script returns a not null exit code if build fails or if install/upgrade operation is cancelled.
+- Dojo is automatically stopped if an upgrade operation is launched with Dojo up and running.
+- A cleanup of old Dojo versions is automatically processed at the end of successful upgrade operations.
+
+
+#### New configuration options ####
+
+Addition of two new configuration options:
+
+- BITCOIND_LISTEN_MODE (in docker-bitcoind.conf): When set to `off`, the fullnode will refuse incoming connections. Default = `on`.
+- WHIRLPOOL_COORDINATOR_ONION (in docker-whirlpool.conf): When set to `on`, whirlpool-cli will contact the coordinator through its onion address. When set to `off`, clearnet address will be used (through Tor). Default = `on`.
+
+
+#### Extended support Tor hidden services ####
+
+Dojo now provides a v2 and v3 hidden service for:
+
+- Dojo Maintenance Tool and API
+- Whirlpool CLI
+- Bitcoind
+- Explorer
+
+Tor v3 onion addresses are recommended but v2 addresses can be used in the case of new attacks disrupting v3 hidden services.
+
+These onion addresses can be retrieved thanks to the `onion` command of the Dojo Shell Script
+
+'''
+# Display Tor v3 onion addresses (default)
+> ./dojo.h onion
+
+# Display Tor v3 onion addresses
+> ./dojo.h onion v3
+
+# Display Tor v2 onion addresses
+> ./dojo.h onion v2
+'''
+
+
+#### Upgrade of bitcoind to v0.21.0 ####
+
+Upgrade to Bitcoin Core v0.21.0
+
+
+#### Upgrade of whirlpool to v0.10.9 ####
+
+Upgrade to whirlpool-cli 0.10.9
+
+
+#### Upgrade of explorer to v2.1.0 ####
+
+Upgrade to btc-rpc-explorer 2.1.0
+
+
+#### Upgrade of tor to v0.4.4.7 ####
+
+Tor 0.4.4.7 fixes and mitigates multiple issues, including one that made v3 onion services more susceptible to denial-of-service attacks.
+
+
+#### Upgrade of indexer to v0.4.0 ####
+
+Upgrade to addrindexrs v0.4.0
+
+
+### Change log ###
+
+
+#### MyDojo ####
+
+- [#mr165](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/165) improve dmt ux
+- [#mr166](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/166) add new configuration property BITCOIND_LISTEN_MODE
+- [#mr167](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/167) upgrade explorer to btc-rpc-explorer 2.0.2
+- [#mr168](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/168) add new getChaintipHeight() method to remote importer and data sources
+- [#mr170](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/170) add indexer info to /status endpoint
+- [#mr171](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/171) add db and indexer blocks to status screen of dmt
+- [#mr172](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/172) upgrade indexer to addrindexrs 0.4.0
+- [#mr174](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/174) upgrade whirlpool to whirlpool-cli 0.10.9
+- [#mr175](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/175) track and display progress of import/rescan
+- [#mr178](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/178) improve dojo shell script
+- [#mr179](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/179) update samourai logo
+- [#mr181](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/181) add support of xpub deletion from the dmt
+- [#mr182](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/182) upgrade bitcoin container with bitcoin core 0.21.0
+- [#mr183](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/183) upgrade explorer to btc-rpc-explorer 2.1.0
+- [#mr184](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/184) upgrade tor to v0.4.4.6
+- [#mr186](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/186) upgrade tor to v0.4.4.6
+- [#mr188](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/188) return exit code 2 if install or upgrade is cancelled
+- [#mr190](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/190) add new WHIRLPOOL_COORDINATOR_ONION config option
+- [#mr191](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/191) add v2 onion addresses for explorer and whirlpool
+- [#mr192](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/192) return exit code 1 instead of 2 for aborted install & upgrade
+- [#mr193](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/193) reactivate tor v2 hidden service for bitcoind
+- [#mr194](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/194) upgrade tor to v0.4.4.7
+- [#mr195](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/195) bump block height defining ibd mode
+- [9fe22a35](https://code.samourai.io/dojo/samourai-dojo/-/commit/9fe22a356625e0c1aeb18691d617af9118990c84) update .gitignore
+
+
+#### Bug fixes ####
+
+- [#mr176](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/176) check that jqxhr['responseJSON']['error'] is a string
+- [#mr177](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/177) prevent restart of bitcoin container if bitcoind fails
+- [#mr185](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/185) build addrindexrs with --locked argument
+- [#mr189](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/189) return a 0 feerate if bitcoind doesn't return an estimate
+
+
+#### Security ####
+
+- [#mr173](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/173) replace request-promise-native by axios
+
+
+#### Documentation ####
+
+- [#mr180](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/180) add a detailed installation and upgrade guide for ubuntu
+
+
+#### Credits ###
+
+- BTCxZelko
+- flatcloud0b3
+- kenshin-samourai
+- LaurentMT
+- likewhoa
 
 
 <a name="1_8_1"/>

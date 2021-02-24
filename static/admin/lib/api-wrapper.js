@@ -111,6 +111,23 @@ const lib_api = {
   },
 
   /**
+   * Deletes a xpub
+   */
+  getXpubDelete: function(xpub) {
+    let prefix = conf['prefixes']['support']
+    let uri = this.baseUri + '/' + prefix + '/xpub/' + xpub + '/delete'
+    return this.sendGetUriEncoded(uri, {})
+  },
+
+  /**
+   * Gets the status of a xpub rescan
+   */
+  getXpubRescanStatus: function(xpub) {
+    let uri = this.baseUri + '/xpub/' + xpub + '/import/status'
+    return this.sendGetUriEncoded(uri, {})
+  },
+
+  /**
    * Notifies the server of the new HD account for tracking.
    */
   postXpub: function(arguments) {

@@ -27,8 +27,7 @@ const screenPairingScript = {
       lib_msg.cleanMessagesUi()
       return result
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
       return result
     })
   },

@@ -70,6 +70,14 @@ class SupportRestApi {
     )
 
     this.httpServer.app.get(
+      `/${keys.prefixes.support}/xpub/:xpub/delete`,
+      authMgr.checkHasAdminProfile.bind(authMgr),
+      this.validateArgsGetXpubDelete.bind(this),
+      this.getXpubDelete.bind(this),
+      HttpServer.sendAuthError
+    )
+
+    this.httpServer.app.get(
       `/${keys.prefixes.support}/pairing/explorer`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getPairingExplorer.bind(this),
@@ -120,31 +128,8 @@ class SupportRestApi {
    */
   _formatAddressInfoResult(info) {
     const res = info.toPojoExtended()
-    /*res._endpoints = []
-
-    if (info.tracked) {
-      res._endpoints.push({
-        task: 'Rescan this address from remote sources',
-        url: `/${keys.prefixes.support}/address/${info.address}/rescan`
-      })
-    }
-
-    if (info.xpub != null) {
-      res._endpoints.push({
-        task: 'Get information about the HD account that owns this address',
-        url: `/${keys.prefixes.support}/xpub/${info.xpub}/info`
-      })
-
-      res._endpoints.push({
-        task: 'Rescan the whole HD account that owns this address',
-        url: `/${keys.prefixes.support}/xpub/${info.xpub}/rescan`
-      })
-    }*/
-
     return JSON.stringify(res, null, 2)
   }
-
-
 
   /**
    * Rescan the blockchain for a given address
@@ -162,10 +147,6 @@ class SupportRestApi {
 
       const ret = {
         status: 'Rescan complete',
-        /*_endpoints: [{
-          task: 'Get updated information about this address',
-          url: `/${keys.prefixes.support}/address/${address}/info`
-        }]*/
       }
 
       await addrService.rescan(address)
@@ -224,12 +205,6 @@ class SupportRestApi {
    */
   _formatXpubInfoResult(info) {
     const res = info.toPojoExtended()
-
-    /*res._endpoints = [{
-      task: 'Rescan the whole HD account from remote sources',
-      url: `/${keys.prefixes.support}/xpub/${info.xpub}/rescan`
-    }]*/
-
     return JSON.stringify(res, null, 2)
   }
 
@@ -249,10 +224,6 @@ class SupportRestApi {
 
       const ret = {
         status: 'Rescan complete',
-        /*_endpoints: [{
-          task: 'Get updated information about this HD account',
-          url: `/${keys.prefixes.support}/xpub/${xpub}/info`
-        }]*/
       }
 
       const gapLimit = req.query.gap != null ? parseInt(req.query.gap) : 0
@@ -282,6 +253,36 @@ class SupportRestApi {
       debugApi && Logger.info(`API : Completed GET /support/xpub/${req.params.xpub}/rescan`)
     }
   }
+
+  /**
+   * Delete all data related to a hd account
+   * @param {object} req - http request object
+   * @param {object} res - http response object
+   */
+  async getXpubDelete(req, res) {
+    try {
+      // Parse the entities passed as url params
+      const entities = apiHelper.parseEntities(req.params.xpub).xpubs
+      if (entities.length == 0)
+        return HttpServer.sendError(res, errors.xpub.INVALID)
+
+      const xpub = entities[0]
+
+      try {
+        await hdaService.deleteHdAccount(xpub)
+        HttpServer.sendOk(res)
+      } catch(e) {
+        HttpServer.sendError(res, e)
+      }
+
+    } catch(e) {
+      HttpServer.sendError(res, errors.generic.GEN)
+
+    } finally {
+      debugApi && Logger.info(`API : Completed GET /support/xpub/${req.params.xpub}/delete`)
+    }
+  }
+
 
   /**
    * Get pairing info
@@ -361,6 +362,23 @@ class SupportRestApi {
     if (!(isValidXpub && isValidGap)) {
       HttpServer.sendError(res, errors.body.INVDATA)
       Logger.error(null, 'API : SupportRestApi.validateArgsGetXpubRescan() : Invalid arguments')
+    } else {
+      next()
+    }
+  }
+
+  /**
+   * Validate arguments related to GET xpub delete requests
+   * @param {object} req - http request object
+   * @param {object} res - http response object
+   * @param {function} next - next express middleware
+   */
+  validateArgsGetXpubDelete(req, res, next) {
+    const isValidXpub = validator.isAlphanumeric(req.params.xpub)
+
+    if (!isValidXpub) {
+      HttpServer.sendError(res, errors.body.INVDATA)
+      Logger.error(null, `API : SupportRestApi.validateArgsGetXpubDelete() : Invalid xpub ${req.params.xpub}`)
     } else {
       next()
     }

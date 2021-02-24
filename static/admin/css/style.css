@@ -265,7 +265,7 @@ td.table-value {
 /* PAGES - COMMONS */
 body.dmt {
   min-height: 100vh;
-  background-image: url("../icons/samourai-logo-loading.png");
+  background-image: url("../icons/samourai-logo.png");
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -453,6 +453,10 @@ button {
   color: #76d776;
 }
 
+#indexer-status {
+  padding-bottom: 12px;
+}
+
 /* PAGES - PAIRING */
 #qr-label,
 #qr-explorer-label {
@@ -524,6 +528,17 @@ button {
 }
 
 #xpubs-rescans-actions input {
+  width: 50px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: inline-block;
+}
+
+#xpubs-deletion-actions span {
+  display: inline;
+}
+
+#xpubs-deletion-actions input {
   width: 50px;
   margin-left: 5px;
   margin-right: 5px;

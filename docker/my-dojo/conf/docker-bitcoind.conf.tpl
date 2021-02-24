@@ -39,6 +39,11 @@ BITCOIND_MEMPOOL_EXPIRY=72
 # Type: numeric
 BITCOIND_MIN_RELAY_TX_FEE=0.00001
 
+# Allow incoming connections
+# This parameter is inactive if BITCOIND_INSTALL is set to 'off'
+# Values: on | off
+BITCOIND_LISTEN_MODE=on
+
 
 #
 # EXPERT SETTINGS

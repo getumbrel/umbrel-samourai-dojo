@@ -24,8 +24,7 @@ const screenTxsToolsScript = {
     lib_api.getExplorerPairingInfo().then(explorerInfo => {
       this.explorerInfo = explorerInfo
     }).catch(e => {
-      lib_msg.displayErrors(lib_msg.extractJqxhrErrorMsg(e))
-      console.log(e)
+      lib_errors.processError(e)
     })
   },
 

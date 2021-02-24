@@ -61,7 +61,7 @@ MyDojo is a set of Docker containers providing a full Samourai backend composed 
       |                 |     ----------            ----------                         |
       |        whirlnet |                                                      dojonet |
       |_________________|______________________________________________________________|
-        Host machine  
+        Host machine
 
 
 
@@ -108,6 +108,8 @@ Most options provided in the configuration files can be later modified. New valu
 <a name="install"/>
 
 ## First-time Setup ##
+
+For Ubuntu 16, see this detailed [installation and upgrade guide](./DOCKER_ubuntu_setup.MD).
 
 For MacOS, see this detailed [installation guide](./DOCKER_mac_setup.MD).
 
@@ -325,7 +327,7 @@ Once the database has finished syncing, you can pair your Samourai Wallet with y
 
 1. Open the maintenance tool in a Tor browser (Tor v3 onion address) and sign in with your admin key.
 
-2. Get your smartphone and launch the Samourai Wallet app. Scan the first QRCode displayed in the "Pairing" tab of the maintenance tool. 
+2. Get your smartphone and launch the Samourai Wallet app. Scan the first QRCode displayed in the "Pairing" tab of the maintenance tool.
 
 If you experience any problems when pairing, try re-installing the app and select "Connect to existing Dojo" from the [⋮] menu.
 
@@ -336,7 +338,7 @@ You can pair your Samourai Wallet with your local block explorer in 2 steps:
 
 1. Open the maintenance tool in a Tor browser (Tor v3 onion address) and sign in with your admin key.
 
-2. Get your smartphone and launch the Samourai Wallet app. Scan the second QRCode displayed in the "Pairing" tab of the maintenance tool. 
+2. Get your smartphone and launch the Samourai Wallet app. Scan the second QRCode displayed in the "Pairing" tab of the maintenance tool.
 
 
 <a name="network"/>
@@ -353,7 +355,7 @@ The block explorer is accessed as a Tor hidden service (static onion address).
 
 The Whirlpool API  is accessed as a Tor hidden service (static onion address).
 
-The Whirlpool client connects to the Whirlpool Coordinator hidden service. 
+The Whirlpool client connects to the Whirlpool Coordinator hidden service.
 
 The Bitcoin node only allows incoming connections from Tor (ephemeral onion address).
 

@@ -9,6 +9,9 @@ const lib_auth = {
   /* SessionStorage Key used for refresh token */
   SESSION_STORE_REFRESH_TOKEN: 'refresh_token',
 
+  /* SessionStorage Key used for the timestamp of the refresh token */
+  SESSION_STORE_REFRESH_TOKEN_TS: 'refresh_token_ts',
+
   /* JWT Scheme */
   JWT_SCHEME: 'Bearer',
 
@@ -43,6 +46,8 @@ const lib_auth = {
    * Stores refresh token in session storage
    */
   setRefreshToken: function(token) {
+    const now = new Date();
+    sessionStorage.setItem(this.SESSION_STORE_REFRESH_TOKEN_TS, now.getTime())
     sessionStorage.setItem(this.SESSION_STORE_REFRESH_TOKEN, token)
   },
 
@@ -56,17 +61,23 @@ const lib_auth = {
 
     const now = new Date();
     const atts = sessionStorage.getItem(this.SESSION_STORE_ACCESS_TOKEN_TS)
-    const timeElapsed = (now.getTime() - atts) / 1000
+    let timeElapsed = (now.getTime() - atts) / 1000
 
     // Refresh the access token if more than 5mn
     if (timeElapsed > 300) {
-      const dataJson = {
-        'rt': this.getRefreshToken()
+      // Check if refresh token has expired or is about to expire
+      const rtts = sessionStorage.getItem(this.SESSION_STORE_REFRESH_TOKEN_TS)
+      if ((now.getTime() - rtts) / 1000 > 7200 - 60) {
+        // Force user to sign in again
+        this.logout()
+        return
       }
 
       let self = this
 
-      let deferred = lib_api.refreshToken(dataJson)
+      let deferred = lib_api.refreshToken({
+        'rt': this.getRefreshToken()
+      })
 
       deferred.then(
         function (result) {

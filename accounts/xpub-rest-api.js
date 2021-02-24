@@ -16,6 +16,7 @@ const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
 const HdAccountInfo = require('../lib/wallet/hd-account-info')
 const authMgr = require('../lib/auth/authorizations-manager')
 const HttpServer = require('../lib/http-server/http-server')
+const remoteImporter = require('../lib/remote-importer/remote-importer')
 
 const debugApi = !!(process.argv.indexOf('api-debug') > -1)
 const gap = require('../keys/')[network.key].gap
@@ -230,8 +231,18 @@ class XPubRestApi {
         return HttpServer.sendError(res, e)
       }
 
-      const ret = {
-        import_in_progress: hdaService.importInProgress(xpub)
+      let ret = {
+        import_in_progress: false
+      }
+
+      const status = hdaService.importInProgress(xpub)
+      if (status != null) {
+        ret['import_in_progress'] = true
+        ret['status'] = status['status']
+        if (ret['status'] == remoteImporter.STATUS_RESCAN)
+          ret['hits'] = status['txs_int'] + status['txs_ext']
+        else
+          ret['hits'] = status['txs']
       }
 
       HttpServer.sendOkData(res, ret)
@@ -275,7 +286,7 @@ class XPubRestApi {
       const argAddr = req.body.address
       const argSig = req.body.signature
       const argMsg = req.body.message
-      
+
       // Translate xpub if needed
       try {
         const ret = this.xlatHdAccount(argXpub)
@@ -323,7 +334,7 @@ class XPubRestApi {
       const argXpub = req.params.xpub
       const argAddr = req.body.address
       const argSig = req.body.signature
-      
+
       // Translate xpub if needed
       try {
         const ret = this.xlatHdAccount(argXpub)
@@ -398,15 +409,15 @@ class XPubRestApi {
   validateArgsPostXpub(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.body.xpub)
 
-    const isValidSegwit = 
+    const isValidSegwit =
       !req.body.segwit
       || validator.isAlphanumeric(req.body.segwit)
 
-    const isValidType = 
+    const isValidType =
       !req.body.type
       || validator.isAlphanumeric(req.body.type)
 
-    const isValidForce = 
+    const isValidForce =
       !req.body.force
       || validator.isAlphanumeric(req.body.force)
 

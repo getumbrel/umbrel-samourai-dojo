@@ -60,7 +60,7 @@ class BlockchainProcessor extends AbstractProcessor {
     const daemonNbHeaders = info.headers
 
     // Consider that we are in IBD mode if Dojo is far in the past (> 13,000 blocks)
-    this.isIBD = (highest.blockHeight < 612000) || (highest.blockHeight < daemonNbHeaders - 13000)
+    this.isIBD = (highest.blockHeight < 655000) || (highest.blockHeight < daemonNbHeaders - 13000)
 
     if (this.isIBD)
       return this.catchupIBDMode()
@@ -169,7 +169,7 @@ class BlockchainProcessor extends AbstractProcessor {
         try {
           const hash = await this.client.getblockhash(height)
           const header = await this.client.getblockheader(hash)
-          return this.processBlock(header) 
+          return this.processBlock(header)
         } catch(e) {
           Logger.error(e, 'Tracker : BlockchainProcessor.catchupNormalMode()')
           process.exit()
@@ -206,25 +206,25 @@ class BlockchainProcessor extends AbstractProcessor {
   /**
    * Upon receipt of a new block hash, retrieve the block header from bitcoind via
    * RPC. Continue pulling block headers back through the chain until the database
-   * contains header.previousblockhash, adding the headers to a stack. If the 
-   * previousblockhash is not found on the first call, this is either a chain 
+   * contains header.previousblockhash, adding the headers to a stack. If the
+   * previousblockhash is not found on the first call, this is either a chain
    * re-org or the tracker missed blocks during a shutdown.
    *
    * Once the chain has bottomed out with a known block in the database, delete
    * all known database transactions confirmed in blocks at heights greater than
-   * the last known block height. These transactions are orphaned but may reappear 
-   * in the new chain. Notify relevant accounts of balance updates / 
+   * the last known block height. These transactions are orphaned but may reappear
+   * in the new chain. Notify relevant accounts of balance updates /
    * transaction confirmation counts.
    *
    * Delete block entries not on the main chain.
    *
-   * Forward-scan through the block headers, pulling the full raw block hex via 
+   * Forward-scan through the block headers, pulling the full raw block hex via
    * RPC. The raw block contains all transactions and is parsed by bitcoinjs-lib.
-   * Add the block to the database. Run checkTransaction for each transaction in 
+   * Add the block to the database. Run checkTransaction for each transaction in
    * the block that is not in the database. Confirm all transactions in the block.
    *
    * After each block, query bitcoin against all database unconfirmed outputs
-   * to see if they remain in the mempool or have been confirmed in blocks. 
+   * to see if they remain in the mempool or have been confirmed in blocks.
    * Malleated transactions entering the wallet will disappear from the mempool on
    * block confirmation.
    *
@@ -247,7 +247,7 @@ class BlockchainProcessor extends AbstractProcessor {
       } catch(err) {
         Logger.error(err, `Tracker : BlockchainProcessor.onBlockHash() : error in getblockheader(${blockHash})`)
       }
-      
+
       if(headers == null)
         return null
 
@@ -263,7 +263,7 @@ class BlockchainProcessor extends AbstractProcessor {
 
       // Process the blocks
       return await util.seriesCall(headers, header => {
-        return this.processBlock(header) 
+        return this.processBlock(header)
       })
 
     } catch(e) {
@@ -302,7 +302,7 @@ class BlockchainProcessor extends AbstractProcessor {
   }
 
   /**
-   * Cancel confirmation of transactions 
+   * Cancel confirmation of transactions
    * and delete blocks after a given height
    * @param {integer} height - height of last block maintained
    * @returns {Promise}
@@ -348,7 +348,7 @@ class BlockchainProcessor extends AbstractProcessor {
         Logger.info(`Tracker : Rescanning block ${height}`)
         const hash = await this.client.getblockhash(height)
         const header = await this.client.getblockheader(hash)
-        return this.processBlock(header) 
+        return this.processBlock(header)
       } catch(e) {
         Logger.error(e, 'Tracker : BlockchainProcessor.rescan()')
         throw e
@@ -367,7 +367,7 @@ class BlockchainProcessor extends AbstractProcessor {
       const hex = await this.client.getblock(header.hash, false)
 
       const block = new Block(hex, header)
-      
+
       const txsForBroadcast = await block.checkBlock()
 
       // Send notifications

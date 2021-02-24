@@ -5,6 +5,7 @@
 
   <div class="row box-main">
     <div id="left-column"  class="two-columns-left">
+
       <div id="bitcoind-status" class="fullwidth box">
         <div class="box-header">FULL NODE</div>
         <div class="spacer10"></div>
@@ -41,8 +42,36 @@
           </table>
         </div>
       </div>
+
+      <div id="indexer-status" class="fullwidth box">
+        <div class="box-header">INDEXER</div>
+        <div class="spacer10"></div>
+        <div class="box-body">
+          <table>
+            <tr>
+              <td class="table-label">Status</td>
+              <td class="table-value" id="indexer-status-ind"></td>
+            </tr>
+            <tr>
+              <td class="table-label">Latest block</td>
+              <td class="table-value" id="indexer-chaintip"></td>
+            </tr>
+            <tr>
+              <td class="table-label">Indexer type</td>
+              <td class="table-value" id="indexer-type"></td>
+            </tr>
+            <tr>
+              <td class="table-label">URL</td>
+              <td class="table-value" id="indexer-url"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
     </div>
+
     <div id="right-column" class="two-columns-right">
+
       <div id="tracker-status" class="fullwidth box">
         <div class="box-header">TRACKER</div>
         <div class="spacer10"></div>
@@ -59,6 +88,23 @@
             <tr>
               <td class="table-label">Latest block</td>
               <td class="table-value" id="tracker-chaintip"></td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="db-status" class="fullwidth box">
+        <div class="box-header">DOJO DB</div>
+        <div class="spacer10"></div>
+        <div class="box-body">
+          <table>
+            <tr>
+              <td class="table-label">Status</td>
+              <td class="table-value" id="db-status-ind">&#10003;</td>
+            </tr>
+            <tr>
+              <td class="table-label">Latest block</td>
+              <td class="table-value" id="db-chaintip"></td>
             </tr>
           </table>
         </div>
@@ -84,6 +130,7 @@
           </table>
         </div>
       </div>
+
     </div>
   </div>
 

@@ -10,6 +10,10 @@ WHIRLPOOL_INSTALL=off
 # Value: on | off
 WHIRLPOOL_RESYNC=off
 
+# Contact coordinator through its onion address or clearnet address
+# Set to on for onion address, set to off for clearnet address
+# Value: on | off
+WHIRLPOOL_COORDINATOR_ONION=on
 
 #
 # EXPERT SETTINGS

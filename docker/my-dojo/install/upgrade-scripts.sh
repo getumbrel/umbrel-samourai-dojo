@@ -69,7 +69,7 @@ update_config_files() {
   update_config_file ./conf/docker-whirlpool.conf ./conf/docker-whirlpool.conf.tpl
   echo "Initialized docker-whirlpool.conf"
 
-  # Initialize config files for nginx and the maintenance tool 
+  # Initialize config files for nginx and the maintenance tool
   if [ "$EXPLORER_INSTALL" == "on" ]; then
     cp ./nginx/explorer.conf ./nginx/dojo-explorer.conf
   else
@@ -106,7 +106,7 @@ update_config_file() {
     cp -p $1 "$1.save"
     cp -p $2 $1
 
-    while IFS='=' read -r key val ; do 
+    while IFS='=' read -r key val ; do
       if [[ $OSTYPE == darwin* ]]; then
         sed -i "" "s~$key=.*~$key=$val~g" "$1"
       else
@@ -179,7 +179,7 @@ cleanup() {
   if [ -f ./bitcoin/bitcoin.conf ]; then
     rm ./bitcoin/bitcoin.conf
   fi
-  
+
 }
 
 # Post start clean-up
