@@ -9,16 +9,14 @@ const bodyParser = require('body-parser')
 const errors = require('../lib/errors')
 const network = require('../lib/bitcoin/network')
 const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
 const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
 const hdaService = require('../lib/bitcoin/hd-accounts-service')
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
 const HdAccountInfo = require('../lib/wallet/hd-account-info')
 const authMgr = require('../lib/auth/authorizations-manager')
 const HttpServer = require('../lib/http-server/http-server')
 const remoteImporter = require('../lib/remote-importer/remote-importer')
 
-const debugApi = !!(process.argv.indexOf('api-debug') > -1)
+const debugApi = process.argv.indexOf('api-debug') > -1
 const gap = require('../keys/')[network.key].gap
 
 
@@ -33,9 +31,6 @@ class XPubRestApi {
    */
   constructor(httpServer) {
     this.httpServer = httpServer
-
-    // Initialize the rpc client
-    this.rpcClient = new RpcClient()
 
     // Establish routes
     const urlencodedParser = bodyParser.urlencoded({ extended: true })
@@ -404,7 +399,7 @@ class XPubRestApi {
    * Validate arguments of postXpub requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsPostXpub(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.body.xpub)
@@ -436,7 +431,7 @@ class XPubRestApi {
    * Validate arguments of getXpub requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsGetXpub(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.params.xpub)
@@ -456,7 +451,7 @@ class XPubRestApi {
    * Validate arguments of postLockXpub requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsPostLockXpub(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.params.xpub)
@@ -480,7 +475,7 @@ class XPubRestApi {
    * Validate arguments of deleteXpub requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsDeleteXpub(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.params.xpub)

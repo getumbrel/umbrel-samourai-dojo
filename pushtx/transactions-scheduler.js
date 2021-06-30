@@ -10,7 +10,7 @@ const errors = require('../lib/errors')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
 const keys = require('../keys')[network.key]
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
 const pushTxProcessor = require('./pushtx-processor')
 
 
@@ -23,7 +23,7 @@ class TransactionsScheduler {
    * Constructor
    */
   constructor() {
-    this.rpcClient = new RpcClient()
+    this.rpcClient = createRpcClient()
   }
 
   /**
@@ -41,7 +41,7 @@ class TransactionsScheduler {
       script.sort((a,b) => a.hop - b.hop || a.nlocktime - b.nlocktime)
 
       // Get the height of last block seen
-      const info = await this.rpcClient.getBlockchainInfo()
+      const info = await this.rpcClient.getblockchaininfo()
       const lastHeight = info.blocks
 
       // Get the nLockTime associated to the first transaction

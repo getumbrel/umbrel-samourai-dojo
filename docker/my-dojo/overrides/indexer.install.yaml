@@ -6,6 +6,9 @@ services:
     container_name: indexer
     build:
       context: ./indexer
+      args:
+        INDEXER_LINUX_UID: ${INDEXER_LINUX_UID}
+        INDEXER_LINUX_GID: ${INDEXER_LINUX_GID}
     env_file:
       - ./.env
       - ./conf/docker-common.conf
@@ -15,6 +18,7 @@ services:
     command: "/wait-for-it.sh tor:9050 --timeout=360 --strict -- /restart.sh"
     expose:
       - "50001"
+      - "8080"
     volumes:
       - data-indexer:/home/indexer
     logging:
@@ -26,7 +30,7 @@ services:
       - tor
     networks:
       dojonet:
-        ipv4_address: 172.28.1.6
+        ipv4_address: ${NET_DOJO_INDEXER_IPV4}
 
 volumes:
   data-indexer:

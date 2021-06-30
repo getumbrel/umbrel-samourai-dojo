@@ -23,7 +23,7 @@ services:
         max-file: "10"
     networks:
       dojonet:
-        ipv4_address: 172.28.1.7
+        ipv4_address: ${NET_DOJO_EXPLORER_IPV4}
 
   node:
     depends_on:

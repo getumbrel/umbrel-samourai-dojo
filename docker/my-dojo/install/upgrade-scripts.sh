@@ -6,6 +6,12 @@ else
   source ./conf/docker-common.conf.tpl
 fi
 
+if [ -f ./conf/docker-mysql.conf ]; then
+  source ./conf/docker-mysql.conf
+else
+  source ./conf/docker-mysql.conf.tpl
+fi
+
 if [ -f ./conf/docker-explorer.conf ]; then
   source ./conf/docker-explorer.conf
 else
@@ -95,6 +101,14 @@ update_config_files() {
     cp ../../static/admin/conf/index-mainnet.js ../../static/admin/conf/index.js
     echo "Initialized index.js (admin module)"
   fi
+
+  # Initialize config files for mysql
+  if [ "$MYSQL_CONF_PROFILE" == "low_mem" ]; then
+    cp ./mysql/mysql-low_mem.cnf ./mysql/mysql-dojo.cnf
+  else
+    cp ./mysql/mysql-default.cnf ./mysql/mysql-dojo.cnf
+  fi
+  echo "Initialized mysql-dojo.cnf (mysql)"
 }
 
 # Update a configuration file from template

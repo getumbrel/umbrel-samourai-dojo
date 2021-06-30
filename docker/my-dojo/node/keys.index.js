@@ -74,7 +74,7 @@ module.exports = {
       // Password
       pass: process.env.MYSQL_PASSWORD,
       // IP address
-      host: 'db',
+      host: process.env.NET_DOJO_MYSQL_IPV4,
       // TCP port
       port: 3306,
       // Db name
@@ -198,7 +198,7 @@ module.exports = {
       },
       // Use a SOCKS5 proxy for all communications with external services
       // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy
-      socks5Proxy: `socks5h://${torIP}:${torPort}`,
+      socks5Proxy: `socks5h://${process.env.NET_DOJO_TOR_IPV4}:9050`,
       // OXT (mainnet)
       oxt: process.env.NODE_URL_OXT_API,
       // Esplora (testnet)
@@ -231,10 +231,10 @@ module.exports = {
       minNbChildren: parseInt(process.env.NODE_ADDR_DERIVATION_MIN_CHILD),
       // Max number of child processes allowed
       maxNbChildren: parseInt(process.env.NODE_ADDR_DERIVATION_MAX_CHILD),
-      // Max duration 
+      // Max duration
       acquireTimeoutMillis: 60000,
       // Parallel derivation threshold
-      // (use parallel derivation if number of addresses to be derived 
+      // (use parallel derivation if number of addresses to be derived
       //  is greater than thresholdParalleDerivation)
       thresholdParallelDerivation: parseInt(process.env.NODE_ADDR_DERIVATION_THRESHOLD),
     },

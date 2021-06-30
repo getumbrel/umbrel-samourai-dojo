@@ -4,7 +4,7 @@ cd /home/node/app
 
 explorer_options=(
   --port 3002
-  --host 172.28.1.7
+  --host "$NET_DOJO_EXPLORER_IPV4"
   --basic-auth-password "$EXPLORER_KEY"
   --coin BTC
   --bitcoind-host "$BITCOIND_IP"

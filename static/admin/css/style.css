@@ -27,6 +27,12 @@ input[type="checkbox"]{
 	-webkit-transform: scale(1.3);
 }
 
+input:disabled, select:disabled {
+  border: 1px solid #8f8f8f;
+  color: #8f8f8f;
+  background-color: #3a3d3f;
+}
+
 a, a:visited {
 	color: #a1a1a1;
 }
@@ -540,6 +546,17 @@ button {
 
 #xpubs-deletion-actions input {
   width: 50px;
+  margin-left: 5px;
+  margin-right: 5px;
+  display: inline-block;
+}
+
+#xpubs-export-actions span {
+  display: inline;
+}
+
+#xpubs-export-actions select {
+  width: 240px;
   margin-left: 5px;
   margin-right: 5px;
   display: inline-block;

@@ -9,7 +9,7 @@ const Logger = require('../lib/logger')
 const util = require('../lib/util')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
 const keys = require('../keys')[network.key]
 
 
@@ -19,7 +19,7 @@ const keys = require('../keys')[network.key]
  */
 
 // RPC Client requests data from bitcoind
-let client = new RpcClient()
+let client = createRpcClient()
 
 // Database id of the previous block
 let prevID = null;
@@ -28,10 +28,10 @@ let prevID = null;
 async function processBlock(height) {
   Logger.info('Start processing block ' + height)
 
-  const blockHash = await client.getblockhash(height)
+  const blockHash = await client.getblockhash({ height })
 
   if (blockHash) {
-    const header = await client.getblockheader(blockHash, true)
+    const header = await client.getblockheader({ blockhash: blockHash, verbose: true })
 
     if (header) {
       const dbBlock = {

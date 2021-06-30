@@ -8,6 +8,7 @@ const _ = require('lodash')
 const bitcoin = require('bitcoinjs-lib')
 const util = require('../lib/util')
 const Logger = require('../lib/logger')
+const addrHelper = require('../lib/bitcoin/addresses-helper')
 const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
@@ -28,9 +29,9 @@ class Transaction {
    */
   constructor(tx) {
     this.tx = tx
-    this.txid = this.tx.getId()   
+    this.txid = this.tx.getId()
     // Id of transaction stored in db
-    this.storedTxnID = null 
+    this.storedTxnID = null
     // Should this transaction be broadcast out to connected clients?
     this.doBroadcast = false
   }
@@ -46,10 +47,10 @@ class Transaction {
   async checkTransaction() {
     try {
       // Process transaction inputs
-      await this._processInputs()
+      await this.processInputs()
 
       // Process transaction outputs
-      await this._processOutputs()
+      await this.processOutputs()
 
       // If this point reached with no errors,
       // store the fact that this transaction was checked.
@@ -72,7 +73,7 @@ class Transaction {
    * Process transaction inputs
    * @returns {Promise}
    */
-  async _processInputs() {
+  async processInputs() {
     // Array of inputs spent
     const spends = []
     // Store input indices, keyed by `txid-outindex` for easy retrieval
@@ -80,7 +81,7 @@ class Transaction {
     // Store database ids of double spend transactions
     const doubleSpentTxnIDs = []
     // Store inputs of interest
-    const inputs = [] 
+    const inputs = []
 
     // Extracts inputs information
     let index = 0
@@ -150,16 +151,16 @@ class Transaction {
    * Process transaction outputs
    * @returns {Promise}
    */
-  async _processOutputs() {
+  async processOutputs() {
     // Store outputs, keyed by address. Values are arrays of outputs
     const indexedOutputs = {}
-    
+
     // Extracts outputs information
     let index = 0
 
     for (let output of this.tx.outs) {
       try {
-        const address = bitcoin.address.fromOutputScript(output.script, activeNet)
+        const address = addrHelper.outputScript2Address(output.script)
         if (!indexedOutputs[address])
           indexedOutputs[address] = []
 
@@ -174,7 +175,7 @@ class Transaction {
 
     // Array of addresses receiving tx outputs
     const addresses = _.keys(indexedOutputs)
-    
+
     // Store a list of known addresses that received funds
     let fundedAddresses = []
 
@@ -203,7 +204,7 @@ class Transaction {
 
     for (let a of fundedAddresses) {
       outputs.push({
-        txnID: this.storedTxnID, 
+        txnID: this.storedTxnID,
         addrID: a.addrID,
         outIndex: a.outIndex,
         outAmount: a.outAmount,
@@ -253,9 +254,9 @@ class Transaction {
     // Store a list of known addresses that received funds
     const fundedAddresses = []
     const xpubList = _.keys(hdAccounts)
-    
+
     if (xpubList.length > 0) {
-      await util.seriesCall(xpubList, async xpub => {
+      await util.parallelCall(xpubList, async xpub => {
         const usedNewAddresses = await this._deriveNewAddresses(
           xpub,
           hdAccounts[xpub],
@@ -281,7 +282,7 @@ class Transaction {
         }
       })
     }
-    
+
     return fundedAddresses
   }
 
@@ -290,7 +291,7 @@ class Transaction {
    * Check if tx addresses are at or beyond the next unused
    * index for the HD chain. Derive additional addresses
    * to replace the gap limit and add those addresses to
-   * the database. Make sure to account for tx sending to 
+   * the database. Make sure to account for tx sending to
    * newly-derived addresses.
    *
    * @param {string} xpub
@@ -389,7 +390,7 @@ class Transaction {
     await db.addAddressesToHDAccount(xpub, newAddresses)
     return _.keys(usedNewAddresses)
   }
-   
+
 
   /**
    * Store the transaction in database
@@ -405,7 +406,7 @@ class Transaction {
         locktime: this.tx.locktime,
       })
 
-      Logger.info(`Tracker : Storing transaction ${this.txid}`)
+      Logger.info(`Tracker :  Storing transaction ${this.txid}`)
     }
   }
 

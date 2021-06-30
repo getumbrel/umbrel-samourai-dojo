@@ -11,7 +11,7 @@ A word of caution, though, the default values of these options try to maximize y
 - [Local Electrum server used as data source for imports/rescans](#local_electrum)
 - [Local Whirlpool client](#local_whirlpool)
 - [External Bitcoin full node](#external_bitcoind)
-- [bitcoind RPC API ans ZMQ notifications exposed to external apps](#exposed_rpc_zmq)
+- [bitcoind RPC API and ZMQ notifications exposed to external apps](#exposed_rpc_zmq)
 - [Static onion address for bitcoind hidden service](#static_onion)
 - [Configure Tor Bridges](#tor_bridges)
 - [Support of testnet](#testnet)
@@ -282,7 +282,7 @@ Follow these steps if you want to speed up this operation by preloading an archi
 
 <a name="exposed_rpc_zmq"/>
 
-## bitcoind RPC API ans ZMQ notifications exposed to external apps ##
+## bitcoind RPC API and ZMQ notifications exposed to external apps ##
 
 By default, access to the RPC API of your bitcoind is restricted to Docker containers hosted on the "dojonet" network.
 

@@ -139,6 +139,7 @@ const lib_auth = {
     this.setRefreshToken(null)
     this.setAccessToken(null)
     sessionStorage.setItem('activeTab', '')
+    sessionStorage.setItem('indexerType', '')
     lib_cmn.goToHomePage()
   }
 

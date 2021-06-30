@@ -57,7 +57,7 @@ class HeadersRestApi {
    * Validate request arguments
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsGetHeader(req, res, next) {
     const isValidHash = validator.isHash(req.params.hash, 'sha256')

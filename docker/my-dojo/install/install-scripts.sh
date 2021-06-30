@@ -6,6 +6,12 @@ else
   source ./conf/docker-bitcoind.conf.tpl
 fi
 
+if [ -f ./conf/docker-mysql.conf ]; then
+  source ./conf/docker-mysql.conf
+else
+  source ./conf/docker-mysql.conf.tpl
+fi
+
 if [ -f ./conf/docker-explorer.conf ]; then
   source ./conf/docker-explorer.conf
 else
@@ -66,10 +72,10 @@ init_config_files() {
 
   cp ./conf/docker-bitcoind.conf.tpl ./conf/docker-bitcoind.conf
   echo "Initialized docker-bitcoind.conf"
-  
+
   cp ./conf/docker-mysql.conf.tpl ./conf/docker-mysql.conf
   echo "Initialized docker-mysql.conf"
-  
+
   cp ./conf/docker-node.conf.tpl ./conf/docker-node.conf
   echo "Initialized docker-node.conf"
 
@@ -99,7 +105,7 @@ init_config_files() {
   fi
   echo "Initialized dojo-whirlpool.conf (nginx)"
 
-  # Initialize config files for nginx and the maintenance tool 
+  # Initialize config files for nginx and the maintenance tool
   if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
     cp ./nginx/testnet.conf ./nginx/dojo.conf
     echo "Initialized dojo.conf (nginx)"
@@ -111,4 +117,12 @@ init_config_files() {
     cp ../../static/admin/conf/index-mainnet.js ../../static/admin/conf/index.js
     echo "Initialized index.js (admin module)"
   fi
+
+  # Initialize config files for mysql
+  if [ "$MYSQL_CONF_PROFILE" == "low_mem" ]; then
+    cp ./mysql/mysql-low_mem.cnf ./mysql/mysql-dojo.cnf
+  else
+    cp ./mysql/mysql-default.cnf ./mysql/mysql-dojo.cnf
+  fi
+  echo "Initialized mysql-dojo.cnf (mysql)"
 }

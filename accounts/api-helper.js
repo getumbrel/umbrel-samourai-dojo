@@ -109,7 +109,7 @@ class ApiHelper {
    * Express middleware validating if entities params are well formed
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateEntitiesParams(req, res, next) {
     const params = this.checkEntitiesParams(req.query) ? req.query : req.body

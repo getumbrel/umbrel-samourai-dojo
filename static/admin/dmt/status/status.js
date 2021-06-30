@@ -55,8 +55,10 @@ const statusScript = {
             this.setStatusIndicator('#indexer-status-ind', 'ko')
           }
           const indexerType = apiStatus['indexer']['type']
-          if (indexerType)
+          if (indexerType) {
+            sessionStorage.setItem('indexerType', indexerType)
             $('#indexer-type').text(indexerType.replace(/_/g, ' '))
+          }
           const indexerUrl = apiStatus['indexer']['url']
           if (indexerUrl)
             $('#indexer-url').text(indexerUrl)

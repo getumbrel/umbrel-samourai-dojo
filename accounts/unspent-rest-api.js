@@ -40,7 +40,7 @@ class UnspentRestApi {
     )
 
     this.httpServer.app.post(
-      '/unspent', 
+      '/unspent',
       urlencodedParser,
       authMgr.checkAuthentication.bind(authMgr),
       apiHelper.validateEntitiesParams.bind(apiHelper),
@@ -79,7 +79,7 @@ class UnspentRestApi {
 
     } finally {
       if (debugApi) {
-        const strParams = 
+        const strParams =
           `${req.query.active ? req.query.active : ''} \
           ${req.query.new ? req.query.new : ''} \
           ${req.query.pubkey ? req.query.pubkey : ''} \
@@ -120,7 +120,7 @@ class UnspentRestApi {
 
     } finally {
       if (debugApi) {
-        const strParams = 
+        const strParams =
           `${req.body.active ? req.body.active : ''} \
           ${req.body.new ? req.body.new : ''} \
           ${req.body.pubkey ? req.body.pubkey : ''} \

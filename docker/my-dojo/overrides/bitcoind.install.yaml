@@ -6,6 +6,10 @@ services:
     container_name: bitcoind
     build:
       context: ./bitcoin
+      args:
+        BITCOIND_LINUX_UID: ${BITCOIND_LINUX_UID}
+        BITCOIND_LINUX_GID: ${BITCOIND_LINUX_GID}
+        TOR_LINUX_GID: ${TOR_LINUX_GID}
     env_file:
       - ./.env
       - ./conf/docker-common.conf
@@ -30,7 +34,7 @@ services:
       - tor
     networks:
       dojonet:
-        ipv4_address: 172.28.1.5
+        ipv4_address: ${NET_DOJO_BITCOIND_IPV4}
 
   node:
     depends_on:

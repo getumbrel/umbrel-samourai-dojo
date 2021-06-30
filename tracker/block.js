@@ -26,44 +26,92 @@ class Block extends TransactionsBundle {
     super()
     this.hex = hex
     this.header = header
+
+    try {
+      if (hex != null) {
+        const block = bitcoin.Block.fromHex(hex)
+        this.transactions = block.transactions
+      }
+    } catch (e) {
+      Logger.error(e, 'Tracker : Block()')
+      Logger.error(null, header)
+      return Promise.reject(e)
+    }
   }
 
   /**
    * Register the block and transactions of interest in db
+   * @dev This method isn't used anymore.
+   *      It has been replaced by a parallel processing of blocks.
+   *      (see blocks-processor and block-worker)
    * @returns {Promise - object[]} returns an array of transactions to be broadcast
    */
-  async checkBlock() {
+  async processBlock() {
     Logger.info('Tracker : Beginning to process new block.')
 
-    let block
-    const txsForBroadcast = []
-    
-    try {
-      block = bitcoin.Block.fromHex(this.hex)
-      this.transactions = block.transactions
-    } catch (e) {
-      Logger.error(e, 'Tracker : Block.checkBlock()')
-      Logger.error(null, this.header)
-      return Promise.reject(e)
-    }
-    
     const t0 = Date.now()
-    let ntx = 0
-    
-    // Filter transactions
-    const filteredTxs = await this.prefilterTransactions()
 
-    // Check filtered transactions
-    // and broadcast notifications
-    await util.seriesCall(filteredTxs, async tx => {
-      const filteredTx = new Transaction(tx)
-      const txCheck = await filteredTx.checkTransaction()
-      if (txCheck && txCheck.broadcast)
-        txsForBroadcast.push(txCheck.tx)
+    const txsForBroadcast = new Map()
+
+    const txsForBroadcast1 = await this.processOutputs()
+    txsForBroadcast1.map(tx => {txsForBroadcast.set(tx.getId(), tx)})
+
+    const txsForBroadcast2 = await this.processInputs()
+    txsForBroadcast2.map(tx => {txsForBroadcast.set(tx.getId(), tx)})
+
+    const aTxsForBroadcast = [...txsForBroadcast.values()]
+
+    const blockId = await this.registerBlock()
+
+    await this.confirmTransactions(aTxsForBroadcast, blockId)
+
+    // Logs and result returned
+    const ntx = this.transactions.length
+    const dt = ((Date.now()-t0)/1000).toFixed(1)
+    const per = ((Date.now()-t0)/ntx).toFixed(0)
+    Logger.info(`Tracker :  Finished block ${this.header.height}, ${dt}s, ${ntx} tx, ${per}ms/tx`)
+
+    return aTxsForBroadcast
+  }
+
+
+  /**
+   * Process the transaction outputs
+   * @returns {Promise - object[]} returns an array of transactions to be broadcast
+   */
+  async processOutputs() {
+    const txsForBroadcast = new Set()
+    const filteredTxs = await this.prefilterByOutputs()
+    await util.parallelCall(filteredTxs, async filteredTx => {
+      const tx = new Transaction(filteredTx)
+      await tx.processOutputs()
+      if (tx.doBroadcast)
+        txsForBroadcast.add(tx.tx)
     })
+    return [...txsForBroadcast]
+  }
 
-    // Retrieve the previous block
-    // and store the new block into the database
+  /**
+   * Process the transaction inputs
+   * @returns {Promise - object[]} returns an array of transactions to be broadcast
+   */
+  async processInputs() {
+    const txsForBroadcast = new Set()
+    const filteredTxs = await this.prefilterByInputs()
+    await util.parallelCall(filteredTxs, async filteredTx => {
+      const tx = new Transaction(filteredTx)
+      await tx.processInputs()
+      if (tx.doBroadcast)
+        txsForBroadcast.add(tx.tx)
+    })
+    return [...txsForBroadcast]
+  }
+
+  /**
+   * Store the block in db
+   * @returns {Promise - int} returns the id of the block
+   */
+  async registerBlock() {
     const prevBlock = await db.getBlockByHash(this.header.previousblockhash)
     const prevID = (prevBlock && prevBlock.blockID) ? prevBlock.blockID : null
 
@@ -76,18 +124,19 @@ class Block extends TransactionsBundle {
 
     Logger.info(`Tracker :  Added block ${this.header.height} (id=${blockId})`)
 
-    // Confirms the transactions
-    const txids = this.transactions.map(t => t.getId())
-    ntx = txids.length    
+    return blockId
+  }
+
+  /**
+   * Confirm the transactions in db
+   * @param {Set} txs - set of transactions stored in db
+   * @param {int} blockId - id of the block
+   * r@returns {Promise}
+   */
+  async confirmTransactions(txs, blockId) {
+    const txids = txs.map(t => t.getId())
     const txidLists = util.splitList(txids, 100)
-    await util.seriesCall(txidLists, list => db.confirmTransactions(list, blockId))
-
-    // Logs and result returned
-    const dt = ((Date.now()-t0)/1000).toFixed(1)
-    const per = ((Date.now()-t0)/ntx).toFixed(0)
-    Logger.info(`Tracker :  Finished block ${this.header.height}, ${dt}s, ${ntx} tx, ${per}ms/tx`)
-
-    return txsForBroadcast
+    return util.parallelCall(txidLists, list => db.confirmTransactions(list, blockId))
   }
 
   /**

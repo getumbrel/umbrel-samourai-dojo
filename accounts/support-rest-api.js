@@ -336,7 +336,7 @@ class SupportRestApi {
    * Validate arguments related to GET xpub info requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsGetXpubInfo(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.params.xpub)
@@ -353,7 +353,7 @@ class SupportRestApi {
    * Validate arguments related to GET xpub rescan requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsGetXpubRescan(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.params.xpub)
@@ -371,7 +371,7 @@ class SupportRestApi {
    * Validate arguments related to GET xpub delete requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateArgsGetXpubDelete(req, res, next) {
     const isValidXpub = validator.isAlphanumeric(req.params.xpub)
@@ -388,7 +388,7 @@ class SupportRestApi {
    * Validate arguments related to addresses requests
    * @param {object} req - http request object
    * @param {object} res - http response object
-   * @param {function} next - next express middleware
+   * @param {function} next - next tiny-http middleware
    */
   validateAddress(req, res, next) {
     const isValidAddress = validator.isAlphanumeric(req.params.addr)

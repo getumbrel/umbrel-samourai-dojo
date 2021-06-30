@@ -11,15 +11,16 @@ whirlpool_options=(
   --cli.torConfig.coordinator.enabled=true
   --cli.torConfig.backend.enabled=false
   --cli.torConfig.backend.onion=false
-  --cli.mix.liquidityClient=false
+  --cli.mix.liquidityClient=true
+  --cli.mix.clientsPerPool=1
 )
 
 if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
   whirlpool_options+=(--cli.server="TESTNET")
-  whirlpool_options+=(--cli.dojo.url="http://${NGINX_IP:-172.30.1.3}:80/test/v2/")
+  whirlpool_options+=(--cli.dojo.url="http://$NET_WHIRL_NGINX_IPV4:80/test/v2/")
 else
   whirlpool_options+=(--cli.server="MAINNET")
-  whirlpool_options+=(--cli.dojo.url="http://${NGINX_IP:-172.30.1.3}:80/v2/")
+  whirlpool_options+=(--cli.dojo.url="http://$NET_WHIRL_NGINX_IPV4:80/v2/")
 fi
 
 if [ "$WHIRLPOOL_COORDINATOR_ONION" == "on" ]; then

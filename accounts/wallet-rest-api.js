@@ -78,7 +78,7 @@ class WalletRestApi {
 
     } finally {
       if (debugApi) {
-        const strParams = 
+        const strParams =
           `${req.query.active ? req.query.active : ''} \
           ${req.query.new ? req.query.new : ''} \
           ${req.query.pubkey ? req.query.pubkey : ''} \
@@ -119,7 +119,7 @@ class WalletRestApi {
 
     } finally {
       if (debugApi) {
-        const strParams = 
+        const strParams =
           `${req.body.active ? req.body.active : ''} \
           ${req.body.new ? req.body.new : ''} \
           ${req.body.pubkey ? req.body.pubkey : ''} \

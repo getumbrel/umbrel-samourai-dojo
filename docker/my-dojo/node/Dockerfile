@@ -1,9 +1,15 @@
-FROM    node:12-buster
+FROM    node:12-alpine
 
-ENV     APP_DIR     /home/node/app
+ENV     NODE_ENV production
+
+ENV     APP_DIR                 /home/node/app
+ARG     TOR_LINUX_GID
+
+RUN     set -ex && \
+        apk --no-cache add shadow bash gcc g++ make python3
 
 # Add node user to tor group
-RUN     addgroup --system -gid 1107 tor && \
+RUN     addgroup -S -g ${TOR_LINUX_GID} tor && \
         usermod -a -G tor node
 
 # Install forever
@@ -11,7 +17,7 @@ RUN     npm install -g forever
 
 # Create app directory
 RUN     mkdir "$APP_DIR" && \
-        chown -R node:node "$APP_DIR" 
+        chown -R node:node "$APP_DIR"
 
 # Copy app source files into APP_DIR
 COPY    . "$APP_DIR"

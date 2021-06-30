@@ -157,6 +157,14 @@ const lib_api = {
   },
 
   /**
+   * Transactions
+   */
+  getTransactions: function(arguments) {
+    let uri = this.baseUri + '/txs'
+    return this.sendGetUriEncoded(uri, arguments)
+  },
+
+  /**
    * Rescans a range of blocks
    */
   getBlocksRescan: function(fromHeight, toHeight) {

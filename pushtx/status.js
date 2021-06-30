@@ -10,7 +10,7 @@ const Logger = require('../lib/logger')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
 const keys = require('../keys')[network.key]
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
 
 
 /**
@@ -49,7 +49,7 @@ class Status {
       amount: 0,
       count: 0
     }
-    this.rpcClient = new RpcClient()
+    this.rpcClient = createRpcClient()
   }
 
   /**
@@ -75,8 +75,7 @@ class Status {
     this.status.push.count = this.stats.count
 
     try {
-      await this._refreshNetworkInfo()
-      await this._refreshBlockchainInfo()
+      await Promise.all([this._refreshNetworkInfo(), this._refreshBlockchainInfo()])
     } catch (e) {
       Logger.error(e, 'PushTx : Status.getCurrent() : Error')
     } finally {
@@ -107,7 +106,7 @@ class Status {
    * Refresh network info
    */
   async _refreshNetworkInfo() {
-    const info = await this.rpcClient.getNetworkInfo()
+    const info = await this.rpcClient.getnetworkinfo()
     this.status.bitcoind.conn = info.connections
     this.status.bitcoind.version = info.version
     this.status.bitcoind.protocolversion = info.protocolversion
@@ -118,9 +117,9 @@ class Status {
    * Refresh blockchain info
    */
   async _refreshBlockchainInfo() {
-    const info = await this.rpcClient.getBlockchainInfo()
+    const info = await this.rpcClient.getblockchaininfo()
     this.status.bitcoind.blocks = info.blocks
-    this.status.bitcoind.testnet = (info.chain != 'main')
+    this.status.bitcoind.testnet = (info.chain !== 'main')
     this.status.bitcoind.up = true
   }
 

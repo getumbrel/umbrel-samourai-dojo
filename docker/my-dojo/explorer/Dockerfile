@@ -1,14 +1,15 @@
-FROM    node:12-buster
+FROM    node:12-alpine
+
+ENV     NODE_ENV production
 
 ENV     APP_DIR              /home/node/app
 
 ENV     EXPLORER_URL         https://github.com/janoside/btc-rpc-explorer/archive
-ENV     EXPLORER_VERSION     2.1.0
+ENV     EXPLORER_VERSION     3.1.1
 
 # Install netcat
 RUN     set -ex && \
-        apt-get update && \
-        apt-get install -y netcat
+        apk --no-cache add bash gcc g++ make python3 git netcat-openbsd
 
 # Download the source code and install it
 RUN     set -ex && \

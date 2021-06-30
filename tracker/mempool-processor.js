@@ -11,8 +11,8 @@ const util = require('../lib/util')
 const Logger = require('../lib/logger')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
+const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
 const keys = require('../keys')[network.key]
-const AbstractProcessor = require('./abstract-processor')
 const Transaction = require('./transaction')
 const TransactionsBundle = require('./transactions-bundle')
 
@@ -20,14 +20,17 @@ const TransactionsBundle = require('./transactions-bundle')
 /**
  * A class managing a buffer for the mempool
  */
-class MempoolProcessor extends AbstractProcessor {
+class MempoolProcessor {
 
   /**
    * Constructor
    * @param {object} notifSock - ZMQ socket used for notifications
    */
   constructor(notifSock) {
-    super(notifSock)
+    // RPC client
+    this.client = createRpcClient()
+    // ZeroMQ socket for notifications sent to others components
+    this.notifSock = notifSock
     // Mempool buffer
     this.mempoolBuffer = new TransactionsBundle()
     // ZeroMQ socket for bitcoind Txs messages
@@ -69,15 +72,17 @@ class MempoolProcessor extends AbstractProcessor {
 
   /**
    * Stop processing
-   */ 
+   */
   async stop() {
     clearInterval(this.checkUnconfirmedId)
     clearInterval(this.processMempoolId)
     //clearInterval(this.displayStatsId)
 
-    resolve(this.txSock.disconnect(keys.bitcoind.zmqTx).close())
-    resolve(this.pushTxSock.disconnect(keys.ports.notifpushtx).close())
-    resolve(this.orchestratorSock.disconnect(keys.ports.orchestrator).close())
+    this.txSock.disconnect(keys.bitcoind.zmqTx).close()
+    this.pushTxSock.disconnect(keys.ports.notifpushtx).close()
+    this.orchestratorSock.disconnect(keys.ports.orchestrator).close()
+
+    return Promise.resolve();
   }
 
   /**
@@ -150,14 +155,27 @@ class MempoolProcessor extends AbstractProcessor {
     let currentMempool = new TransactionsBundle(this.mempoolBuffer.toArray())
     this.mempoolBuffer.clear()
 
-    const filteredTxs = await currentMempool.prefilterTransactions()
+    const txsForBroadcast = new Map()
 
-    return util.seriesCall(filteredTxs, async filteredTx => {
+    let filteredTxs = await currentMempool.prefilterByOutputs()
+    await util.parallelCall(filteredTxs, async filteredTx => {
       const tx = new Transaction(filteredTx)
-      const txCheck = await tx.checkTransaction()
-      if (txCheck && txCheck.broadcast)
-        this.notifyTx(txCheck.tx)
+      await tx.processOutputs()
+      if (tx.doBroadcast)
+        txsForBroadcast[tx.txid] = tx.tx
     })
+
+    filteredTxs = await currentMempool.prefilterByInputs()
+    await util.parallelCall(filteredTxs, async filteredTx => {
+      const tx = new Transaction(filteredTx)
+      await tx.processInputs()
+      if (tx.doBroadcast)
+        txsForBroadcast[tx.txid] = tx.tx
+    })
+
+    // Send the notifications
+    for (let tx of txsForBroadcast.values())
+      this.notifyTx(tx)
   }
 
   /**
@@ -207,6 +225,29 @@ class MempoolProcessor extends AbstractProcessor {
   }
 
   /**
+   * Notify a new transaction
+   * @param {object} tx - bitcoin transaction
+   */
+  notifyTx(tx) {
+    // Real-time client updates for this transaction.
+    // Any address input or output present in transaction
+    // is a potential client to notify.
+    if (this.notifSock)
+      this.notifSock.send(['transaction', JSON.stringify(tx)])
+  }
+
+  /**
+   * Notify a new block
+   * @param {string} header - block header
+   */
+  notifyBlock(header) {
+    // Notify clients of the block
+    if (this.notifSock)
+      this.notifSock.send(['block', JSON.stringify(header)])
+  }
+
+
+  /**
    * Check unconfirmed transactions
    * @returns {Promise}
    */
@@ -218,11 +259,11 @@ class MempoolProcessor extends AbstractProcessor {
     const unconfirmedTxs = await db.getUnconfirmedTransactions()
 
     if (unconfirmedTxs.length > 0) {
-      await util.seriesCall(unconfirmedTxs, tx => {
+      await util.parallelCall(unconfirmedTxs, tx => {
         try {
-          return this.client.getrawtransaction(tx.txnTxid, true)
+          return this.client.getrawtransaction( { txid: tx.txnTxid, verbose: true })
             .then(async rtx => {
-              if (!rtx.blockhash) return null              
+              if (!rtx.blockhash) return null
               // Transaction is confirmed
               const block = await db.getBlockByHash(rtx.blockhash)
               if (block && block.blockID) {
@@ -247,7 +288,7 @@ class MempoolProcessor extends AbstractProcessor {
     const ntx = unconfirmedTxs.length
     const dt = ((Date.now() - t0) / 1000).toFixed(1)
     const per = (ntx == 0) ? 0 : ((Date.now() - t0) / ntx).toFixed(0)
-    Logger.info(`Tracker :  Finished processing unconfirmed transactions ${dt}s, ${ntx} tx, ${per}ms/tx`)
+    Logger.info(`Tracker : Finished processing unconfirmed transactions ${dt}s, ${ntx} tx, ${per}ms/tx`)
   }
 
   /**
@@ -255,11 +296,10 @@ class MempoolProcessor extends AbstractProcessor {
    */
   async _refreshActiveStatus() {
     // Get highest header in the blockchain
-    const info = await this.client.getblockchaininfo()
+    // Get highest block processed by the tracker
+    const [highestBlock, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
     const highestHeader = info.headers
 
-    // Get highest block processed by the tracker
-    const highestBlock = await db.getHighestBlock()
     if (highestBlock == null || highestBlock.blockHeight == 0) {
       this.isActive = false
       return

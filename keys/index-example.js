@@ -6,6 +6,7 @@
 
 /**
  * Desired structure of /keys/index.js, which is ignored in the repository.
+ * index.js should store only one of the 2 sets of parameters (mainnet or testnet)
  */
 module.exports = {
   /*
@@ -15,7 +16,7 @@ module.exports = {
     /*
      * Dojo version
      */
-    dojoVersion: '1.9.0',
+    dojoVersion: '1.10.0',
     /*
      * Bitcoind
      */

@@ -15,9 +15,9 @@ bitcoind_options=(
   -mempoolexpiry=$BITCOIND_MEMPOOL_EXPIRY
   -minrelaytxfee=$BITCOIND_MIN_RELAY_TX_FEE
   -port=8333
-  -proxy=172.28.1.4:9050
+  -proxy=$NET_DOJO_TOR_IPV4:9050
   -rpcallowip=0.0.0.0/0
-  -rpcbind=172.28.1.5
+  -rpcbind=$NET_DOJO_BITCOIND_IPV4
   -rpcpassword=$BITCOIND_RPC_PASSWORD
   -rpcport=28256
   -rpcthreads=$BITCOIND_RPC_THREADS
@@ -31,7 +31,7 @@ bitcoind_options=(
 
 if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
   bitcoind_options+=(-listen=1)
-  bitcoind_options+=(-bind=172.28.1.5)
+  bitcoind_options+=(-bind="$NET_DOJO_BITCOIND_IPV4")
   bitcoind_options+=(-externalip=$(cat /var/lib/tor/hsv2bitcoind/hostname))
   bitcoind_options+=(-externalip=$(cat /var/lib/tor/hsv3bitcoind/hostname))
 fi

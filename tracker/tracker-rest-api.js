@@ -4,10 +4,7 @@
  */
 'use strict'
 
-const qs = require('querystring')
 const validator = require('validator')
-const bodyParser = require('body-parser')
-const Logger = require('../lib/logger')
 const errors = require('../lib/errors')
 const authMgr = require('../lib/auth/authorizations-manager')
 const HttpServer = require('../lib/http-server/http-server')
@@ -28,8 +25,6 @@ class TrackerRestApi {
   constructor(httpServer, tracker) {
     this.httpServer = httpServer
     this.tracker = tracker
-
-    const urlencodedParser = bodyParser.urlencoded({ extended: true })
 
     // Establish routes. Proxy server strips /pushtx
     this.httpServer.app.get(

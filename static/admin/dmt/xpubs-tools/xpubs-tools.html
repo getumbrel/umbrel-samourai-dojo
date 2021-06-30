@@ -59,16 +59,17 @@
 
       <div id="xpubs-tool-actions" class="row box-main">
         <div class="center">
-          <button id="btn-xpub-details-rescan" class="btn btn-success" type="button">RESCAN THIS XPUB</button>
-          <button id="btn-xpub-details-retype" class="btn btn-success" type="button">RETYPE THIS XPUB</button>
-          <button id="btn-xpub-details-delete" class="btn btn-success" type="button">DELETE THIS XPUB</button>
+          <button id="btn-xpub-details-rescan" class="btn btn-success" type="button">RESCAN</button>
+          <button id="btn-xpub-details-retype" class="btn btn-success" type="button">RETYPE</button>
+          <button id="btn-xpub-details-delete" class="btn btn-success" type="button">DELETE</button>
+          <button id="btn-xpub-details-export" class="btn btn-success" type="button">CSV EXPORT</button>
           <button id="btn-xpub-details-reset" class="btn btn-success" type="button">SEARCH ANOTHER XPUB</button>
         </div>
       </div>
 
       <div id="xpubs-rescans-actions" class="row box-main">
         <div class="center">
-          <span>Rescan this xpub starting at index</span>
+          <span>Rescan this XPUB starting at index</span>
           <input id="rescan-start-idx" type="text" value="0" placeholder="index">
           <span> with a lookahead of </span>
           <input id="rescan-lookahead" type="text" value="100" placeholder="#addresses">
@@ -80,9 +81,22 @@
 
       <div id="xpubs-deletion-actions" class="row box-main">
         <div class="center">
-          <span>Do you want to delete this xpub?</span>
+          <span>Do you want to delete this XPUB?</span>
           <button id="btn-xpub-delete-go" class="btn btn-success" type="button">DELETE</button>
           <button id="btn-xpub-delete-cancel" class="btn btn-success" type="button">CANCEL</button>
+        </div>
+      </div>
+
+      <div id="xpubs-export-actions" class="row box-main">
+        <div class="center">
+          <span>Do you want to export a list of </span>
+          <select id="export-type" type="select" value="full">
+            <option value="full" selected>all the transactions</option>
+            <option value="notNull">the transactions modifying the balance</option>
+          </select>
+          <span> of this XPUB?</span>
+          <button id="btn-xpub-export-go" class="btn btn-success" type="button">EXPORT</button>
+          <button id="btn-xpub-export-cancel" class="btn btn-success" type="button">CANCEL</button>
         </div>
       </div>
 

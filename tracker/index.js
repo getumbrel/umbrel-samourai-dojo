@@ -6,7 +6,7 @@
 
   'use strict'
 
-  const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+  const { waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
   const network = require('../lib/bitcoin/network')
   const keys = require('../keys')[network.key]
   const db = require('../lib/db/mysql-db-wrapper')
@@ -21,7 +21,7 @@
 
   // Wait for Bitcoind RPC API
   // being ready to process requests
-  await RpcClient.waitForBitcoindRpcApi()
+  await waitForBitcoindRpcApi()
 
   // Initialize the db wrapper
   const dbConfig = {

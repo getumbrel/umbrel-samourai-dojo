@@ -9,7 +9,8 @@ const zmq = require('zeromq')
 const Logger = require('../lib/logger')
 const errors = require('../lib/errors')
 const db = require('../lib/db/mysql-db-wrapper')
-const RpcClient = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
+const addrHelper = require('../lib/bitcoin/addresses-helper')
 const network = require('../lib/bitcoin/network')
 const activeNet = network.network
 const keys = require('../keys')[network.key]
@@ -24,7 +25,7 @@ if (network.key == 'bitcoin') {
 
 
 /**
- * A singleton providing a wrapper 
+ * A singleton providing a wrapper
  * for pushing transactions with the local bitcoind
  */
 class PushTxProcessor {
@@ -36,7 +37,7 @@ class PushTxProcessor {
     this.notifSock = null
     this.sources = new Sources()
     // Initialize the rpc client
-    this.rpcClient = new RpcClient()
+    this.rpcClient = createRpcClient()
   }
 
   /**
@@ -52,7 +53,7 @@ class PushTxProcessor {
    * Enforce a strict verification mode on a list of outputs
    * @param {string} rawtx - raw bitcoin transaction in hex format
    * @param {array} vouts - output indices (integer)
-   * @returns {array} returns the indices of the faulty outputs 
+   * @returns {array} returns the indices of the faulty outputs
    */
   async enforceStrictModeVouts(rawtx, vouts) {
     const faultyOutputs = []
@@ -63,12 +64,12 @@ class PushTxProcessor {
     } catch(e) {
       throw errors.tx.PARSE
     }
-    // Check in db if addresses are known and have been used 
+    // Check in db if addresses are known and have been used
     for (let vout of vouts) {
       if (vout >= tx.outs.length)
         throw errors.txout.VOUT
       const output = tx.outs[vout]
-      const address = bitcoin.address.fromOutputScript(output.script, activeNet)
+      const address = addrHelper.outputScript2Address(output.script)
       const nbTxs = await db.getAddressNbTransactions(address)
       if (nbTxs == null || nbTxs > 0)
         faultyOutputs.push(vout)
@@ -108,7 +109,7 @@ class PushTxProcessor {
     // At this point, the raw hex parses as a legitimate transaction.
     // Attempt to send via RPC to the bitcoind instance
     try {
-      const txid = await this.rpcClient.sendrawtransaction(rawtx)
+      const txid = await this.rpcClient.sendrawtransaction({ hexstring: rawtx })
       Logger.info('PushTx : Pushed!')
       // Update the stats
       status.updateStats(value)

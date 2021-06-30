@@ -12,10 +12,13 @@ const screenXpubsToolsScript = {
     $('#btn-xpub-details-reset').click(() => {this.showSearchForm()})
     $('#btn-xpub-details-rescan').click(() => {this.showRescanForm()})
     $('#btn-xpub-details-delete').click(() => {this.showDeletionForm()})
+    $('#btn-xpub-details-export').click(() => {this.showExportForm()})
     $('#btn-xpub-rescan-go').click(() => {this.rescanXpub()})
     $('#btn-xpub-rescan-cancel').click(() => {this.hideRescanForm()})
     $('#btn-xpub-delete-go').click(() => {this.deleteXpub()})
     $('#btn-xpub-delete-cancel').click(() => {this.hideDeletionForm()})
+    $('#btn-xpub-export-go').click(() => {this.exportXpubHistory()})
+    $('#btn-xpub-export-cancel').click(() => {this.hideExportForm()})
     $('#btn-xpub-import-go').click(() => {this.importXpub()})
     $('#btn-xpub-details-retype').click(() => {this.showImportForm(true)})
     $('#btn-xpub-import-cancel').click(() => {this.hideImportForm(this.isReimport)})
@@ -27,8 +30,15 @@ const screenXpubsToolsScript = {
   },
 
   preparePage: function() {
+    // Disable custom lookahead if data source is a third party explorer
+    const isTPE = sessionStorage.getItem('indexerType') == 'third_party_explorer'
+    const isLRI = sessionStorage.getItem('indexerType') == 'local_rest_indexer'
+    const disableLookahead = isTPE || isLRI
+    $('#rescan-lookahead').prop('disabled', disableLookahead)
+
     this.hideRescanForm()
     this.hideDeletionForm()
+    this.hideExportForm()
     this.showSearchForm()
     $("#xpub").focus()
   },
@@ -139,6 +149,35 @@ const screenXpubsToolsScript = {
         this.currentXpub = null
         this.preparePage()
         lib_msg.displayInfo('Xpub successfully deleted')
+      }).catch(e => {
+        lib_errors.processError(e)
+      })
+  },
+
+  exportXpubHistory: function() {
+    lib_msg.displayMessage('Exporting the transactional history of this xpub. Please wait...')
+
+    const args = {
+      'active': this.currentXpub,
+      'page': 0,
+      'count': 1000000000
+    }
+
+    if ($('#export-type').val() == 'notNull')
+      args['excludeNullXfer'] = 1
+
+    return lib_api.getTransactions(args)
+      .then(result => {
+        if (result['txs'] && result['txs'].length > 0) {
+          let content = 'data:text/csv;charset=utf-8,'
+          content += 'height,txid,date,flow\n'
+          for (let tx of result['txs'])
+            content += `${tx['block_height']},${tx['hash']},${new Date(tx['time']*1000).toString()},${tx['result']/100000000}\n`
+          const encodedURI = encodeURI(content)
+          window.open(encodedURI)
+        }
+        this.hideExportForm()
+        lib_msg.displayInfo('Transactional history successfully exported.')
       }).catch(e => {
         lib_errors.processError(e)
       })
@@ -305,6 +344,17 @@ const screenXpubsToolsScript = {
 
   hideDeletionForm: function() {
     $('#xpubs-deletion-actions').hide()
+    $('#xpubs-tool-actions').show()
+  },
+
+  showExportForm: function() {
+    $('#xpubs-tool-actions').hide()
+    $('#xpubs-export-actions').show()
+    lib_msg.cleanMessagesUi()
+  },
+
+  hideExportForm: function() {
+    $('#xpubs-export-actions').hide()
     $('#xpubs-tool-actions').show()
   },
 
