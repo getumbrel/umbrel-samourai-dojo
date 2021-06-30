@@ -27,6 +27,7 @@ jobs:
           source ./docker/my-dojo/.env
           echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           echo "DOJO_NODEJS_VERSION_TAG=${DOJO_NODEJS_VERSION_TAG}" >> $GITHUB_ENV
+          echo "TOR_LINUX_GID=${TOR_LINUX_GID}" >> $GITHUB_ENV
 
       - name: Show set environment variables
         run: |
@@ -63,6 +64,7 @@ jobs:
           --cache-to "type=local,dest=/tmp/.buildx-cache" \
           --platform linux/amd64,linux/arm64 \
           --tag ${{ secrets.DOCKER_USERNAME }}/dojo-nodejs:$DOJO_NODEJS_VERSION_TAG \
+          --build-arg TOR_LINUX_GID=${TOR_LINUX_GID} \
           --output "type=registry" \
           --file ./docker/my-dojo/node/Dockerfile ./
 
@@ -73,5 +75,6 @@ jobs:
           --cache-to "type=local,dest=/tmp/.buildx-cache" \
           --platform linux/amd64,linux/arm64 \
           --tag ${{ secrets.DOCKER_USERNAME }}/dojo-nodejs:latest \
+          --build-arg TOR_LINUX_GID=${TOR_LINUX_GID} \
           --output "type=registry" \
           --file ./docker/my-dojo/node/Dockerfile ./
