@@ -36,7 +36,6 @@ class TransactionsRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsGetTransaction.bind(this),
       this.getTransaction.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -45,7 +44,6 @@ class TransactionsRestApi {
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.validateArgsGetTransactions.bind(this),
       this.getTransactions.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

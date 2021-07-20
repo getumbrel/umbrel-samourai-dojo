@@ -36,7 +36,6 @@ class UnspentRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.getUnspent.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
@@ -45,7 +44,6 @@ class UnspentRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.postUnspent.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

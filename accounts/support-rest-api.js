@@ -42,7 +42,6 @@ class SupportRestApi {
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.validateAddress.bind(this),
       this.getAddressInfo.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -50,7 +49,6 @@ class SupportRestApi {
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.validateAddress.bind(this),
       this.getAddressRescan.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -58,7 +56,6 @@ class SupportRestApi {
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.validateArgsGetXpubInfo.bind(this),
       this.getXpubInfo.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -66,7 +63,6 @@ class SupportRestApi {
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.validateArgsGetXpubRescan.bind(this),
       this.getXpubRescan.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -74,21 +70,18 @@ class SupportRestApi {
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.validateArgsGetXpubDelete.bind(this),
       this.getXpubDelete.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       `/${keys.prefixes.support}/pairing/explorer`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getPairingExplorer.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       `/${keys.prefixes.support}/pairing`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getPairing.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

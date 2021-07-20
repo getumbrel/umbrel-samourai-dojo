@@ -41,7 +41,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsPostXpub.bind(this),
       this.postXpub.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -49,7 +48,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsGetXpub.bind(this),
       this.getXpubImportStatus.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
@@ -57,7 +55,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsGetXpub.bind(this),
       this.getXpub.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
@@ -66,7 +63,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsPostLockXpub.bind(this),
       this.postLockXpub.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.delete(
@@ -75,7 +71,6 @@ class XPubRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsDeleteXpub.bind(this),
       this.deleteXpub.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

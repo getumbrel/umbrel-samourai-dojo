@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.10.1](#1_10_1)
 - [v1.10.0](#1_10_0)
 - [v1.9.0](#1_9_0)
 - [v1.8.1](#1_8_1)
@@ -15,6 +16,26 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+<a name="1_10_1"/>
+
+## Samourai Dojo v1.10.1 ##
+
+#### Bug fixes ####
+
+- [#mr236](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/236) fix auth errors
+- [#mr237](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/237) fix zmq block notifications
+
+#### Security ####
+
+- [#mr235](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/235) apply middleware in correct order
+
+#### Credits ###
+
+- pajasevi
+- lukechilds
+- kenshin-samourai
+- zeroleak
 
 
 <a name="1_10_0"/>

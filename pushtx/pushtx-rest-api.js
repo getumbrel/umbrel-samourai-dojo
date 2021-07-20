@@ -40,35 +40,30 @@ class PushTxRestApi {
       jsonParser,
       authMgr.checkAuthentication.bind(authMgr),
       this.postScheduleTxs.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
       '/',
       authMgr.checkAuthentication.bind(authMgr),
       this.postPushTx.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       '/',
       authMgr.checkAuthentication.bind(authMgr),
       this.getPushTx.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       `/${keys.prefixes.statusPushtx}/`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getStatus.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.get(
       `/${keys.prefixes.statusPushtx}/schedule`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getStatusSchedule.bind(this),
-      HttpServer.sendAuthError
     )
 
     // Handle unknown paths, returning a help message
@@ -76,7 +71,6 @@ class PushTxRestApi {
       '/*',
       authMgr.checkAuthentication.bind(authMgr),
       this.getHelp.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

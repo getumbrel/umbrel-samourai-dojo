@@ -16,7 +16,7 @@ module.exports = {
     /*
      * Dojo version
      */
-    dojoVersion: '1.10.0',
+    dojoVersion: '1.10.1',
     /*
      * Bitcoind
      */

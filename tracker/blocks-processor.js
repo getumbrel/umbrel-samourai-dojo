@@ -32,10 +32,10 @@ module.exports.nbWorkers = nbWorkers
 
 /**
  * Initialize the processor
- * @param {object} notifSock - ZMQ socket used for notifications
+ * @param {object} aNotifSock - ZMQ socket used for notifications
  */
-function init(notifSock) {
-  notifSock = notifSock
+function init(aNotifSock) {
+  notifSock = aNotifSock
 
   for (let i = 0; i < nbWorkers; i++) {
     const worker = new Worker(

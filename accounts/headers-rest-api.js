@@ -33,7 +33,6 @@ class HeadersRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       this.validateArgsGetHeader.bind(this),
       this.getHeader.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

@@ -31,7 +31,6 @@ class StatusRestApi {
       `/${keys.prefixes.status}/`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getStatus.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

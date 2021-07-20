@@ -35,7 +35,6 @@ class WalletRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.getWallet.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
@@ -44,7 +43,6 @@ class WalletRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.postWallet.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

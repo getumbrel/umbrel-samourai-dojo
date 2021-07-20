@@ -36,7 +36,6 @@ class MultiaddrRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.getMultiaddr.bind(this),
-      HttpServer.sendAuthError
     )
 
     this.httpServer.app.post(
@@ -45,7 +44,6 @@ class MultiaddrRestApi {
       authMgr.checkAuthentication.bind(authMgr),
       apiHelper.validateEntitiesParams.bind(apiHelper),
       this.postMultiaddr.bind(this),
-      HttpServer.sendAuthError
     )
   }
 

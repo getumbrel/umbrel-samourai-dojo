@@ -31,7 +31,6 @@ class TrackerRestApi {
       `/${keys.prefixes.support}/rescan`,
       authMgr.checkHasAdminProfile.bind(authMgr),
       this.getBlocksRescan.bind(this),
-      HttpServer.sendAuthError
     )
   }
 
