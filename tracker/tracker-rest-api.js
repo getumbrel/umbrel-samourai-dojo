@@ -2,15 +2,17 @@
  * tracker/tracker-rest-api.js
  * Copyright (c) 2016-2019, Samourai Wallet (CC BY-NC-ND 4.0 License).
  */
-'use strict'
 
-const validator = require('validator')
-const errors = require('../lib/errors')
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
 
+import validator from 'validator'
+
+import errors from '../lib/errors.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+
+const keys = keysFile[network.key]
 
 /**
  * Tracker API endpoints
@@ -19,7 +21,7 @@ class TrackerRestApi {
 
   /**
    * Constructor
-   * @param {pushtx.HttpServer} httpServer - HTTP server
+   * @param {HttpServer} httpServer - HTTP server
    * @param {tracker.Tracker} tracker - tracker
    */
   constructor(httpServer, tracker) {
@@ -70,4 +72,4 @@ class TrackerRestApi {
 
 }
 
-module.exports = TrackerRestApi
+export default TrackerRestApi

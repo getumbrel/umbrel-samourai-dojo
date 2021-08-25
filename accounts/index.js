@@ -2,30 +2,30 @@
  * accounts/index.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-(async () => {
 
-  'use strict'
+import Logger from '../lib/logger.js'
+import { waitForBitcoindRpcApi } from '../lib/bitcoind-rpc/rpc-client.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import hdaHelper from '../lib/bitcoin/hd-accounts-helper.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import AuthRestApi from '../lib/auth/auth-rest-api.js'
+import XPubRestApi from './xpub-rest-api.js'
+import FeesRestApi from './fees-rest-api.js'
+import HeadersRestApi from './headers-rest-api.js'
+import TransactionsRestApi from './transactions-rest-api.js'
+import StatusRestApi from './status-rest-api.js'
+import notifServer from './notifications-server.js'
+import WalletRestApi from './wallet-rest-api.js'
+import MultiaddrRestApi from './multiaddr-rest-api.js'
+import UnspentRestApi from './unspent-rest-api.js'
+import SupportRestApi from './support-rest-api.js'
 
-  const Logger = require('../lib/logger')
-  const { waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
-  const network = require('../lib/bitcoin/network')
-  const keys = require('../keys')[network.key]
-  const db = require('../lib/db/mysql-db-wrapper')
-  const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
-  const HttpServer = require('../lib/http-server/http-server')
-  const AuthRestApi = require('../lib/auth/auth-rest-api')
-  const XPubRestApi = require('./xpub-rest-api')
-  const FeesRestApi = require('./fees-rest-api')
-  const HeadersRestApi = require('./headers-rest-api')
-  const TransactionsRestApi = require('./transactions-rest-api')
-  const StatusRestApi = require('./status-rest-api')
-  const notifServer = require('./notifications-server')
-  const WalletRestApi = require('./wallet-rest-api')
-  const MultiaddrRestApi = require('./multiaddr-rest-api')
-  const UnspentRestApi = require('./unspent-rest-api')
-  const SupportRestApi = require('./support-rest-api')
+const keys = keysFile[network.key]
 
 
+try {
   /**
    * Samourai REST API
    */
@@ -75,7 +75,7 @@
   // Attach the web sockets server to the web server
   notifServer.attach(httpServer)
 
-})().catch(err => {
+} catch(err) {
   console.error(err)
   process.exit(1)
-})
+}

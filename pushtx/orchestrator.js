@@ -2,17 +2,18 @@
  * pushtx/orchestrator.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const zmq = require('zeromq/v5-compat')
-const { Sema } = require('async-sema')
-const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
-const { createRpcClient, isConnectionError } = require('../lib/bitcoind-rpc/rpc-client')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const pushTxProcessor = require('./pushtx-processor')
 
+import zmq from 'zeromq/v5-compat.js'
+import { Sema } from 'async-sema'
+import Logger from '../lib/logger.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import { createRpcClient, isConnectionError } from '../lib/bitcoind-rpc/rpc-client.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import pushTxProcessor from './pushtx-processor.js'
+
+const keys = keysFile[network.key]
 
 /**
  * A class orchestrating the push of scheduled transactions
@@ -179,4 +180,4 @@ class Orchestrator {
 
 }
 
-module.exports = Orchestrator
+export default Orchestrator

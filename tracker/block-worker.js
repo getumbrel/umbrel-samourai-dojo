@@ -2,51 +2,43 @@
  * tracker/block-worker.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const { isMainThread, parentPort } = require('worker_threads')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const db = require('../lib/db/mysql-db-wrapper')
-const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
-const Block = require('./block')
 
+import { isMainThread, parentPort } from 'worker_threads'
+
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import { createRpcClient } from '../lib/bitcoind-rpc/rpc-client.js'
+import Block from './block.js'
+
+const keys = keysFile[network.key]
 
 /**
  * STATUS
  */
-const IDLE = 0
-module.exports.IDLE = IDLE
+export const IDLE = 0
 
-const INITIALIZED = 1
-module.exports.INITIALIZED = INITIALIZED
+export const INITIALIZED = 1
 
-const OUTPUTS_PROCESSED = 2
-module.exports.OUTPUTS_PROCESSED = OUTPUTS_PROCESSED
+export const OUTPUTS_PROCESSED = 2
 
-const INPUTS_PROCESSED = 3
-module.exports.INPUTS_PROCESSED = INPUTS_PROCESSED
+export const INPUTS_PROCESSED = 3
 
-const TXS_CONFIRMED = 4
-module.exports.TXS_CONFIRMED = TXS_CONFIRMED
+export const TXS_CONFIRMED = 4
 
 /**
  * OPS
  */
-const OP_INIT = 0
-module.exports.OP_INIT = OP_INIT
+export const OP_INIT = 0
 
-const OP_PROCESS_OUTPUTS = 1
-module.exports.OP_PROCESS_OUTPUTS = OP_PROCESS_OUTPUTS
+export const OP_PROCESS_OUTPUTS = 1
 
-const OP_PROCESS_INPUTS = 2
-module.exports.OP_PROCESS_INPUTS = OP_PROCESS_INPUTS
+export const OP_PROCESS_INPUTS = 2
 
-const OP_CONFIRM = 3
-module.exports.OP_CONFIRM = OP_CONFIRM
+export const OP_CONFIRM = 3
 
-const OP_RESET = 4
-module.exports.OP_RESET = OP_RESET
+export const OP_RESET = 4
 
 
 

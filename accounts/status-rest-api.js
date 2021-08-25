@@ -2,15 +2,16 @@
  * accounts/status-rest-api.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const Logger = require('../lib/logger')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const status = require('./status')
 
+import Logger from '../lib/logger.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import status from './status.js'
+
+const keys = keysFile[network.key]
 const debugApi = process.argv.indexOf('api-debug') > -1
 
 
@@ -52,4 +53,4 @@ class StatusRestApi {
 
 }
 
-module.exports = StatusRestApi
+export default StatusRestApi

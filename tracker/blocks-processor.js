@@ -2,15 +2,17 @@
  * tracker/blocks-processor.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const os = require('os')
-const { Sema } = require('async-sema')
-const { Worker } = require('worker_threads')
-const Logger = require('../lib/logger')
-const util = require('../lib/util')
-const dbProcessor = require('../lib/db/mysql-db-wrapper')
-const blockWorker = require('./block-worker')
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+import os from 'os'
+import { Sema } from 'async-sema'
+import { Worker } from 'worker_threads'
+
+import Logger from '../lib/logger.js'
+import util from '../lib/util.js'
+import dbProcessor from '../lib/db/mysql-db-wrapper.js'
+import * as blockWorker from './block-worker.js'
 
 
 let notifSock = null
@@ -26,16 +28,17 @@ let nbTasksCompleted = 0
 const _processBlocksSemaphor = new Sema(1)
 
 // Number of worker threads processing the blocks in parallel
-const nbWorkers = os.cpus().length //- 1
-module.exports.nbWorkers = nbWorkers
+export const nbWorkers = os.cpus().length //- 1
 
 
 /**
  * Initialize the processor
  * @param {object} aNotifSock - ZMQ socket used for notifications
  */
-function init(aNotifSock) {
+export function init(aNotifSock) {
   notifSock = aNotifSock
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
 
   for (let i = 0; i < nbWorkers; i++) {
     const worker = new Worker(
@@ -47,13 +50,12 @@ function init(aNotifSock) {
     blockWorkers.push(worker)
   }
 }
-module.exports.init = init
 
 /**
  * Process a chunk of block headers
  * @param {object[]} chunk - array of block headers
  */
-async function processChunk(chunk) {
+export async function processChunk(chunk) {
   // Acquire the semaphor (wait for previous chunk)
   await _processBlocksSemaphor.acquire()
 
@@ -67,7 +69,6 @@ async function processChunk(chunk) {
   txsForBroadcast = []
   processTask(blockWorker.OP_INIT)
 }
-module.exports.processChunk = processChunk
 
 /**
  * Process an error returned by a worker thread

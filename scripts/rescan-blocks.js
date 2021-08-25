@@ -2,10 +2,10 @@
  * scripts/tracker.index.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
+ 
 
-const Logger = require('../lib/logger')
-const BlockchainProcessor = require('../tracker/blockchain-processor')
+import Logger from '../lib/logger.js'
+import BlockchainProcessor from '../tracker/blockchain-processor.js'
 
 
 /**

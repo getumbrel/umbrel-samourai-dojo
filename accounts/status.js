@@ -2,15 +2,16 @@
  * accounts/status.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const util = require('../lib/util')
-const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
-const remote = require('../lib/remote-importer/remote-importer')
 
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import util from '../lib/util.js'
+import Logger from '../lib/logger.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import remote from '../lib/remote-importer/remote-importer.js'
+
+const keys = keysFile[network.key]
 
 /**
  * Singleton providing information about the accounts endpoints
@@ -81,4 +82,4 @@ class Status {
 
 }
 
-module.exports = new Status()
+export default new Status()

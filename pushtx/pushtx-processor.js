@@ -2,25 +2,27 @@
  * pushtx/pushtx-processor.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bitcoin = require('bitcoinjs-lib')
-const zmq = require('zeromq/v5-compat')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const db = require('../lib/db/mysql-db-wrapper')
-const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
-const addrHelper = require('../lib/bitcoin/addresses-helper')
-const network = require('../lib/bitcoin/network')
-const activeNet = network.network
-const keys = require('../keys')[network.key]
-const status = require('./status')
+
+import bitcoin from 'bitcoinjs-lib'
+import zmq from 'zeromq/v5-compat.js'
+
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import { createRpcClient } from '../lib/bitcoind-rpc/rpc-client.js'
+import addrHelper from '../lib/bitcoin/addresses-helper.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import status from './status.js'
+
+const keys = keysFile[network.key]
 
 let Sources
 if (network.key === 'bitcoin') {
-  Sources = require('../lib/remote-importer/sources-mainnet')
+  Sources = (await import('../lib/remote-importer/sources-mainnet.js')).default
 } else {
-  Sources = require('../lib/remote-importer/sources-testnet')
+  Sources = (await import('../lib/remote-importer/sources-testnet.js')).default
 }
 
 
@@ -124,4 +126,4 @@ class PushTxProcessor {
 
 }
 
-module.exports = new PushTxProcessor()
+export default new PushTxProcessor()

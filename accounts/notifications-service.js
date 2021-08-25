@@ -2,17 +2,15 @@
  * accounts/notification-web-sockets.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const _ = require('lodash')
-const LRU = require('lru-cache')
-const WebSocket = require('websocket')
-const Logger = require('../lib/logger')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const apiHelper = require('./api-helper')
-const status = require('./status')
-const authMgr = require('../lib/auth/authorizations-manager')
+
+import _ from 'lodash'
+import LRU from 'lru-cache'
+import WebSocket from 'websocket'
+import Logger from '../lib/logger.js'
+import apiHelper from './api-helper.js'
+import status from './status.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
 
 const debug = process.argv.indexOf('ws-debug') > -1
 
@@ -473,4 +471,4 @@ class NotificationsService {
 
 }
 
-module.exports = NotificationsService
+export default NotificationsService

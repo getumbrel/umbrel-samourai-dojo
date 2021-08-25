@@ -2,14 +2,15 @@
  * scripts/patches/translate-hd-accounts.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const mysql = require('mysql')
-const bitcoin = require('bitcoinjs-lib')
-const bs58check = require('bs58check')
-const bs58 = require('bs58')
-const db = require('../../lib/db/mysql-db-wrapper')
-const hdaHelper = require('../../lib/bitcoin/hd-accounts-helper')
+
+import mysql from 'mysql'
+import bitcoin from 'bitcoinjs-lib'
+import bs58check from 'bs58check'
+import bs58 from 'bs58'
+
+import db from '../../lib/db/mysql-db-wrapper.js'
+import hdaHelper from '../../lib/bitcoin/hd-accounts-helper.js'
 
 
 /**

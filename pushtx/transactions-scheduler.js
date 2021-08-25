@@ -2,17 +2,18 @@
  * pushtx/pushtx-rest-api.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bitcoin = require('bitcoinjs-lib')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const db = require('../lib/db/mysql-db-wrapper')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
-const pushTxProcessor = require('./pushtx-processor')
 
+import bitcoin from 'bitcoinjs-lib'
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import { createRpcClient } from '../lib/bitcoind-rpc/rpc-client.js'
+import pushTxProcessor from './pushtx-processor.js'
+
+const keys = keysFile[network.key]
 
 /**
  * A class scheduling delayed push of transactions
@@ -160,4 +161,4 @@ class TransactionsScheduler {
 
 }
 
-module.exports = TransactionsScheduler
+export default TransactionsScheduler

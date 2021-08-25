@@ -3,12 +3,10 @@
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
 
-'use strict'
 
-const assert = require('assert')
-const bitcoin = require('bitcoinjs-lib')
-const network = require('../../../lib/bitcoin/network')
-const hdaHelper = require('../../../lib/bitcoin/hd-accounts-helper')
+
+import assert from 'assert'
+import hdaHelper from '../../../lib/bitcoin/hd-accounts-helper.js'
 
 
 /**

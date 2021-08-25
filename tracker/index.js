@@ -2,20 +2,21 @@
  * tracker/index.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-(async () => {
-
-  'use strict'
-
-  const { waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
-  const network = require('../lib/bitcoin/network')
-  const keys = require('../keys')[network.key]
-  const db = require('../lib/db/mysql-db-wrapper')
-  const Logger = require('../lib/logger')
-  const HttpServer = require('../lib/http-server/http-server')
-  const Tracker = require('./tracker')
-  const TrackerRestApi = require('./tracker-rest-api')
 
 
+
+import { waitForBitcoindRpcApi } from '../lib/bitcoind-rpc/rpc-client.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import Logger from '../lib/logger.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import Tracker from './tracker.js'
+import TrackerRestApi from './tracker-rest-api.js'
+
+const keys = keysFile[network.key]
+
+try {
   Logger.info('Tracker : Process ID: ' + process.pid)
   Logger.info('Tracker : Preparing the tracker')
 
@@ -52,7 +53,7 @@
   // Start the tracker
   tracker.start()
 
-})().catch(err => {
+} catch(err) {
   console.error(err)
   process.exit(1)
-})
+}

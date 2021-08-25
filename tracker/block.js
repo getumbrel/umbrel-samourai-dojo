@@ -2,14 +2,15 @@
  * tracker/block.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bitcoin = require('bitcoinjs-lib')
-const util = require('../lib/util')
-const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
-const Transaction = require('./transaction')
-const TransactionsBundle = require('./transactions-bundle')
+
+import bitcoin from 'bitcoinjs-lib'
+
+import util from '../lib/util.js'
+import Logger from '../lib/logger.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import Transaction from './transaction.js'
+import TransactionsBundle from './transactions-bundle.js'
 
 
 /**
@@ -162,4 +163,4 @@ class Block extends TransactionsBundle {
 
 }
 
-module.exports = Block
+export default Block

@@ -2,19 +2,21 @@
  * accounts/transactions-fees-rest-api.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const validator = require('validator')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const rpcTxns = require('../lib/bitcoind-rpc/transactions')
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const walletService = require('../lib/wallet/wallet-service')
-const network = require('../lib/bitcoin/network')
-const apiHelper = require('./api-helper')
-const keys = require('../keys')[network.key]
 
+import validator from 'validator'
+
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import rpcTxns from '../lib/bitcoind-rpc/transactions.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import walletService from '../lib/wallet/wallet-service.js'
+import network from '../lib/bitcoin/network.js'
+import apiHelper from './api-helper.js'
+import keysFile from '../keys/index.js'
+
+const keys = keysFile[network.key]
 const debugApi = process.argv.indexOf('api-debug') > -1
 
 
@@ -162,4 +164,4 @@ class TransactionsRestApi {
   }
 }
 
-module.exports = TransactionsRestApi
+export default TransactionsRestApi

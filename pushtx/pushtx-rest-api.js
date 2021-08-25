@@ -2,21 +2,23 @@
  * pushtx/pushtx-rest-api.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const qs = require('querystring')
-const validator = require('validator')
-const bodyParser = require('body-parser')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const status = require('./status')
-const pushTxProcessor = require('./pushtx-processor')
-const TransactionsScheduler = require('./transactions-scheduler')
 
+import qs from 'querystring'
+import validator from 'validator'
+import bodyParser from 'body-parser'
+
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import status from './status.js'
+import pushTxProcessor from './pushtx-processor.js'
+import TransactionsScheduler from './transactions-scheduler.js'
+
+const keys = keysFile[network.key]
 
 /**
  * PushTx API endpoints
@@ -241,4 +243,4 @@ class PushTxRestApi {
 
 }
 
-module.exports = PushTxRestApi
+export default PushTxRestApi

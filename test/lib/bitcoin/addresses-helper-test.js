@@ -3,14 +3,14 @@
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
 
-'use strict'
 
-const assert = require('assert')
-const bitcoin = require('bitcoinjs-lib')
-const btcMessage = require('bitcoinjs-message')
-const network = require('../../../lib/bitcoin/network')
+
+import assert from 'assert'
+import btcMessage from 'bitcoinjs-message'
+
+import network from '../../../lib/bitcoin/network.js'
 const activeNet = network.network
-const addrHelper = require('../../../lib/bitcoin/addresses-helper')
+import addrHelper from '../../../lib/bitcoin/addresses-helper.js'
 
 
 /**

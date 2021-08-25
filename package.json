@@ -6,6 +6,7 @@
   "engines": {
     "node": "14.x.x"
   },
+  "type": "module",
   "scripts": {
     "test": "mocha --recursive --reporter spec"
   },

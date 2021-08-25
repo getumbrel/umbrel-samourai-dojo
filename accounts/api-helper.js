@@ -2,19 +2,20 @@
  * accounts/api-helper.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bitcoin = require('bitcoinjs-lib')
-const validator = require('validator')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const WalletEntities = require('../lib/wallet/wallet-entities')
-const network = require('../lib/bitcoin/network')
+
+import bitcoin from 'bitcoinjs-lib'
+import validator from 'validator'
+
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import WalletEntities from '../lib/wallet/wallet-entities.js'
+import network from '../lib/bitcoin/network.js'
+import hdaHelper from '../lib/bitcoin/hd-accounts-helper.js'
+import addrHelper from '../lib/bitcoin/addresses-helper.js'
+import HttpServer from '../lib/http-server/http-server.js'
+
 const activeNet = network.network
-const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
-const addrHelper = require('../lib/bitcoin/addresses-helper')
-const HttpServer = require('../lib/http-server/http-server')
-
 
 /**
  * A singleton providing util methods used by the API
@@ -159,4 +160,4 @@ class ApiHelper {
 
 }
 
-module.exports = new ApiHelper()
+export default new ApiHelper()

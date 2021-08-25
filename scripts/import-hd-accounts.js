@@ -2,14 +2,12 @@
  * scripts/import-hd-accounts.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const util = require('../lib/util')
-const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
-const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
-const hdaService = require('../lib/bitcoin/hd-accounts-service')
-const apiHelper = require('../accounts/api-helper')
+
+import Logger from '../lib/logger.js'
+import hdaHelper from '../lib/bitcoin/hd-accounts-helper.js'
+import hdaService from '../lib/bitcoin/hd-accounts-service.js'
+import apiHelper from '../accounts/api-helper.js'
 
 
 /**
@@ -23,7 +21,7 @@ async function run(strEntities) {
   if (entities.xpubs.length > 0) {
     for (let i = 0; i < entities.xpubs.length; i++) {
       const xpub = entities.xpubs[i]
-      
+
       let scheme = hdaHelper.BIP44
 
       if (entities.ypubs[i])

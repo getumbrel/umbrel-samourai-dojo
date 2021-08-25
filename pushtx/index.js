@@ -2,20 +2,19 @@
  * pushtx/index.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-(async () => {
 
-  'use strict'
+import Logger from '../lib/logger.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import { waitForBitcoindRpcApi } from '../lib/bitcoind-rpc/rpc-client.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import PushTxRestApi from './pushtx-rest-api.js'
+import pushTxProcessor from './pushtx-processor.js'
 
-  const Logger = require('../lib/logger')
-  const db = require('../lib/db/mysql-db-wrapper')
-  const { waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
-  const network = require('../lib/bitcoin/network')
-  const keys = require('../keys')[network.key]
-  const HttpServer = require('../lib/http-server/http-server')
-  const PushTxRestApi = require('./pushtx-rest-api')
-  const pushTxProcessor = require('./pushtx-processor')
+const keys = keysFile[network.key]
 
-
+try {
   /**
    * PushTx API
    */
@@ -54,7 +53,7 @@
   // Start the http server
   httpServer.start()
 
-})().catch(err => {
+} catch(err) {
   console.error(err)
   process.exit(1)
-})
+}

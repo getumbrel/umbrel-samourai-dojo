@@ -2,17 +2,14 @@
  * accounts/notification-web-sockets.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const _ = require('lodash')
-const zmq = require('zeromq/v5-compat')
-const WebSocket = require('websocket')
-const Logger = require('../lib/logger')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const status = require('./status')
-const NotificationsService = require('./notifications-service')
+import zmq from 'zeromq/v5-compat.js'
+import Logger from '../lib/logger.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import NotificationsService from './notifications-service.js'
 
+const keys = keysFile[network.key]
 
 /**
  * A singleton providing a notifications server over web sockets
@@ -81,4 +78,4 @@ class NotificationsServer {
 
 }
 
-module.exports = new NotificationsServer()
+export default new NotificationsServer()

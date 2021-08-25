@@ -2,19 +2,22 @@
  * tracker/blockchain-processor.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const _ = require('lodash')
-const zmq = require('zeromq/v5-compat')
-const { Sema } = require('async-sema')
-const util = require('../lib/util')
-const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
-const network = require('../lib/bitcoin/network')
-const { createRpcClient, waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
-const keys = require('../keys')[network.key]
-const Block = require('./block')
-const blocksProcessor = require('./blocks-processor')
+
+import _ from 'lodash'
+import zmq from 'zeromq/v5-compat.js'
+import { Sema } from 'async-sema'
+
+import util from '../lib/util.js'
+import Logger from '../lib/logger.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import network from '../lib/bitcoin/network.js'
+import { createRpcClient, waitForBitcoindRpcApi } from '../lib/bitcoind-rpc/rpc-client.js'
+import keysFile from '../keys/index.js'
+import Block from './block.js'
+import * as blocksProcessor from './blocks-processor.js'
+
+const keys = keysFile[network.key]
 
 
 /**
@@ -395,4 +398,4 @@ class BlockchainProcessor {
 
 }
 
-module.exports = BlockchainProcessor
+export default BlockchainProcessor

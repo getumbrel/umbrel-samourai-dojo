@@ -2,13 +2,14 @@
  * tracker/transactions-bundle.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const _ = require('lodash')
-const LRU = require('lru-cache')
-const util = require('../lib/util')
-const db = require('../lib/db/mysql-db-wrapper')
-const addrHelper = require('../lib/bitcoin/addresses-helper')
+
+import _ from 'lodash'
+import LRU from 'lru-cache'
+
+import util from '../lib/util.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import addrHelper from '../lib/bitcoin/addresses-helper.js'
 
 
 /**
@@ -198,4 +199,4 @@ TransactionsBundle.cache = new LRU({
 })
 
 
-module.exports = TransactionsBundle
+export default TransactionsBundle

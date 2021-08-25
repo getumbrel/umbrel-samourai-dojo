@@ -2,15 +2,16 @@
  * accounts/unspent-rest-api.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bodyParser = require('body-parser')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const walletService = require('../lib/wallet/wallet-service')
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const apiHelper = require('./api-helper')
+
+import bodyParser from 'body-parser'
+
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import walletService from '../lib/wallet/wallet-service.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import apiHelper from './api-helper.js'
 
 const debugApi = process.argv.indexOf('api-debug') > -1
 
@@ -132,4 +133,4 @@ class UnspentRestApi {
 
 }
 
-module.exports = UnspentRestApi
+export default UnspentRestApi

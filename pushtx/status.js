@@ -2,15 +2,12 @@
  * pushtx/status.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bitcoin = require('bitcoinjs-lib')
-const util = require('../lib/util')
-const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
-const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
+
+import util from '../lib/util.js'
+import Logger from '../lib/logger.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import { createRpcClient } from '../lib/bitcoind-rpc/rpc-client.js'
 
 
 /**
@@ -125,4 +122,4 @@ class Status {
 
 }
 
-module.exports = new Status()
+export default new Status()

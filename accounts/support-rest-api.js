@@ -2,23 +2,24 @@
  * accounts/support-rest-api.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const fs = require('fs')
-const validator = require('validator')
-const bodyParser = require('body-parser')
-const errors = require('../lib/errors')
-const Logger = require('../lib/logger')
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const network = require('../lib/bitcoin/network')
-const hdaService = require('../lib/bitcoin/hd-accounts-service')
-const addrService = require('../lib/bitcoin/addresses-service')
-const HdAccountInfo = require('../lib/wallet/hd-account-info')
-const AddressInfo = require('../lib/wallet/address-info')
-const apiHelper = require('./api-helper')
-const keys = require('../keys')[network.key]
 
+import validator from 'validator'
+import bodyParser from 'body-parser'
+
+import errors from '../lib/errors.js'
+import Logger from '../lib/logger.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import network from '../lib/bitcoin/network.js'
+import hdaService from '../lib/bitcoin/hd-accounts-service.js'
+import addrService from '../lib/bitcoin/addresses-service.js'
+import HdAccountInfo from '../lib/wallet/hd-account-info.js'
+import AddressInfo from '../lib/wallet/address-info.js'
+import apiHelper from './api-helper.js'
+import keysFile from '../keys/index.js'
+
+const keys = keysFile[network.key]
 const debugApi = process.argv.indexOf('api-debug') > -1
 
 
@@ -395,4 +396,4 @@ class SupportRestApi {
   }
 }
 
-module.exports = SupportRestApi
+export default SupportRestApi

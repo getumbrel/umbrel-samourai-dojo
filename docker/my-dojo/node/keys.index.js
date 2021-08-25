@@ -2,7 +2,7 @@
  * keys/index-example.js
  * Copyright (c) 2016-2018, Samourai Wallet (CC BY-NC-ND 4.0 License).
  */
-const fs = require('fs')
+import fs from 'fs'
 
 
 // Retrieve active bitcoin network from conf files
@@ -26,7 +26,7 @@ if (process.env.EXPLORER_INSTALL === 'on') {
 /**
  * Desired structure of /keys/index.js, which is ignored in the repository.
  */
-module.exports = {
+export default {
   /*
    * Mainnet parameters
    */

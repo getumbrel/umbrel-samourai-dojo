@@ -2,20 +2,22 @@
  * tracker/mempool-buffer.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const _ = require('lodash')
-const zmq = require('zeromq/v5-compat')
-const bitcoin = require('bitcoinjs-lib')
-const util = require('../lib/util')
-const Logger = require('../lib/logger')
-const db = require('../lib/db/mysql-db-wrapper')
-const network = require('../lib/bitcoin/network')
-const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
-const keys = require('../keys')[network.key]
-const Transaction = require('./transaction')
-const TransactionsBundle = require('./transactions-bundle')
 
+import _ from 'lodash'
+import zmq from 'zeromq/v5-compat.js'
+import bitcoin from 'bitcoinjs-lib'
+
+import util from '../lib/util.js'
+import Logger from '../lib/logger.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import network from '../lib/bitcoin/network.js'
+import { createRpcClient } from '../lib/bitcoind-rpc/rpc-client.js'
+import keysFile from '../keys/index.js'
+import Transaction from './transaction.js'
+import TransactionsBundle from './transactions-bundle.js'
+
+const keys = keysFile[network.key]
 
 /**
  * A class managing a buffer for the mempool
@@ -325,4 +327,4 @@ class MempoolProcessor {
 }
 
 
-module.exports = MempoolProcessor
+export default MempoolProcessor

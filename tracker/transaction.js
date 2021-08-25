@@ -2,21 +2,21 @@
  * tracker/transaction.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const _ = require('lodash')
-const bitcoin = require('bitcoinjs-lib')
-const util = require('../lib/util')
-const Logger = require('../lib/logger')
-const addrHelper = require('../lib/bitcoin/addresses-helper')
-const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
-const db = require('../lib/db/mysql-db-wrapper')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
+
+import _ from 'lodash'
+
+import util from '../lib/util.js'
+import Logger from '../lib/logger.js'
+import addrHelper from '../lib/bitcoin/addresses-helper.js'
+import hdaHelper from '../lib/bitcoin/hd-accounts-helper.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import TransactionsBundle from './transactions-bundle.js'
+
+const keys = keysFile[network.key]
 const gapLimit = [keys.gap.external, keys.gap.internal]
-const activeNet = network.network
-const TransactionsBundle = require('./transactions-bundle')
-
 
 /**
  * A class allowing to process a transaction
@@ -413,4 +413,4 @@ class Transaction {
 
 }
 
-module.exports = Transaction
+export default Transaction
