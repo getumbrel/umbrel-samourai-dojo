@@ -8,7 +8,7 @@ chmod 750 /var/lib/tor
 echo "## Start tor #############################"
 
 tor_options=(
-  --SocksPort "$NET_DOJO_TOR_IPV4:9050"
+  --SocksPort "$NET_DOJO_TOR_IPV4:$TOR_SOCKS_PORT"
   --SocksPolicy "accept 172.28.0.0/16"
   --SocksPolicy "reject *"
   --DataDirectory /var/lib/tor/.tor

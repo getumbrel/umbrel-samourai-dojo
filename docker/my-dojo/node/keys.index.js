@@ -191,7 +191,7 @@ export default {
             },
             // Use a SOCKS5 proxy for all communications with external services
             // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy
-            socks5Proxy: `socks5h://${process.env.NET_DOJO_TOR_IPV4}:9050`,
+            socks5Proxy: `socks5h://${process.env.NET_DOJO_TOR_IPV4}:${process.env.TOR_SOCKS_PORT}`,
             // OXT (mainnet)
             oxt: process.env.NODE_URL_OXT_API,
             // Esplora (testnet)
