@@ -19,7 +19,7 @@ ARG     TOR_LINUX_GID
 
 RUN     set -ex && \
         apt-get update && \
-        apt-get install -qq --no-install-recommends ca-certificates dirmngr gosu gpg gpg-agent wget && \
+        apt-get install -qq --no-install-recommends ca-certificates dirmngr gosu gpg gpg-agent wget python3 && \
         rm -rf /var/lib/apt/lists/*
 
 # Build and install bitcoin binaries
@@ -55,6 +55,13 @@ COPY    ./wait-for-it.sh /wait-for-it.sh
 RUN     chown bitcoin:bitcoin /wait-for-it.sh && \
         chmod u+x /wait-for-it.sh && \
         chmod g+x /wait-for-it.sh
+
+# Copy rpcauth.py script
+COPY    ./rpcauth.py /rpcauth.py
+
+RUN     chown bitcoin:bitcoin /rpcauth.py && \
+        chmod u+x /rpcauth.py && \
+        chmod g+x /rpcauth.py
 
 EXPOSE  8333 9501 9502 28256
 

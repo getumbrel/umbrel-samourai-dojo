@@ -59,7 +59,7 @@ const screenTxsToolsScript = {
     $('#txid-value').text(this.currentTxid)
     $('#txid-value').attr('href', txUrl)
 
-    const firstseen = lib_fmt.unixTsToLocaleString(txInfo['created'])
+    const firstseen = txInfo['created'] ? lib_fmt.unixTsToLocaleString(txInfo['created']) : '--'
     $('#tx-firstseen').text(firstseen)
 
     if (txInfo.hasOwnProperty('block'))

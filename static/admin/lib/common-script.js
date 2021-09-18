@@ -27,9 +27,9 @@ const lib_cmn = {
   getExplorerTxUrl: function(txid, explorerInfo) {
     if (explorerInfo == null)
       return null
-    else if (explorerInfo['pairing']['type'] == 'explorer.oxt')
+    else if (explorerInfo['pairing']['type'] === 'explorer.oxt')
       return `${explorerInfo['pairing']['url']}/transaction/${txid}`
-    else if (explorerInfo['pairing']['type'] == 'explorer.btc_rpc_explorer')
+    else if (explorerInfo['pairing']['type'] === 'explorer.btc_rpc_explorer')
       return `http://${explorerInfo['pairing']['url']}/tx/${txid}`
     else
       return null
@@ -46,7 +46,7 @@ const lib_cmn = {
       if (file) {
         xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {
+          if (this.readyState === 4 && this.status === 200) {
             elmnt.innerHTML = this.responseText
             elmnt.removeAttribute('include-html')
             self.includeHTML(cb)
@@ -72,7 +72,7 @@ const lib_cmn = {
       if (file) {
         xhttp = new XMLHttpRequest()
         xhttp.onreadystatechange = function() {
-          if (this.readyState == 4 && this.status == 200) {
+          if (this.readyState === 4 && this.status === 200) {
             const newElmnt = document.createElement('script')
             newElmnt.textContent = this.responseText
             if (elmnt.parentNode) {

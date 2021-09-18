@@ -96,7 +96,7 @@ class Transaction {
     // Check if we find some inputs of interest
     const results = await db.getOutputSpends(spends)
 
-    if (results.length == 0)
+    if (results.length === 0)
       return null
 
     // Flag the transaction for broadcast
@@ -122,7 +122,7 @@ class Transaction {
       })
 
       // Detect potential double spends
-      if (r.spendingTxnID !== null && r.spendingTxnID != this.storedTxnID) {
+      if (r.spendingTxnID !== null && r.spendingTxnID !== this.storedTxnID) {
         Logger.info(`Tracker : DOUBLE SPEND of ${r.txnTxid}-${r.outIndex} by ${this.txid}!`)
         // Delete the existing transaction that has been double-spent:
         // since the deepest block keeps its transactions, this will
@@ -190,7 +190,7 @@ class Transaction {
     const aHdAcctAddr = await this._processOutputsHdAccounts(result.hd, indexedOutputs)
     fundedAddresses = fundedAddresses.concat(aHdAcctAddr)
 
-    if (fundedAddresses.length == 0)
+    if (fundedAddresses.length === 0)
       return null
 
     // Flag the transaction for broadcast
@@ -219,7 +219,7 @@ class Transaction {
    * Process outputs sending to tracked loose addresses
    * @param {object[]} addresses - array of address objects
    * @param {object} indexedOutputs - outputs indexed by address
-   * @returns {Promise - object[]} return an array of funded addresses
+   * @returns {Promise<object[]>} return an array of funded addresses
    *  {addrID: ..., outIndex: ..., outAmount: ..., outScript: ...}
    */
   async _processOutputsLooseAddresses(addresses, indexedOutputs) {
@@ -247,7 +247,7 @@ class Transaction {
    * Process outputs sending to tracked hd accounts
    * @param {object[]} hdAccounts - array of hd account objects
    * @param {object} indexedOutputs - outputs indexed by address
-   * @returns {Promise - object[]} return an array of funded addresses
+   * @returns {Promise<object[]>} return an array of funded addresses
    *  {addrID: ..., outIndex: ..., outAmount: ..., outScript: ...}
    */
   async _processOutputsHdAccounts(hdAccounts, indexedOutputs) {
@@ -297,7 +297,7 @@ class Transaction {
    * @param {string} xpub
    * @param {object} hdAccount - hd account object
    * @param {object} indexedOutputs - outputs indexed by address
-   * @returns {Promise - object[]} returns an array of the new addresses used
+   * @returns {Promise<object[]>} returns an array of the new addresses used
    */
   async _deriveNewAddresses(xpub, hdAccount, indexedOutputs) {
     const hdType = hdAccount.hdType
@@ -317,10 +317,10 @@ class Transaction {
     for (let chain of [0,1]) {
       // Get addresses for this account that are on this chain
       const chainAddresses = _.filter(hdAccount.addresses, v => {
-        return v.hdAddrChain == chain
+        return v.hdAddrChain === chain
       })
 
-      if (chainAddresses.length == 0)
+      if (chainAddresses.length === 0)
         continue
 
       // Get the maximum used address on this chain
@@ -365,7 +365,8 @@ class Transaction {
         const indices = _.range(minIdx, maxIdx)
 
         const derived = await hdaHelper.deriveAddresses(xpub, chain, indices, hdType)
-        Array.prototype.push.apply(newAddresses, derived)
+
+        newAddresses.push(...derived)
 
         Logger.info(`Tracker : Derived hdID(${hdAccount.hdID}) M/${chain}/${indices.join(',')}`)
 

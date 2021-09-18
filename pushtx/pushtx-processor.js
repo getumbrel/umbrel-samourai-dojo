@@ -5,7 +5,7 @@
 'use strict'
 
 const bitcoin = require('bitcoinjs-lib')
-const zmq = require('zeromq')
+const zmq = require('zeromq/v5-compat')
 const Logger = require('../lib/logger')
 const errors = require('../lib/errors')
 const db = require('../lib/db/mysql-db-wrapper')
@@ -17,7 +17,7 @@ const keys = require('../keys')[network.key]
 const status = require('./status')
 
 let Sources
-if (network.key == 'bitcoin') {
+if (network.key === 'bitcoin') {
   Sources = require('../lib/remote-importer/sources-mainnet')
 } else {
   Sources = require('../lib/remote-importer/sources-testnet')
@@ -46,7 +46,7 @@ class PushTxProcessor {
   initNotifications(config) {
     // Notification socket for the tracker
     this.notifSock = zmq.socket('pub')
-    this.notifSock.bindSync(config.uriSocket)
+    this.notifSock.bind(config.uriSocket)
   }
 
   /**
@@ -78,7 +78,7 @@ class PushTxProcessor {
     }
     // Checks with indexer if addresses are known and have been used
     if (Object.keys(addrMap).length > 0) {
-      if (keys.indexer.active != 'local_bitcoind') {
+      if (keys.indexer.active !== 'local_bitcoind') {
         const results = await this.sources.getAddresses(Object.keys(addrMap))
         for (let r of results)
           if (r.ntx > 0)

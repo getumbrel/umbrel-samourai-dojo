@@ -28,7 +28,7 @@ BITCOIND_RPC_THREADS=6
 
 # RPC Work queue size
 # Type: integer
-BITCOIND_RPC_WORK_QUEUE=16
+BITCOIND_RPC_WORK_QUEUE=64
 
 # Mempool expiry in hours
 # Defines how long transactions stay in your local mempool before expiring

@@ -70,7 +70,9 @@ class ApiHelper {
             item = item.toLowerCase()
           ret.addAddress(item, false)
         }
-      } catch(e) {}
+      } catch(e) {
+        Logger.error(e, 'API : ApiHelper.parseEntities() : Invalid arguments')
+      }
     }
 
     return ret

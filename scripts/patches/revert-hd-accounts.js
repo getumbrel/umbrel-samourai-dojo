@@ -21,9 +21,9 @@ function xlatXPUB(xpub) {
 
   let xlatVer = 0
 
-  if (ver == hdaHelper.MAGIC_XPUB || ver == hdaHelper.MAGIC_YPUB || ver == hdaHelper.MAGIC_ZPUB) {
-    xlatVer = hdaHelper.MAGIC_XPUB    
-  } else if (ver == hdaHelper.MAGIC_TPUB || ver == hdaHelper.MAGIC_UPUB || ver == hdaHelper.MAGIC_VPUB) {
+  if (ver === hdaHelper.MAGIC_XPUB || ver === hdaHelper.MAGIC_YPUB || ver === hdaHelper.MAGIC_ZPUB) {
+    xlatVer = hdaHelper.MAGIC_XPUB
+  } else if (ver === hdaHelper.MAGIC_TPUB || ver === hdaHelper.MAGIC_UPUB || ver === hdaHelper.MAGIC_VPUB) {
     xlatVer = hdaHelper.MAGIC_TPUB
   }
 
@@ -75,8 +75,8 @@ async function run() {
       const xpub = account.hdXpub
       const info = hdaHelper.classify(account.hdType)
       const scheme = info.type
-      
-      if ((scheme == hdaHelper.BIP49) || (scheme == hdaHelper.BIP84)) {
+
+      if ((scheme === hdaHelper.BIP49) || (scheme === hdaHelper.BIP84)) {
         try {
           const xlatedXpub = xlatXPUB(xpub)
           await updateHdAccount(hdId, xlatedXpub)
@@ -90,7 +90,7 @@ async function run() {
   } catch(e) {
     console.log('A problem was met')
     console.log(e)
-  }  
+  }
 }
 
 /**

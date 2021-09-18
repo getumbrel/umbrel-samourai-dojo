@@ -98,7 +98,7 @@ const lib_auth = {
   isAuthenticated: function() {
     // Checks that an access token is stored in session storage
     let token = this.getAccessToken()
-    return (token && (token != 'null')) ? true : false
+    return Boolean(token && (token !== 'null'))
   },
 
   /*
@@ -128,7 +128,7 @@ const lib_auth = {
     const payload = this.getPayloadAccessToken(token)
     if (!payload)
       return false
-    return (('prf' in payload) && (payload['prf'] == this.TOKEN_PROFILE_ADMIN))
+    return (('prf' in payload) && (payload['prf'] === this.TOKEN_PROFILE_ADMIN))
   },
 
   /*

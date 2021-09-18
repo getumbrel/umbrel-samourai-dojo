@@ -84,7 +84,7 @@ function preparePage() {
   const activeTab = sessionStorage.getItem('activeTab')
   for (let idxTab in tabs) {
     const screen = screens[idxTab]
-    if (tabs[idxTab] == activeTab) {
+    if (tabs[idxTab] === activeTab) {
       $(screen).show()
       if (screenScripts.has(screen))
         screenScripts.get(screen).preparePage()

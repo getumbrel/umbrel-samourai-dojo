@@ -14,7 +14,7 @@ const bitcoinNetwork = (process.env.COMMON_BTC_NETWORK == 'testnet')
 let explorerActive = 'oxt'
 let explorerUrl = 'https://oxt.me'
 let explorerPassword = ''
-if (process.env.EXPLORER_INSTALL == 'on') {
+if (process.env.EXPLORER_INSTALL === 'on') {
   try {
     explorerUrl = fs.readFileSync('/var/lib/tor/hsv3explorer/hostname', 'utf8').replace('\n', '')
     explorerPassword = process.env.EXPLORER_KEY

@@ -44,7 +44,7 @@ class Block extends TransactionsBundle {
    * @dev This method isn't used anymore.
    *      It has been replaced by a parallel processing of blocks.
    *      (see blocks-processor and block-worker)
-   * @returns {Promise - object[]} returns an array of transactions to be broadcast
+   * @returns {Promise<object[]>} returns an array of transactions to be broadcast
    */
   async processBlock() {
     Logger.info('Tracker : Beginning to process new block.')
@@ -77,7 +77,7 @@ class Block extends TransactionsBundle {
 
   /**
    * Process the transaction outputs
-   * @returns {Promise - object[]} returns an array of transactions to be broadcast
+   * @returns {Promise<object[]>} returns an array of transactions to be broadcast
    */
   async processOutputs() {
     const txsForBroadcast = new Set()
@@ -93,7 +93,7 @@ class Block extends TransactionsBundle {
 
   /**
    * Process the transaction inputs
-   * @returns {Promise - object[]} returns an array of transactions to be broadcast
+   * @returns {Promise<object[]>} returns an array of transactions to be broadcast
    */
   async processInputs() {
     const txsForBroadcast = new Set()
@@ -109,7 +109,7 @@ class Block extends TransactionsBundle {
 
   /**
    * Store the block in db
-   * @returns {Promise - int} returns the id of the block
+   * @returns {Promise<number>} returns the id of the block
    */
   async registerBlock() {
     const prevBlock = await db.getBlockByHash(this.header.previousblockhash)
@@ -130,8 +130,8 @@ class Block extends TransactionsBundle {
   /**
    * Confirm the transactions in db
    * @param {Set} txs - set of transactions stored in db
-   * @param {int} blockId - id of the block
-   * r@returns {Promise}
+   * @param {number} blockId - id of the block
+   * @returns {Promise}
    */
   async confirmTransactions(txs, blockId) {
     const txids = txs.map(t => t.getId())
@@ -141,8 +141,8 @@ class Block extends TransactionsBundle {
 
   /**
    * Register the block header
-   * @param {int} prevBlockID - id of previous block
-   * @returns {Promise}
+   * @param {number} prevBlockID - id of previous block
+   * @returns {Promise<number>}
    */
   async checkBlockHeader(prevBlockID) {
     Logger.info('Tracker : Beginning to process new block header.')

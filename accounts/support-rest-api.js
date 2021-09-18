@@ -19,7 +19,7 @@ const AddressInfo = require('../lib/wallet/address-info')
 const apiHelper = require('./api-helper')
 const keys = require('../keys')[network.key]
 
-const debugApi = !!(process.argv.indexOf('api-debug') > -1)
+const debugApi = process.argv.indexOf('api-debug') > -1
 
 
 /**
@@ -94,7 +94,7 @@ class SupportRestApi {
     try {
       // Parse the entities passed as url params
       const entities = apiHelper.parseEntities(req.params.addr).addrs
-      if (entities.length == 0)
+      if (entities.length === 0)
         return HttpServer.sendError(res, errors.address.INVALID)
 
       const address = entities[0]
@@ -133,7 +133,7 @@ class SupportRestApi {
     try {
       // Parse the entities passed as url params
       const entities = apiHelper.parseEntities(req.params.addr).addrs
-      if (entities.length == 0)
+      if (entities.length === 0)
         return HttpServer.sendError(res, errors.address.INVALID)
 
       const address = entities[0]
@@ -162,7 +162,7 @@ class SupportRestApi {
     try {
       // Parse the entities passed as url params
       const entities = apiHelper.parseEntities(req.params.xpub).xpubs
-      if (entities.length == 0)
+      if (entities.length === 0)
         return HttpServer.sendError(res, errors.xpub.INVALID)
 
       const xpub = entities[0]
@@ -174,7 +174,7 @@ class SupportRestApi {
         const ret = this._formatXpubInfoResult(info)
         HttpServer.sendRawData(res, ret)
       } catch(e) {
-        if(e == errors.db.ERROR_NO_HD_ACCOUNT) {
+        if(e === errors.db.ERROR_NO_HD_ACCOUNT) {
           const ret = this._formatXpubInfoResult(info)
           HttpServer.sendRawData(res, ret)
         } else {
@@ -210,7 +210,7 @@ class SupportRestApi {
     try {
       // Parse the entities passed as url params
       const entities = apiHelper.parseEntities(req.params.xpub).xpubs
-      if (entities.length == 0)
+      if (entities.length === 0)
         return HttpServer.sendError(res, errors.xpub.INVALID)
 
       const xpub = entities[0]
@@ -226,10 +226,10 @@ class SupportRestApi {
         await hdaService.rescan(xpub, gapLimit, startIndex)
         HttpServer.sendRawData(res, JSON.stringify(ret, null, 2))
       } catch(e) {
-        if (e == errors.db.ERROR_NO_HD_ACCOUNT) {
+        if (e === errors.db.ERROR_NO_HD_ACCOUNT) {
           ret.status = 'Error: Not tracking xpub'
           HttpServer.sendRawData(res, JSON.stringify(ret, null, 2))
-        } else if (e == errors.xpub.OVERLAP) {
+        } else if (e === errors.xpub.OVERLAP) {
           ret.status = 'Error: Rescan in progress'
           HttpServer.sendRawData(res, JSON.stringify(ret, null, 2))
         } else {
@@ -256,7 +256,7 @@ class SupportRestApi {
     try {
       // Parse the entities passed as url params
       const entities = apiHelper.parseEntities(req.params.xpub).xpubs
-      if (entities.length == 0)
+      if (entities.length === 0)
         return HttpServer.sendError(res, errors.xpub.INVALID)
 
       const xpub = entities[0]

@@ -14,7 +14,7 @@ const lib_errors = {
   processError: function(e) {
     const errorMsg = this.extractJqxhrErrorMsg(e)
     // Redirect to sign in page if authentication error
-    if (errorMsg == 'Invalid JSON Web Token' || errorMsg == 'Missing JSON Web Token') {
+    if (errorMsg === 'Invalid JSON Web Token' || errorMsg === 'Missing JSON Web Token') {
       lib_auth.logout()
     } else {
       lib_msg.displayErrors(errorMsg)

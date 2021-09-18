@@ -113,9 +113,9 @@ class XPubRestApi {
 
       if (argSegwit) {
         const segwit = argSegwit.toLowerCase()
-        if (segwit == 'bip49')
+        if (segwit === 'bip49')
           scheme = hdaHelper.BIP49
-        else if (segwit == 'bip84')
+        else if (segwit === 'bip84')
           scheme = hdaHelper.BIP84
         else
           return HttpServer.sendError(res, errors.xpub.SEGWIT)
@@ -125,7 +125,7 @@ class XPubRestApi {
       const forceOverride = argForceOverride ? argForceOverride : false
 
       // Process action
-      if (argAction == 'new') {
+      if (argAction === 'new') {
         // New hd account
         try {
           await hdaService.createHdAccount(xpub, scheme)
@@ -133,7 +133,7 @@ class XPubRestApi {
         } catch(e) {
           HttpServer.sendError(res, e)
         }
-      } else if (argAction == 'restore') {
+      } else if (argAction === 'restore') {
         // Restore hd account
         try {
           await hdaService.restoreHdAccount(xpub, scheme, forceOverride)
@@ -229,7 +229,7 @@ class XPubRestApi {
       if (status != null) {
         ret['import_in_progress'] = true
         ret['status'] = status['status']
-        if (ret['status'] == remoteImporter.STATUS_RESCAN)
+        if (ret['status'] === remoteImporter.STATUS_RESCAN)
           ret['hits'] = status['txs_int'] + status['txs_ext']
         else
           ret['hits'] = status['txs']
@@ -268,7 +268,7 @@ class XPubRestApi {
       if (!req.body.message)
         return HttpServer.sendError(res, errors.body.NOMSG)
 
-      if (!(req.body.message == 'lock' || req.body.message == 'unlock'))
+      if (!(req.body.message === 'lock' || req.body.message === 'unlock'))
         return HttpServer.sendError(res, errors.sig.INVMSG)
 
       // Extract arguments
@@ -289,7 +289,7 @@ class XPubRestApi {
       try {
         // Check the signature and process the request
         await hdaService.verifyXpubSignature(xpub, argAddr, argSig, argMsg, scheme)
-        const lock = (argMsg == 'unlock') ? false : true
+        const lock = argMsg !== 'unlock'
         const ret = await hdaService.lockHdAccount(xpub, lock)
         HttpServer.sendOkData(res, {derivation: ret})
       } catch(e) {
@@ -385,7 +385,7 @@ class XPubRestApi {
       }
 
     } catch(e) {
-      const err = (e == errors.xpub.PRIVKEY) ? e : errors.xpub.INVALID
+      const err = (e === errors.xpub.PRIVKEY) ? e : errors.xpub.INVALID
       throw err
     }
   }

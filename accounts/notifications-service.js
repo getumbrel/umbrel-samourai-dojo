@@ -14,7 +14,7 @@ const apiHelper = require('./api-helper')
 const status = require('./status')
 const authMgr = require('../lib/auth/authorizations-manager')
 
-const debug = !!(process.argv.indexOf('ws-debug') > -1)
+const debug = process.argv.indexOf('ws-debug') > -1
 
 
 /**
@@ -38,7 +38,7 @@ class NotificationsService {
 
     // Cache registering the most recent subscriptions received
     // Used to filter multiple subscriptions sent by external apps.
-    this.cacheSubs = LRU({
+    this.cacheSubs = new LRU({
       // Maximum number of subscriptions to store in cache
       // Estimate: 1000 clients with an average of 5 subscriptions
       max: 5000,
@@ -80,7 +80,7 @@ class NotificationsService {
         })
 
         conn.on('message', msg => {
-          if (msg.type == 'utf8')
+          if (msg.type === 'utf8')
             this._handleWSMessage(msg.utf8Data, conn)
           else
             this._closeWSConnection(conn, true)
@@ -229,7 +229,7 @@ class NotificationsService {
   /**
    * Unsubscribe from a topic
    * @param {string} topic - topic
-   * @param {int} cid - client id
+   * @param {number} cid - client id
    */
   _unsub(topic, cid) {
     if (!this.subs[topic])
@@ -241,7 +241,7 @@ class NotificationsService {
 
     this.subs[topic].splice(index, 1)
 
-    if (this.subs[topic].length == 0) {
+    if (this.subs[topic].length === 0) {
       delete this.subs[topic]
       if (this.cachePubKeys.hasOwnProperty(topic))
         delete this.cachePubKeys[topic]
@@ -391,7 +391,7 @@ class NotificationsService {
         for (let cid of this.subs[topic]) {
           if (!clients[cid])
             clients[cid] = []
-          if (clients[cid].indexOf(topic) == -1)
+          if (clients[cid].indexOf(topic) === -1)
             clients[cid].push(topic)
         }
       }
@@ -429,7 +429,7 @@ class NotificationsService {
         }
 
         // Move on if the custom transaction has no inputs or outputs
-        if (ctx.inputs.length == 0 && ctx.out.length == 0)
+        if (ctx.inputs.length === 0 && ctx.out.length === 0)
           continue
 
         // Send custom transaction to client
@@ -454,7 +454,7 @@ class NotificationsService {
   /**
    * Dispatch notification for an authentication error
    * @param {string} err - error
-   * @param {integer} cid - connection id
+   * @param {number} cid - connection id
    */
   notifyAuthError(err, cid) {
     const data = {

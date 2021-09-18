@@ -5,7 +5,7 @@
 'use strict'
 
 const _ = require('lodash')
-const zmq = require('zeromq')
+const zmq = require('zeromq/v5-compat')
 const WebSocket = require('websocket')
 const Logger = require('../lib/logger')
 const network = require('../lib/bitcoin/network')
@@ -27,9 +27,6 @@ class NotificationsServer {
     this.httpServer = null
     // Notifications service
     this.notifService = null
-    // Initialize the zmq socket for communications
-    // with the tracker
-    this._initTrackerSocket()
   }
 
   /**
@@ -40,8 +37,12 @@ class NotificationsServer {
     this.httpServer = httpServer
 
     if (this.notifService !== null) return
-    
+
     this.notifService = new NotificationsService(httpServer.server)
+
+    // Initialize the zmq socket for communications
+    // with the tracker
+    this._initTrackerSocket()
   }
 
 
@@ -54,7 +55,7 @@ class NotificationsServer {
     this.sock.subscribe('block')
     this.sock.subscribe('transaction')
 
-    this.sock.on('message', (topic, message, sequence) => {
+    this.sock.on('message', (topic, message) => {
       switch(topic.toString()) {
         case 'block':
           try {

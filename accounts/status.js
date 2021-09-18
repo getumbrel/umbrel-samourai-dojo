@@ -29,7 +29,7 @@ class Status {
 
   /**
    * Get current status
-   * @returns {Promise - object} status object
+   * @returns {Promise<object>} status object
    */
   async getCurrent() {
     const uptime = util.timePeriod((Date.now() - this.t0) / 1000, false)
@@ -49,8 +49,8 @@ class Status {
     let indexerMaxHeight = null
     let indexerUrl = null
 
-    if (indexerType == 'third_party_explorer') {
-      indexerUrl = (network.key == 'bitcoin')
+    if (indexerType === 'third_party_explorer') {
+      indexerUrl = (network.key === 'bitcoin')
         ? keys.indexer.oxt
         : keys.indexer.esplora
     }

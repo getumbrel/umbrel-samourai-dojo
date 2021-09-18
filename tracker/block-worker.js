@@ -61,22 +61,22 @@ async function processMessage(msg) {
   try {
     switch(msg.op) {
       case OP_INIT:
-        if (status != IDLE)
+        if (status !== IDLE)
           throw 'Operation not allowed'
         res = await initBlock(msg.header)
         break
       case OP_PROCESS_OUTPUTS:
-        if (status != INITIALIZED)
+        if (status !== INITIALIZED)
           throw 'Operation not allowed'
         res = await processOutputs()
         break
       case OP_PROCESS_INPUTS:
-        if (status != OUTPUTS_PROCESSED)
+        if (status !== OUTPUTS_PROCESSED)
           throw 'Operation not allowed'
         res = await processInputs()
         break
       case OP_CONFIRM:
-        if (status != INPUTS_PROCESSED)
+        if (status !== INPUTS_PROCESSED)
           throw 'Operation not allowed'
         res = await confirmTransactions(msg.blockId)
         break
@@ -130,7 +130,7 @@ async function processInputs() {
 
 /**
  * Confirm the transactions
- * @param {integer} blockId - id of the block in db
+ * @param {number} blockId - id of the block in db
  */
 async function confirmTransactions(blockId) {
   status = TXS_CONFIRMED

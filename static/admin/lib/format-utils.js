@@ -52,7 +52,7 @@ const lib_fmt = {
    * Format a unix timestamp into a readable date/hour
    */
   formatUnixTs: function(ts) {
-    if (ts == null || ts == 0)
+    if (ts == null || ts === 0)
       return '-'
 
     let tmpDate = new Date(ts*1000),

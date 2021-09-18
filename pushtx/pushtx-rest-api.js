@@ -193,7 +193,7 @@ class PushTxRestApi {
       HttpServer.sendOk(res)
     } catch(e) {
       // Returns code 200 if VIOLATION_STRICT_MODE_VOUTS
-      if (e.message && e.message.code && e.message.code == errors.pushtx.VIOLATION_STRICT_MODE_VOUTS) {
+      if (e.message && e.message.code && e.message.code === errors.pushtx.VIOLATION_STRICT_MODE_VOUTS) {
         e.message = JSON.stringify(e.message)
         this._traceError(res, e, 200)
       } else {
@@ -206,7 +206,7 @@ class PushTxRestApi {
    * Trace an error during push
    * @param {object} res - http response object
    * @param {object} err - error object
-   * @param {int} errorCode - error code (optional)
+   * @param {number} errorCode - error code (optional)
    */
   _traceError(res, err, errorCode) {
     let ret = null

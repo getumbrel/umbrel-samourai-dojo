@@ -27,7 +27,7 @@ RUN     set -ex && \
 # Install Tor
 ENV     WHIRLPOOL_TOR_URL             https://dist.torproject.org
 ENV     WHIRLPOOL_TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     WHIRLPOOL_TOR_VERSION         0.4.4.8
+ENV     WHIRLPOOL_TOR_VERSION         0.4.6.6
 ENV     WHIRLPOOL_TOR_GPG_KS_URI      hkp://keyserver.ubuntu.com:80
 ENV     WHIRLPOOL_TOR_GPG_KEY1        0xEB5A896A28988BF5
 ENV     WHIRLPOOL_TOR_GPG_KEY2        0xC218525819F78451

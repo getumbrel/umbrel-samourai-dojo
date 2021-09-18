@@ -19,6 +19,8 @@ const XPUB = 'tpubDDDAe7GgFT4fzEzKwWVA4BWo8fiJXQeGEYDTexzo2w6CK1iDoLPYkpEisXo623
 const YPUB = 'upub5ELkCsSF68UnAZE7zF9CDztvHeBJiAAhwa4VxEFzZ1CfQRbpy93mkBbUZsqYVpoeEHFwY3fGh9bfftH79ZwbhjUEUBAxQj551TMxVyny4UX'
 const ZPUB = 'vpub5ZB1WY7AEp2G1rREpbvpS5zRTcKkenACrgaijd9sw1aYTXR4DoDLNFFcb5o8VjTZdvNkHXFq9oxDZAtfsGMcVy9qLWsNzdtZHBRbtXe87LB'
 
+const POSTMIX_ZPUB = 'vpub5Y6cjg7GbwSLRu33XB76n3EoJZscmYSVEToLSMqD6ugAcm4rof8E9yvDiaFfhGEuyL95P9VD4A9W3JrBTZhzWSXiRyYvWFnUBAZc67X32wh'
+
 const BIP44_VECTORS = [
   [0, 0, 'mmZ5FRccGAkwfKme4JkrsmurnimDLdfmNL'],
   [0, 1, 'n3yomLicyrSULiNWFKHsK8erntSpJZEPV6'],
@@ -61,6 +63,27 @@ const BIP84_VECTORS = [
   [1, 4, 'tb1qjrnw8u2pvspm6hq3aa83ff93wevq2zyxqczewy']
 ]
 
+const POSTMIX_VECTORS = [
+  [1, 0, 'tb1qv3laps2vues6nh9fkxpds3wxd0cttd9jnr0772'],
+  [1, 1, 'tb1qz538rwwchv2unf97g4pugv3wjwxxjaypnwz8sk'],
+  [1, 2, 'tb1qdm3hfvw3knzujxx24g05e30kpe7vk0ez3dk0h8'],
+  [1, 3, 'tb1qxn4jgg5hgl3eggvt4alvraladpwq9pj30fy5ze'],
+  [1, 4, 'tb1qw2ghyxhqv5ysyehq9p9xwux4zqaf0mcwm29agh'],
+
+  [1, 0, 'mpgLz1YXDU9buy7Zn8w9w9mJtrGghiXotH'],
+  [1, 1, 'mhShkJxHHgzJd2WcqeaKL4spqBMe1wcaK5'],
+  [1, 2, 'mqdH74foDiN8hV2mmFSHnceCm7vgErd4A2'],
+  [1, 3, 'mkLm7vUy1rij3YicskkQJxGovnGDG6G2oj'],
+  [1, 4, 'mqxjZfjdSdUmecTVALzhoQBPFRNvLViMBr'],
+
+  [1, 0, '2N5UxwLfWexxHDm5MKHoyitRLWEK8x25tiA'],
+  [1, 1, '2N8wnnGoJujWGrM5YLs1nC1TFuszx2vJVA9'],
+  [1, 2, '2NA6Ja6PM6YMuQpSQdeWofKRV9pcBbz4aii'],
+  [1, 3, '2NFLd63BqGzh5BtfxobuU4dpoThg9sxMPth'],
+  [1, 4, '2NEeziC2dc3nbf9k3fyUWBzLWbn4MTrR2mm']
+
+]
+
 const HD_TYPES_VECTORS = [
   // unlocked
   [0, hdaHelper.BIP44, false],
@@ -74,7 +97,7 @@ const HD_TYPES_VECTORS = [
 
 
 describe('HdAccountsHelper', function() {
-  
+
   describe('isXpub()', function() {
     it('should successfully detect a XPUB', function() {
       assert(hdaHelper.isXpub(XPUB))
@@ -117,7 +140,7 @@ describe('HdAccountsHelper', function() {
         const ret = hdaHelper.classify(v[0])
         assert(ret.type == v[1])
         assert(ret.locked == v[2])
-      }      
+      }
     })
   })
 
@@ -127,7 +150,7 @@ describe('HdAccountsHelper', function() {
       for (const v of HD_TYPES_VECTORS) {
         const ret = hdaHelper.makeType(v[1], v[2])
         assert(ret == v[0])
-      }      
+      }
     })
   })
 
@@ -152,6 +175,15 @@ describe('HdAccountsHelper', function() {
         const addresses = await hdaHelper.deriveAddresses(XPUB, v[0], [v[1]], hdaHelper.BIP84)
         assert(addresses[0].address == v[2])
       }
+    })
+
+    it('should successfully derive additional change address types for postmix account', async () => {
+      const addresses = await hdaHelper.deriveAddresses(POSTMIX_ZPUB, 1, [0, 1, 2, 3, 4], hdaHelper.BIP84)
+
+      POSTMIX_VECTORS.forEach((vector) => {
+        assert(addresses.find((addr) => addr.index === vector[1]))
+        assert(addresses.find((addr) => addr.address === vector[2]))
+      })
     })
   })
 

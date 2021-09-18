@@ -16,7 +16,7 @@ module.exports = {
     /*
      * Dojo version
      */
-    dojoVersion: '1.10.1',
+    dojoVersion: '1.11.0',
     /*
      * Bitcoind
      */
@@ -233,7 +233,7 @@ module.exports = {
    * Testnet parameters
    */
   testnet: {
-    dojoVersion: '1.9.0',
+    dojoVersion: '1.11.0',
     bitcoind: {
       rpc: {
         user: 'user',

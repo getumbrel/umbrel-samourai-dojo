@@ -95,7 +95,7 @@ const statusScript = {
         this.chaintipBitcoind = data['bitcoind']['blocks']
         $('#node-chaintip').text(data['bitcoind']['blocks'])
         $('#node-version').text(data['bitcoind']['version'])
-        const network = data['bitcoind']['testnet'] == true ? 'testnet' : 'mainnet'
+        const network = data['bitcoind']['testnet'] === true ? 'testnet' : 'mainnet'
         $('#node-network').text(network)
         $('#node-conn').text(data['bitcoind']['conn'])
         $('#node-relay-fee').text(data['bitcoind']['relayfee'])
@@ -123,13 +123,13 @@ const statusScript = {
   },
 
   setStatusIndicator: function(id, status) {
-    if (status == 'ok') {
+    if (status === 'ok') {
       $(id).html('&#10003;')
       $(id).css('color', '#76d776')
-    } else if (status == 'ko') {
+    } else if (status === 'ko') {
       $(id).html('X')
       $(id).css('color', '#f77c7c')
-    } else if (status == 'desynchronized') {
+    } else if (status === 'desynchronized') {
       $(id).html('&#10003;')
       $(id).css('color', '#f0c649')
     } else {

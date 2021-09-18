@@ -5,7 +5,7 @@
 'use strict'
 
 const _ = require('lodash')
-const zmq = require('zeromq')
+const zmq = require('zeromq/v5-compat')
 const bitcoin = require('bitcoinjs-lib')
 const util = require('../lib/util')
 const Logger = require('../lib/logger')
@@ -47,7 +47,7 @@ class MempoolProcessor {
 
   /**
    * Start processing the mempool
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async start() {
     this.checkUnconfirmedId = setInterval(
@@ -143,7 +143,7 @@ class MempoolProcessor {
 
   /**
    * Process transactions from the mempool buffer
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async processMempool() {
     // Refresh the isActive flag
@@ -181,7 +181,7 @@ class MempoolProcessor {
   /**
    * On reception of a new transaction from bitcoind mempool
    * @param {Buffer} buf - transaction
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async onTx(buf) {
     if (this.isActive) {
@@ -201,7 +201,7 @@ class MempoolProcessor {
   /**
    * On reception of a new transaction from /pushtx
    * @param {Buffer} buf - transaction
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async onPushTx(buf) {
     try {
@@ -249,7 +249,7 @@ class MempoolProcessor {
 
   /**
    * Check unconfirmed transactions
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async checkUnconfirmed() {
     const t0 = Date.now()
@@ -259,40 +259,46 @@ class MempoolProcessor {
     const unconfirmedTxs = await db.getUnconfirmedTransactions()
 
     if (unconfirmedTxs.length > 0) {
-      await util.parallelCall(unconfirmedTxs, tx => {
-        try {
-          return this.client.getrawtransaction( { txid: tx.txnTxid, verbose: true })
-            .then(async rtx => {
-              if (!rtx.blockhash) return null
-              // Transaction is confirmed
-              const block = await db.getBlockByHash(rtx.blockhash)
-              if (block && block.blockID) {
-                Logger.info(`Tracker : Marking TXID ${tx.txnTxid} confirmed`)
-                return db.confirmTransactions([tx.txnTxid], block.blockID)
+      const unconfirmedTxLists = util.splitList(unconfirmedTxs, 10)
+
+      await util.seriesCall(unconfirmedTxLists, async (txList) => {
+        return await util.parallelCall(txList, tx => {
+          try {
+            return this.client.getrawtransaction( { txid: tx.txnTxid, verbose: true })
+              .then(async rtx => {
+                if (!rtx.blockhash) return null
+                // Transaction is confirmed
+                const block = await db.getBlockByHash(rtx.blockhash)
+                if (block && block.blockID) {
+                  Logger.info(`Tracker : Marking TXID ${tx.txnTxid} confirmed`)
+                  return db.confirmTransactions([tx.txnTxid], block.blockID)
+                }
+              },
+              (e) => {
+                Logger.error(e, 'Tracker : MempoolProcessor.checkUnconfirmed()')
+                // Transaction not in mempool. Update LRU cache and database
+                TransactionsBundle.cache.del(tx.txnTxid)
+                // TODO: Notify clients of orphaned transaction
+                return db.deleteTransaction(tx.txnTxid)
               }
-            },
-            () => {
-              // Transaction not in mempool. Update LRU cache and database
-              TransactionsBundle.cache.del(tx.txnTxid)
-              // TODO: Notify clients of orphaned transaction
-              return db.deleteTransaction(tx.txnTxid)
-            }
-          )
-        } catch(e) {
-          Logger.error(e, 'Tracker : MempoolProcessor.checkUnconfirmed()')
-        }
+            )
+          } catch(e) {
+            Logger.error(e, 'Tracker : MempoolProcessor.checkUnconfirmed()')
+          }
+        })
       })
     }
 
     // Logs
     const ntx = unconfirmedTxs.length
     const dt = ((Date.now() - t0) / 1000).toFixed(1)
-    const per = (ntx == 0) ? 0 : ((Date.now() - t0) / ntx).toFixed(0)
+    const per = (ntx === 0) ? 0 : ((Date.now() - t0) / ntx).toFixed(0)
     Logger.info(`Tracker : Finished processing unconfirmed transactions ${dt}s, ${ntx} tx, ${per}ms/tx`)
   }
 
   /**
    * Sets the isActive flag
+   * @private
    */
   async _refreshActiveStatus() {
     // Get highest header in the blockchain
@@ -300,7 +306,7 @@ class MempoolProcessor {
     const [highestBlock, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
     const highestHeader = info.headers
 
-    if (highestBlock == null || highestBlock.blockHeight == 0) {
+    if (highestBlock == null || highestBlock.blockHeight === 0) {
       this.isActive = false
       return
     }

@@ -31,8 +31,8 @@ const screenXpubsToolsScript = {
 
   preparePage: function() {
     // Disable custom lookahead if data source is a third party explorer
-    const isTPE = sessionStorage.getItem('indexerType') == 'third_party_explorer'
-    const isLRI = sessionStorage.getItem('indexerType') == 'local_rest_indexer'
+    const isTPE = sessionStorage.getItem('indexerType') === 'third_party_explorer'
+    const isLRI = sessionStorage.getItem('indexerType') === 'local_rest_indexer'
     const disableLookahead = isTPE || isLRI
     $('#rescan-lookahead').prop('disabled', disableLookahead)
 
@@ -99,9 +99,9 @@ const screenXpubsToolsScript = {
     }
 
     const derivType = $('#import-deriv-type').val()
-    if (derivType == 'bip49' || derivType == 'bip84') {
+    if (derivType === 'bip49' || derivType === 'bip84') {
       jsonData['segwit'] = derivType
-    } else if (derivType == 'auto') {
+    } else if (derivType === 'auto') {
       if (this.currentXpub.startsWith('ypub'))
         jsonData['segwit'] = 'bip49'
       else if (this.currentXpub.startsWith('zpub'))

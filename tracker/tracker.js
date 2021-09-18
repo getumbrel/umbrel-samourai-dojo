@@ -4,11 +4,12 @@
  */
 'use strict'
 
-const zmq = require('zeromq')
+const zmq = require('zeromq/v5-compat')
 const network = require('../lib/bitcoin/network')
 const keys = require('../keys')[network.key]
 const BlockchainProcessor = require('./blockchain-processor')
 const MempoolProcessor = require('./mempool-processor')
+const util = require('../lib/util')
 
 
 /**
@@ -22,23 +23,28 @@ class Tracker {
   constructor() {
     // Notification socket for client events
     this.notifSock = zmq.socket('pub')
-    this.notifSock.bindSync(`tcp://127.0.0.1:${keys.ports.tracker}`)
-
-    // Initialize the blockchain processor
-    // and the mempool buffer
-    this.blockchainProcessor = new BlockchainProcessor(this.notifSock)
-    this.mempoolProcessor = new MempoolProcessor(this.notifSock)
+    this.notifSock.bind(`tcp://127.0.0.1:${keys.ports.tracker}`, () => {
+      // Initialize the blockchain processor
+      // and the mempool buffer
+      this.initialized = true
+      this.blockchainProcessor = new BlockchainProcessor(this.notifSock)
+      this.mempoolProcessor = new MempoolProcessor(this.notifSock)
+    })
   }
 
   /**
    * Start the tracker
-   * @returns {Promise}
+   * @returns {Promise<void>}
    */
   async start() {
-    this.startupTimeout = setTimeout(async function() {
-      await this.blockchainProcessor.start()
-      await this.mempoolProcessor.start()
-    }.bind(this), 1500)
+    if (!this.initialized) {
+      await util.delay(1000)
+
+      return this.start()
+    }
+
+    await this.blockchainProcessor.start()
+    await this.mempoolProcessor.start()
   }
 
   /**

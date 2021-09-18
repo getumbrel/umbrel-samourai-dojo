@@ -85,7 +85,6 @@ stop() {
     # Renewal of bitcoind onion address
     if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
       if [ "$BITCOIND_EPHEMERAL_HS" = "on" ]; then
-        $( docker exec -it tor rm -rf /var/lib/tor/hsv2bitcoind ) &> /dev/null
         $( docker exec -it tor rm -rf /var/lib/tor/hsv3bitcoind ) &> /dev/null
       fi
     fi
@@ -355,76 +354,34 @@ upgrade() {
 
 # Display the onion addresses
 onion() {
-  version=3
-
-  # Extract version arguments
-  if [ $# -gt 0 ]; then
-    for option in $@
-    do
-      case "$option" in
-        v2 )     version=2 ;;
-        v3 )     version=3 ;;
-        * )      break ;;
-      esac
-    done
-  fi
-
   echo " "
   echo "WARNING: Do not share these onion addresses with anyone!"
   echo "         To allow another person to use this Dojo with their Samourai Wallet,"
   echo "         you should share the QRCodes provided by the Maintenance Tool."
   echo " "
 
-  if [ $version -eq 3 ]; then
-    # V3 onion addresses
-    V3_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv3dojo/hostname )
-    echo "Dojo API and Maintenance Tool = $V3_ADDR"
+  # V3 onion addresses
+  V3_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv3dojo/hostname )
+  echo "Dojo API and Maintenance Tool = $V3_ADDR"
+  echo " "
+
+  if [ "$EXPLORER_INSTALL" == "on" ]; then
+    V3_ADDR_EXPLORER=$( docker exec -it tor cat /var/lib/tor/hsv3explorer/hostname )
+    echo "Block Explorer = $V3_ADDR_EXPLORER"
     echo " "
+  fi
 
-    if [ "$EXPLORER_INSTALL" == "on" ]; then
-      V3_ADDR_EXPLORER=$( docker exec -it tor cat /var/lib/tor/hsv3explorer/hostname )
-      echo "Block Explorer = $V3_ADDR_EXPLORER"
-      echo " "
-    fi
-
-    if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
-      V3_ADDR_WHIRLPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3whirlpool/hostname )
-      echo "Your private Whirlpool client (do not share) = $V3_ADDR_WHIRLPOOL"
-      echo " "
-    fi
-
-    if [ "$BITCOIND_INSTALL" == "on" ]; then
-      if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
-        V3_ADDR_BTCD=$( docker exec -it tor cat /var/lib/tor/hsv3bitcoind/hostname )
-        echo "Your local bitcoind (do not share) = $V3_ADDR_BTCD"
-        echo " "
-      fi
-    fi
-
-  else
-    # v2 onion addresses
-    V2_ADDR=$( docker exec -it tor cat /var/lib/tor/hsv2dojo/hostname )
-    echo "Dojo API and Maintenance Tool = $V2_ADDR"
+  if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
+    V3_ADDR_WHIRLPOOL=$( docker exec -it tor cat /var/lib/tor/hsv3whirlpool/hostname )
+    echo "Your private Whirlpool client (do not share) = $V3_ADDR_WHIRLPOOL"
     echo " "
+  fi
 
-    if [ "$EXPLORER_INSTALL" == "on" ]; then
-      V2_ADDR_EXPLORER=$( docker exec -it tor cat /var/lib/tor/hsv2explorer/hostname )
-      echo "Block Explorer = $V2_ADDR_EXPLORER"
+  if [ "$BITCOIND_INSTALL" == "on" ]; then
+    if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
+      V3_ADDR_BTCD=$( docker exec -it tor cat /var/lib/tor/hsv3bitcoind/hostname )
+      echo "Your local bitcoind (do not share) = $V3_ADDR_BTCD"
       echo " "
-    fi
-
-    if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
-      V2_ADDR_WHIRLPOOL=$( docker exec -it tor cat /var/lib/tor/hsv2whirlpool/hostname )
-      echo "Your private Whirlpool client (do not share) = $V2_ADDR_WHIRLPOOL"
-      echo " "
-    fi
-
-    if [ "$BITCOIND_INSTALL" == "on" ]; then
-      if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
-        V2_ADDR_BTCD=$( docker exec -it tor cat /var/lib/tor/hsv2bitcoind/hostname )
-        echo "Your local bitcoind (do not share) = $V2_ADDR_BTCD"
-        echo " "
-      fi
     fi
   fi
 }
@@ -561,11 +518,7 @@ help() {
   echo "                                Available options:"
   echo "                                  -n [VALUE]                  : display the last VALUE lines"
   echo " "
-  echo "  onion [version]               Display the Tor onion addresses allowing your wallet to access your dojo."
-  echo " "
-  echo "                                Available versions:"
-  echo "                                  v2: display Tor v2 onion addresses"
-  echo "                                  v3 (default): display Tor v3 onion addresses"
+  echo "  onion                         Display the Tor onion addresses allowing your wallet to access your dojo."
   echo " "
   echo "  restart                       Restart your dojo."
   echo " "
@@ -659,7 +612,7 @@ case "$subcommand" in
     logs "$module" $numlines
     ;;
   onion )
-    onion "$@"
+    onion
     ;;
   restart )
     restart

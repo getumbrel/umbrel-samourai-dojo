@@ -149,7 +149,7 @@ describe('AddressesHelper', function() {
           const targetSig = Buffer.from(stc[1], 'hex')
           const expectedResult = stc[2]
 
-          const sig = btcMessage.sign(msg, prefix, privKey, true)
+          const sig = btcMessage.sign(msg, privKey, true, prefix)
 
           // Check that library returns valid result
           assert((sig.compare(targetSig) == 0) == expectedResult)

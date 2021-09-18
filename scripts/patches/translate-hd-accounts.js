@@ -21,18 +21,18 @@ function xlatXPUB(xpub, targetType) {
 
   let xlatVer = 0
 
-  if (ver == hdaHelper.MAGIC_XPUB) {
+  if (ver === hdaHelper.MAGIC_XPUB) {
 
-    if (targetType == hdaHelper.BIP49)
+    if (targetType === hdaHelper.BIP49)
       xlatVer = hdaHelper.MAGIC_YPUB
-    else if (targetType == hdaHelper.BIP84)
+    else if (targetType === hdaHelper.BIP84)
       xlatVer = hdaHelper.MAGIC_ZPUB
 
-  } else if (ver == hdaHelper.MAGIC_TPUB) {
+  } else if (ver === hdaHelper.MAGIC_TPUB) {
 
-    if (targetType == hdaHelper.BIP49)
+    if (targetType === hdaHelper.BIP49)
       xlatVer = hdaHelper.MAGIC_UPUB
-    else if (targetType == hdaHelper.BIP84)
+    else if (targetType === hdaHelper.BIP84)
       xlatVer = hdaHelper.MAGIC_VPUB
   }
 
@@ -84,8 +84,8 @@ async function run() {
       const xpub = account.hdXpub
       const info = hdaHelper.classify(account.hdType)
       const scheme = info.type
-      
-      if ((scheme == hdaHelper.BIP49) || (scheme == hdaHelper.BIP84)) {
+
+      if ((scheme === hdaHelper.BIP49) || (scheme === hdaHelper.BIP84)) {
         const xlatedXpub = xlatXPUB(xpub, scheme)
         await updateHdAccount(hdId, xlatedXpub)
         console.log(`Updated ${hdId} (${xpub} => ${xlatedXpub})`)
@@ -94,7 +94,7 @@ async function run() {
   } catch(e) {
     console.log('A problem was met')
     console.log(e)
-  }  
+  }
 }
 
 /**

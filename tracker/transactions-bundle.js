@@ -18,7 +18,8 @@ class TransactionsBundle {
 
   /**
    * Constructor
-   * @param {object[]} txs - array of bitcoin transaction objects
+   * @constructor
+   * @param {object[]=} txs - array of bitcoin transaction objects
    */
   constructor(txs) {
     // List of transactions
@@ -52,7 +53,7 @@ class TransactionsBundle {
 
   /**
    * Get the size of the bundle
-   * @returns {integer} return the number of transactions stored in the bundle
+   * @returns {number} return the number of transactions stored in the bundle
    */
   size() {
     return this.transactions.length
@@ -61,7 +62,7 @@ class TransactionsBundle {
   /**
    * Find the transactions of interest
    * based on theirs inputs
-   * @returns {object[]} returns an array of transactions objects
+   * @returns {Promise<object[]>} returns an array of transactions objects
    */
   async prefilterByInputs() {
     // Process transactions by slices of 5000 transactions
@@ -74,7 +75,7 @@ class TransactionsBundle {
   /**
    * Find the transactions of interest
    * based on theirs outputs
-   * @returns {object[]} returns an array of transactions objects
+   * @returns {Promise<object[]>} returns an array of transactions objects
    */
   async prefilterByOutputs() {
     // Process transactions by slices of 5000 transactions
@@ -88,7 +89,7 @@ class TransactionsBundle {
    * Find the transactions of interest
    * based on theirs outputs (internal implementation)
    * @params {object[]} txs - array of transactions objects
-   * @returns {object[]} returns an array of transactions objects
+   * @returns {Promise<object[]>} returns an array of transactions objects
    */
   async _prefilterByOutputs(txs) {
     let addresses = []
@@ -122,7 +123,7 @@ class TransactionsBundle {
       const idxTxs = indexedOutputs[key]
       if (idxTxs) {
         for (const idxTx of idxTxs)
-          if (filteredIdxTxs.indexOf(idxTx) == -1)
+          if (filteredIdxTxs.indexOf(idxTx) === -1)
             filteredIdxTxs.push(idxTx)
       }
     }
@@ -134,7 +135,7 @@ class TransactionsBundle {
    * Find the transactions of interest
    * based on theirs inputs (internal implementation)
    * @params {object[]} txs - array of transactions objects
-   * @returns {object[]} returns an array of transactions objects
+   * @returns {Promise<object[]>} returns an array of transactions objects
    */
   async _prefilterByInputs(txs) {
     let inputs = []
@@ -169,7 +170,7 @@ class TransactionsBundle {
       const idxTxs = indexedInputs[key]
       if (idxTxs) {
         for (const idxTx of idxTxs)
-          if (filteredIdxTxs.indexOf(idxTx) == -1)
+          if (filteredIdxTxs.indexOf(idxTx) === -1)
             filteredIdxTxs.push(idxTx)
       }
     }
@@ -187,7 +188,7 @@ class TransactionsBundle {
  * Additionally, the transaction comes in a block
  * Orphaned transactions are deleted during the routine check
  */
-TransactionsBundle.cache = LRU({
+TransactionsBundle.cache = new LRU({
   // Maximum number of txids to store in cache
   max: 100000,
   // Function used to compute length of item
