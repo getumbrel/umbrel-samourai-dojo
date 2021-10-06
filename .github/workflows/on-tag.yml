@@ -27,12 +27,14 @@ jobs:
           source ./docker/my-dojo/.env
           echo "TAG=${GITHUB_REF/refs\/tags\//}" >> $GITHUB_ENV
           echo "DOJO_NODEJS_VERSION_TAG=${DOJO_NODEJS_VERSION_TAG}" >> $GITHUB_ENV
+          echo "DOJO_DB_VERSION_TAG=${DOJO_DB_VERSION_TAG}" >> $GITHUB_ENV
           echo "TOR_LINUX_GID=${TOR_LINUX_GID}" >> $GITHUB_ENV
 
       - name: Show set environment variables
         run: |
           printf "    TAG: %s\n"  "$TAG"
           printf "    DOJO_NODEJS_VERSION_TAG: %s\n"  "$DOJO_NODEJS_VERSION_TAG"
+          printf "    DOJO_DB_VERSION_TAG: %s\n"  "$DOJO_DB_VERSION_TAG"
 
       - name: Set up QEMU
         id: qemu
@@ -78,3 +80,23 @@ jobs:
           --build-arg TOR_LINUX_GID=${TOR_LINUX_GID} \
           --output "type=registry" \
           --file ./docker/my-dojo/node/Dockerfile ./
+
+      - name: Run Docker buildx against tag for dojo-db
+        run: |
+          docker buildx build \
+          --cache-from "type=local,src=/tmp/.buildx-cache" \
+          --cache-to "type=local,dest=/tmp/.buildx-cache" \
+          --platform linux/amd64,linux/arm64 \
+          --tag ${{ secrets.DOCKER_USERNAME }}/dojo-db:$DOJO_DB_VERSION_TAG-low-mem \
+          --output "type=registry" \
+          --file ./docker/my-dojo/mysql/Dockerfile ./
+
+      - name: Run Docker buildx against latest for dojo-db
+        run: |
+          docker buildx build \
+          --cache-from "type=local,src=/tmp/.buildx-cache" \
+          --cache-to "type=local,dest=/tmp/.buildx-cache" \
+          --platform linux/amd64,linux/arm64 \
+          --tag ${{ secrets.DOCKER_USERNAME }}/dojo-db:latest-low-mem \
+          --output "type=registry" \
+          --file ./docker/my-dojo/mysql/Dockerfile ./
