@@ -26,56 +26,56 @@ const keys = keysFile[network.key]
 
 
 try {
-  /**
-   * Samourai REST API
-   */
-  Logger.info('API : Process ID: ' + process.pid)
-  Logger.info('API : Preparing the REST API')
+    /**
+     * Samourai REST API
+     */
+    Logger.info('API : Process ID: ' + process.pid)
+    Logger.info('API : Preparing the REST API')
 
-  // Wait for Bitcoind RPC API
-  // being ready to process requests
-  await waitForBitcoindRpcApi()
+    // Wait for Bitcoind RPC API
+    // being ready to process requests
+    await waitForBitcoindRpcApi()
 
-  // Initialize the db wrapper
-  const dbConfig = {
-    connectionLimit: keys.db.connectionLimitApi,
-    acquireTimeout: keys.db.acquireTimeout,
-    host: keys.db.host,
-    user: keys.db.user,
-    password: keys.db.pass,
-    database: keys.db.database
-  }
+    // Initialize the db wrapper
+    const dbConfig = {
+        connectionLimit: keys.db.connectionLimitApi,
+        acquireTimeout: keys.db.acquireTimeout,
+        host: keys.db.host,
+        user: keys.db.user,
+        password: keys.db.pass,
+        database: keys.db.database
+    }
 
-  db.connect(dbConfig)
+    db.connect(dbConfig)
 
-  // Activate addresses derivation
-  // in an external process
-  hdaHelper.activateExternalDerivation()
+    // Activate addresses derivation
+    // in an external process
+    hdaHelper.activateExternalDerivation()
 
-  // Initialize the http server
-  const host = keys.apiBind
-  const port = keys.ports.account
-  const httpServer = new HttpServer(port, host)
+    // Initialize the http server
+    const host = keys.apiBind
+    const port = keys.ports.account
+    const httpServer = new HttpServer(port, host)
 
-  // Initialize the rest api endpoints
-  const authRestApi = new AuthRestApi(httpServer)
-  const xpubRestApi = new XPubRestApi(httpServer)
-  const feesRestApi = new FeesRestApi(httpServer)
-  const headersRestApi = new HeadersRestApi(httpServer)
-  const transactionsRestApi = new TransactionsRestApi(httpServer)
-  const statusRestApi = new StatusRestApi(httpServer)
-  const walletRestApi = new WalletRestApi(httpServer)
-  const multiaddrRestApi = new MultiaddrRestApi(httpServer)
-  const unspentRestApi = new UnspentRestApi(httpServer)
-  const supportRestApi = new SupportRestApi(httpServer)
+    // Initialize the rest api endpoints
+    new AuthRestApi(httpServer)
+    new XPubRestApi(httpServer)
+    new FeesRestApi(httpServer)
+    new HeadersRestApi(httpServer)
+    new TransactionsRestApi(httpServer)
+    new StatusRestApi(httpServer)
+    new WalletRestApi(httpServer)
+    new MultiaddrRestApi(httpServer)
+    new UnspentRestApi(httpServer)
+    new SupportRestApi(httpServer)
 
-  // Start the http server
-  httpServer.start()
+    // Start the http server
+    httpServer.start()
 
-  // Attach the web sockets server to the web server
-  notifServer.attach(httpServer)
+    // Attach the web sockets server to the web server
+    notifServer.attach(httpServer)
 
-} catch(err) {
-  console.error(err)
-  process.exit(1)
+} catch (error) {
+    console.error(error)
+    process.exit(1)
 }

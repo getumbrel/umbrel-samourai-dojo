@@ -19,44 +19,44 @@ const keys = keysFile[network.key]
  */
 class Tracker {
 
-  /**
-   * Constructor
-   */
-  constructor() {
-    // Notification socket for client events
-    this.notifSock = zmq.socket('pub')
-    this.notifSock.bind(`tcp://127.0.0.1:${keys.ports.tracker}`, () => {
-      // Initialize the blockchain processor
-      // and the mempool buffer
-      this.initialized = true
-      this.blockchainProcessor = new BlockchainProcessor(this.notifSock)
-      this.mempoolProcessor = new MempoolProcessor(this.notifSock)
-    })
-  }
-
-  /**
-   * Start the tracker
-   * @returns {Promise<void>}
-   */
-  async start() {
-    if (!this.initialized) {
-      await util.delay(1000)
-
-      return this.start()
+    /**
+     * Constructor
+     */
+    constructor() {
+        // Notification socket for client events
+        this.notifSock = zmq.socket('pub')
+        this.notifSock.bind(`tcp://127.0.0.1:${keys.ports.tracker}`, () => {
+            // Initialize the blockchain processor
+            // and the mempool buffer
+            this.initialized = true
+            this.blockchainProcessor = new BlockchainProcessor(this.notifSock)
+            this.mempoolProcessor = new MempoolProcessor(this.notifSock)
+        })
     }
 
-    await this.blockchainProcessor.start()
-    await this.mempoolProcessor.start()
-  }
+    /**
+     * Start the tracker
+     * @returns {Promise<void>}
+     */
+    async start() {
+        if (!this.initialized) {
+            await util.delay(1000)
 
-  /**
-   * Stop the tracker
-   */
-  async stop() {
-    clearTimeout(this.startupTimeout)
-    await this.blockchainProcessor.stop()
-    await this.mempoolProcessor.stop()
-  }
+            return this.start()
+        }
+
+        await this.blockchainProcessor.start()
+        await this.mempoolProcessor.start()
+    }
+
+    /**
+     * Stop the tracker
+     */
+    async stop() {
+        clearTimeout(this.startupTimeout)
+        await this.blockchainProcessor.stop()
+        await this.mempoolProcessor.stop()
+    }
 
 }
 

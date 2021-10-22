@@ -12,7 +12,7 @@ import HttpServer from '../lib/http-server/http-server.js'
 import status from './status.js'
 
 const keys = keysFile[network.key]
-const debugApi = process.argv.indexOf('api-debug') > -1
+const debugApi = process.argv.includes('api-debug')
 
 
 /**
@@ -20,36 +20,36 @@ const debugApi = process.argv.indexOf('api-debug') > -1
  */
 class StatusRestApi {
 
-  /**
-   * Constructor
-   * @param {pushtx.HttpServer} httpServer - HTTP server
-   */
-  constructor(httpServer) {
-    this.httpServer = httpServer
+    /**
+     * Constructor
+     * @param {HttpServer} httpServer - HTTP server
+     */
+    constructor(httpServer) {
+        this.httpServer = httpServer
 
-    // Establish routes
-    this.httpServer.app.get(
-      `/${keys.prefixes.status}/`,
-      authMgr.checkHasAdminProfile.bind(authMgr),
-      this.getStatus.bind(this),
-    )
-  }
-
-  /**
-   * Return information about the api
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   */
-  async getStatus(req, res) {
-    try {
-      const currStatus = await status.getCurrent()
-      HttpServer.sendRawData(res, JSON.stringify(currStatus, null, 2))
-    } catch(e) {
-      HttpServer.sendError(res, e)
-    } finally {
-      debugApi && Logger.info(`API : Completed GET /status`)
+        // Establish routes
+        this.httpServer.app.get(
+            `/${keys.prefixes.status}/`,
+            authMgr.checkHasAdminProfile.bind(authMgr),
+            this.getStatus.bind(this),
+        )
     }
-  }
+
+    /**
+     * Return information about the api
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     */
+    async getStatus(req, res) {
+        try {
+            const currentStatus = await status.getCurrent()
+            HttpServer.sendRawData(res, JSON.stringify(currentStatus, null, 2))
+        } catch (error) {
+            HttpServer.sendError(res, error)
+        } finally {
+            debugApi && Logger.info('API : Completed GET /status')
+        }
+    }
 
 }
 

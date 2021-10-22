@@ -17,7 +17,7 @@ import apiHelper from './api-helper.js'
 import keysFile from '../keys/index.js'
 
 const keys = keysFile[network.key]
-const debugApi = process.argv.indexOf('api-debug') > -1
+const debugApi = process.argv.includes('api-debug')
 
 
 /**
@@ -25,143 +25,143 @@ const debugApi = process.argv.indexOf('api-debug') > -1
  */
 class TransactionsRestApi {
 
-  /**
-   * Constructor
-   * @param {pushtx.HttpServer} httpServer - HTTP server
-   */
-  constructor(httpServer) {
-    this.httpServer = httpServer
+    /**
+     * Constructor
+     * @param {HttpServer} httpServer - HTTP server
+     */
+    constructor(httpServer) {
+        this.httpServer = httpServer
 
-    // Establish routes
-    this.httpServer.app.get(
-      '/tx/:txid',
-      authMgr.checkAuthentication.bind(authMgr),
-      this.validateArgsGetTransaction.bind(this),
-      this.getTransaction.bind(this),
-    )
+        // Establish routes
+        this.httpServer.app.get(
+            '/tx/:txid',
+            authMgr.checkAuthentication.bind(authMgr),
+            this.validateArgsGetTransaction.bind(this),
+            this.getTransaction.bind(this),
+        )
 
-    this.httpServer.app.get(
-      '/txs',
-      authMgr.checkAuthentication.bind(authMgr),
-      apiHelper.validateEntitiesParams.bind(apiHelper),
-      this.validateArgsGetTransactions.bind(this),
-      this.getTransactions.bind(this),
-    )
-  }
-
-  /**
-   * Retrieve the transaction for a given tiid
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   */
-  async getTransaction(req, res) {
-    try {
-      const tx = await rpcTxns.getTransaction(req.params.txid, req.query.fees)
-      const ret = JSON.stringify(tx, null, 2)
-      HttpServer.sendRawData(res, ret)
-    } catch(e) {
-      HttpServer.sendError(res, e)
-    } finally {
-      const strParams = `${req.query.fees ? req.query.fees : ''}`
-      debugApi && Logger.info(`API : Completed GET /tx/${req.params.txid} ${strParams}`)
+        this.httpServer.app.get(
+            '/txs',
+            authMgr.checkAuthentication.bind(authMgr),
+            apiHelper.validateEntitiesParams.bind(apiHelper),
+            this.validateArgsGetTransactions.bind(this),
+            this.getTransactions.bind(this),
+        )
     }
-  }
+
+    /**
+     * Retrieve the transaction for a given tiid
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     */
+    async getTransaction(req, res) {
+        try {
+            const tx = await rpcTxns.getTransaction(req.params.txid, req.query.fees)
+            const returnValue = JSON.stringify(tx, null, 2)
+            HttpServer.sendRawData(res, returnValue)
+        } catch (error) {
+            HttpServer.sendError(res, error)
+        } finally {
+            const stringParameters = `${req.query.fees ? req.query.fees : ''}`
+            debugApi && Logger.info(`API : Completed GET /tx/${req.params.txid} ${stringParameters}`)
+        }
+    }
 
 
-  /**
-   * Retrieve a page of transactions related to a wallet
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   */
-  async getTransactions(req, res) {
-    try {
-      // Check request params
-      if (!apiHelper.checkEntitiesParams(req.query))
-        return HttpServer.sendError(res, errors.multiaddr.NOACT)
+    /**
+     * Retrieve a page of transactions related to a wallet
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     */
+    async getTransactions(req, res) {
+        try {
+            // Check request params
+            if (!apiHelper.checkEntitiesParams(req.query))
+                return HttpServer.sendError(res, errors.multiaddr.NOACT)
 
-      // Parse params
-      const active = apiHelper.parseEntities(req.query.active)
-      const page = req.query.page != null ? parseInt(req.query.page) : 0
-      const count = req.query.count != null ? parseInt(req.query.count) : keys.multiaddr.transactions
-      const excludeNullXfer = req.query.excludeNullXfer != null
+            // Parse params
+            const active = apiHelper.parseEntities(req.query.active)
+            const page = req.query.page != null ? Number.parseInt(req.query.page) : 0
+            const count = req.query.count != null ? Number.parseInt(req.query.count) : keys.multiaddr.transactions
+            const excludeNullXfer = req.query.excludeNullXfer != null
 
-      const result = await walletService.getWalletTransactions(active, page, count)
-      if (excludeNullXfer) {
-        result.txs = result.txs.filter(tx => {
-          return tx['result'] !== 0
-        })
-      }
+            const result = await walletService.getWalletTransactions(active, page, count)
+            if (excludeNullXfer) {
+                result.txs = result.txs.filter(tx => {
+                    return tx['result'] !== 0
+                })
+            }
 
-      const ret = JSON.stringify(result, null, 2)
-      HttpServer.sendRawData(res, ret)
+            const returnValue = JSON.stringify(result, null, 2)
+            HttpServer.sendRawData(res, returnValue)
 
-    } catch(e) {
-      HttpServer.sendError(res, e)
+        } catch (error) {
+            HttpServer.sendError(res, error)
 
-    } finally {
-      const strParams =
-        `${req.query.active} \
+        } finally {
+            const stringParameters =
+                `${req.query.active} \
         ${req.query.page ? req.query.page : ''} \
         ${req.query.count ? req.query.count : ''}`
 
-      debugApi && Logger.info(`API : Completed GET /txs ${strParams}`)
+            debugApi && Logger.info(`API : Completed GET /txs ${stringParameters}`)
+        }
     }
-  }
 
-  /**
-   * Validate arguments of /tx requests
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   * @param {function} next - next tiny-http middleware
-   */
-  validateArgsGetTransaction(req, res, next) {
-    const isValidTxid = validator.isHash(req.params.txid, 'sha256')
+    /**
+     * Validate arguments of /tx requests
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     * @param {function} next - next tiny-http middleware
+     */
+    validateArgsGetTransaction(req, res, next) {
+        const isValidTxid = validator.isHash(req.params.txid, 'sha256')
 
-    const isValidFees =
-      !req.query.fees
-      || validator.isAlphanumeric(req.query.fees)
+        const isValidFees =
+            !req.query.fees
+            || validator.isAlphanumeric(req.query.fees)
 
-    if (!(isValidTxid && isValidFees)) {
-      HttpServer.sendError(res, errors.body.INVDATA)
-      Logger.error(
-        req.params,
-        'API : HeadersRestApi.validateArgsGetTransaction() : Invalid arguments'
-      )
-      Logger.error(req.query, '')
-    } else {
-      next()
+        if (!(isValidTxid && isValidFees)) {
+            HttpServer.sendError(res, errors.body.INVDATA)
+            Logger.error(
+                req.params,
+                'API : HeadersRestApi.validateArgsGetTransaction() : Invalid arguments'
+            )
+            Logger.error(req.query, '')
+        } else {
+            next()
+        }
     }
-  }
 
-  /**
-   * Validate arguments of /txs requests
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   * @param {function} next - next tiny-http middleware
-   */
-  validateArgsGetTransactions(req, res, next) {
-    const isValidPage =
-      !req.query.page
-      || validator.isInt(req.query.page)
+    /**
+     * Validate arguments of /txs requests
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     * @param {function} next - next tiny-http middleware
+     */
+    validateArgsGetTransactions(req, res, next) {
+        const isValidPage =
+            !req.query.page
+            || validator.isInt(req.query.page)
 
-    const isValidCount =
-      !req.query.count
-      || validator.isInt(req.query.count)
+        const isValidCount =
+            !req.query.count
+            || validator.isInt(req.query.count)
 
-    const isValidExcludeNull =
-      !req.query.excludeNullXfer
-      || validator.isAlphanumeric(req.query.excludeNullXfer)
+        const isValidExcludeNull =
+            !req.query.excludeNullXfer
+            || validator.isAlphanumeric(req.query.excludeNullXfer)
 
-    if (!(isValidPage && isValidCount && isValidExcludeNull)) {
-      HttpServer.sendError(res, errors.body.INVDATA)
-      Logger.error(
-        req.query,
-        'API : HeadersRestApi.validateArgsGetTransactions() : Invalid arguments'
-      )
-    } else {
-      next()
+        if (!(isValidPage && isValidCount && isValidExcludeNull)) {
+            HttpServer.sendError(res, errors.body.INVDATA)
+            Logger.error(
+                req.query,
+                'API : HeadersRestApi.validateArgsGetTransactions() : Invalid arguments'
+            )
+        } else {
+            next()
+        }
     }
-  }
 }
 
 export default TransactionsRestApi

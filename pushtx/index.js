@@ -15,45 +15,45 @@ import pushTxProcessor from './pushtx-processor.js'
 const keys = keysFile[network.key]
 
 try {
-  /**
-   * PushTx API
-   */
-  Logger.info('PushTx : Process ID: ' + process.pid)
-  Logger.info('PushTx : Preparing the pushTx API')
+    /**
+     * PushTx API
+     */
+    Logger.info('PushTx : Process ID: ' + process.pid)
+    Logger.info('PushTx : Preparing the pushTx API')
 
-  // Wait for Bitcoind RPC API
-  // being ready to process requests
-  await waitForBitcoindRpcApi()
+    // Wait for Bitcoind RPC API
+    // being ready to process requests
+    await waitForBitcoindRpcApi()
 
-  // Initialize the db wrapper
-  const dbConfig = {
-    connectionLimit: keys.db.connectionLimitPushTxApi,
-    acquireTimeout: keys.db.acquireTimeout,
-    host: keys.db.host,
-    user: keys.db.user,
-    password: keys.db.pass,
-    database: keys.db.database
-  }
+    // Initialize the db wrapper
+    const dbConfig = {
+        connectionLimit: keys.db.connectionLimitPushTxApi,
+        acquireTimeout: keys.db.acquireTimeout,
+        host: keys.db.host,
+        user: keys.db.user,
+        password: keys.db.pass,
+        database: keys.db.database
+    }
 
-  db.connect(dbConfig)
+    db.connect(dbConfig)
 
-  // Initialize notification sockets of singleton pushTxProcessor
-  pushTxProcessor.initNotifications({
-    uriSocket: `tcp://127.0.0.1:${keys.ports.notifpushtx}`
-  })
+    // Initialize notification sockets of singleton pushTxProcessor
+    pushTxProcessor.initNotifications({
+        uriSocket: `tcp://127.0.0.1:${keys.ports.notifpushtx}`
+    })
 
-  // Initialize the http server
-  const host = keys.apiBind
-  const port = keys.ports.pushtx
-  const httpServer = new HttpServer(port, host)
+    // Initialize the http server
+    const host = keys.apiBind
+    const port = keys.ports.pushtx
+    const httpServer = new HttpServer(port, host)
 
-  // Initialize the PushTx rest api
-  const pushtxRestApi = new PushTxRestApi(httpServer)
+    // Initialize the PushTx rest api
+    new PushTxRestApi(httpServer)
 
-  // Start the http server
-  httpServer.start()
+    // Start the http server
+    httpServer.start()
 
-} catch(err) {
-  console.error(err)
-  process.exit(1)
+} catch (error) {
+    console.error(error)
+    process.exit(1)
 }

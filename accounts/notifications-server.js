@@ -16,65 +16,63 @@ const keys = keysFile[network.key]
  */
 class NotificationsServer {
 
-  /**
-   * Constructor
-   */
-  constructor() {
-    // Http server
-    this.httpServer = null
-    // Notifications service
-    this.notifService = null
-  }
+    constructor() {
+        // Http server
+        this.httpServer = null
+        // Notifications service
+        this.notifService = null
+    }
 
-  /**
-   * Attach the web sockets server to the listening web server
-   * @param {pushtx.HttpServer} httpServer - HTTP server
-   */
-  attach(httpServer) {
-    this.httpServer = httpServer
+    /**
+     * Attach the web sockets server to the listening web server
+     * @param {HttpServer} httpServer - HTTP server
+     */
+    attach(httpServer) {
+        this.httpServer = httpServer
 
-    if (this.notifService !== null) return
+        if (this.notifService !== null) return
 
-    this.notifService = new NotificationsService(httpServer.server)
+        this.notifService = new NotificationsService(httpServer.server)
 
-    // Initialize the zmq socket for communications
-    // with the tracker
-    this._initTrackerSocket()
-  }
+        // Initialize the zmq socket for communications
+        // with the tracker
+        this._initTrackerSocket()
+    }
 
 
-  /**
-   * Initialize a zmq socket for notifications from the tracker
-   */
-  _initTrackerSocket() {
-    this.sock = zmq.socket('sub')
-    this.sock.connect(`tcp://127.0.0.1:${keys.ports.tracker}`)
-    this.sock.subscribe('block')
-    this.sock.subscribe('transaction')
+    /**
+     * Initialize a zmq socket for notifications from the tracker
+     * @private
+     */
+    _initTrackerSocket() {
+        this.sock = zmq.socket('sub')
+        this.sock.connect(`tcp://127.0.0.1:${keys.ports.tracker}`)
+        this.sock.subscribe('block')
+        this.sock.subscribe('transaction')
 
-    this.sock.on('message', (topic, message) => {
-      switch(topic.toString()) {
-        case 'block':
-          try {
-            const header = JSON.parse(message.toString())
-            this.notifService.notifyBlock(header)
-          } catch(e) {
-            Logger.error(e, 'API : NotificationServer._initTrackerSocket() : Error in block message')
-          }
-          break
-        case 'transaction':
-          try {
-            const tx = JSON.parse(message.toString())
-            this.notifService.notifyTransaction(tx)
-          } catch(e) {
-            Logger.error(e, 'API : NotificationServer._initTrackerSocket() : Error in transaction message')
-          }
-          break
-        default:
-          Logger.info(`API : Unknown ZMQ message topic: "${topic}"`)
-      }
-    })
-  }
+        this.sock.on('message', (topic, message) => {
+            switch (topic.toString()) {
+            case 'block':
+                try {
+                    const header = JSON.parse(message.toString())
+                    this.notifService.notifyBlock(header)
+                } catch (error) {
+                    Logger.error(error, 'API : NotificationServer._initTrackerSocket() : Error in block message')
+                }
+                break
+            case 'transaction':
+                try {
+                    const tx = JSON.parse(message.toString())
+                    this.notifService.notifyTransaction(tx)
+                } catch (error) {
+                    Logger.error(error, 'API : NotificationServer._initTrackerSocket() : Error in transaction message')
+                }
+                break
+            default:
+                Logger.info(`API : Unknown ZMQ message topic: "${topic}"`)
+            }
+        })
+    }
 
 }
 
