@@ -5,7 +5,7 @@ ENV     NODE_ENV production
 ENV     APP_DIR              /home/node/app
 
 ENV     EXPLORER_URL         https://github.com/janoside/btc-rpc-explorer/archive
-ENV     EXPLORER_VERSION     3.1.1
+ENV     EXPLORER_VERSION     3.2.0
 
 # Install netcat
 RUN     set -ex && \

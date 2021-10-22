@@ -1,4 +1,4 @@
-FROM      nginx:1.15.10-alpine
+FROM      nginx:1.21.3-alpine
 
 # Copy configuration files
 COPY      ./nginx.conf /etc/nginx/nginx.conf

@@ -259,31 +259,27 @@ class MempoolProcessor {
     const unconfirmedTxs = await db.getUnconfirmedTransactions()
 
     if (unconfirmedTxs.length > 0) {
-      const unconfirmedTxLists = util.splitList(unconfirmedTxs, 10)
+      const unconfirmedTxLists = util.splitList(unconfirmedTxs, 20)
 
       await util.seriesCall(unconfirmedTxLists, async (txList) => {
-        return await util.parallelCall(txList, tx => {
-          try {
-            return this.client.getrawtransaction( { txid: tx.txnTxid, verbose: true })
-              .then(async rtx => {
-                if (!rtx.blockhash) return null
-                // Transaction is confirmed
-                const block = await db.getBlockByHash(rtx.blockhash)
-                if (block && block.blockID) {
-                  Logger.info(`Tracker : Marking TXID ${tx.txnTxid} confirmed`)
-                  return db.confirmTransactions([tx.txnTxid], block.blockID)
-                }
-              },
-              (e) => {
-                Logger.error(e, 'Tracker : MempoolProcessor.checkUnconfirmed()')
-                // Transaction not in mempool. Update LRU cache and database
-                TransactionsBundle.cache.del(tx.txnTxid)
-                // TODO: Notify clients of orphaned transaction
-                return db.deleteTransaction(tx.txnTxid)
-              }
-            )
-          } catch(e) {
-            Logger.error(e, 'Tracker : MempoolProcessor.checkUnconfirmed()')
+        const rpcRequests = txList.map((tx) => ({ method: 'getrawtransaction', params: { txid: tx.txnTxid, verbose: true }, id: tx.txnTxid }))
+        const txs = await this.client.batch(rpcRequests)
+
+        return await util.parallelCall(txs, async (rtx) => {
+          if (rtx.error) {
+            Logger.error(rtx.error.message, 'Tracker : MempoolProcessor.checkUnconfirmed()')
+            // Transaction not in mempool. Update LRU cache and database
+            TransactionsBundle.cache.del(rtx.id)
+            // TODO: Notify clients of orphaned transaction
+            return db.deleteTransaction(rtx.id)
+          } else {
+            if (!rtx.result.blockhash) return null
+            // Transaction is confirmed
+            const block = await db.getBlockByHash(rtx.result.blockhash)
+            if (block && block.blockID) {
+              Logger.info(`Tracker : Marking TXID ${rtx.id} confirmed`)
+              return db.confirmTransactions([rtx.id], block.blockID)
+            }
           }
         })
       })
@@ -303,16 +299,20 @@ class MempoolProcessor {
   async _refreshActiveStatus() {
     // Get highest header in the blockchain
     // Get highest block processed by the tracker
-    const [highestBlock, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
-    const highestHeader = info.headers
+    try {
+      const [highestBlock, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
+      const highestHeader = info.headers
 
-    if (highestBlock == null || highestBlock.blockHeight === 0) {
-      this.isActive = false
-      return
+      if (highestBlock == null || highestBlock.blockHeight === 0) {
+        this.isActive = false
+        return
+      }
+
+      // Tolerate a delay of 6 blocks
+      this.isActive = (highestHeader >= 550000) && (highestHeader <= highestBlock.blockHeight + 6)
+    } catch (err) {
+      Logger.error(err, 'Tracker : MempoolProcessor._refreshActiveStatus()')
     }
-
-    // Tolerate a delay of 6 blocks
-    this.isActive = (highestHeader >= 550000) && (highestHeader <= highestBlock.blockHeight + 6)
   }
 
   /**

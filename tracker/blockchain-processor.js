@@ -11,7 +11,7 @@ const util = require('../lib/util')
 const Logger = require('../lib/logger')
 const db = require('../lib/db/mysql-db-wrapper')
 const network = require('../lib/bitcoin/network')
-const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
+const { createRpcClient, waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
 const keys = require('../keys')[network.key]
 const Block = require('./block')
 const blocksProcessor = require('./blocks-processor')
@@ -60,16 +60,23 @@ class BlockchainProcessor {
    * @returns {Promise<void>}
    */
   async catchup() {
-    const [highest, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
-    const daemonNbHeaders = info.headers
+    try {
+      await waitForBitcoindRpcApi()
+      const [highest, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
+      const daemonNbHeaders = info.headers
 
-    // Consider that we are in IBD mode if Dojo is far in the past (> 13,000 blocks)
-    this.isIBD = (highest.blockHeight < 681000) || (highest.blockHeight < daemonNbHeaders - 13000)
+      // Consider that we are in IBD mode if Dojo is far in the past (> 13,000 blocks)
+      this.isIBD = (highest.blockHeight < 681000) || (highest.blockHeight < daemonNbHeaders - 13000)
 
-    if (this.isIBD)
-      return this.catchupIBDMode()
-    else
-      return this.catchupNormalMode()
+      if (this.isIBD)
+        return this.catchupIBDMode()
+      else
+        return this.catchupNormalMode()
+    } catch (err) {
+      Logger.error(err, 'Tracker : BlockchainProcessor.catchup()');
+      await util.delay(2000)
+      return this.catchup()
+    }
   }
 
   /**

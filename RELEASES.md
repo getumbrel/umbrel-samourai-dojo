@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.12.0](#1_12_0)
 - [v1.11.0](#1_11_0)
 - [v1.10.1](#1_10_1)
 - [v1.10.0](#1_10_0)
@@ -17,6 +18,45 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+<a name="1_12_0"/>
+
+## Samourai Dojo v1.12.0 ##
+
+### Notable changes ###
+
+#### Upgrade of bitcoind to v22.0 ####
+
+Upgrade to Bitcoin Core v22.0
+
+#### Upgrade of Tor to v0.4.6.7 ####
+
+Upgrade to Tor v0.4.6.7 which removes support for outdated v2 onion services
+
+#### Upgrade of BTC-RPC Explorer to v3.2.0 ####
+
+Upgrade to BTC-RPC Explorer v3.2.0
+
+#### Stability improvements ####
+
+Dojo stability has been improved by raising RPC timeout value and fixing uncaught promise rejections.
+Stability issues have been encountered on non-standard installations which contain LND.
+
+### Change log ###
+
+#### Features ####
+- [#mr252](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/252) updated Tor to 0.4.6.7
+- [#mr249](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/249) updated Nginx to 1.21.3
+- [#mr247](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/247) updated Bitcoin Core to 22.0
+- [#mr246](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/246) updated BTC-RPC Explorer to 3.2.0
+- [#mr248](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/248) added uacomment to identify Dojo bitcoind nodes on the network
+
+#### Bug fixes ####
+- [#mr251](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/251) raised RPC timeout value, fixed uncaught promise rejections
+
+#### Credits ####
+- pajasevi
+- Ketominer
 
 <a name="1_11_0"/>
 

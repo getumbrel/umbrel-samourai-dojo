@@ -13,6 +13,7 @@ bitcoind_options=(
   -disablewallet=1
   -dns=$BITCOIND_DNS
   -dnsseed=$BITCOIND_DNSSEED
+  -uacomment="Samourai Dojo $DOJO_VERSION_TAG"
   -maxconnections=$BITCOIND_MAX_CONNECTIONS
   -maxmempool=$BITCOIND_MAX_MEMPOOL
   -mempoolexpiry=$BITCOIND_MEMPOOL_EXPIRY
