@@ -2,7 +2,8 @@
   "env": {
     "node": true,
     "browser": true,
-    "es2021": true
+    "es2021": true,
+    "mocha": true
   },
   "plugins": [
     "import",
@@ -35,6 +36,8 @@
       "never"
     ],
     "max-len": ["warn", 160],
+    "eol-last": "error",
+    "eqeqeq": ["error", "smart"],
     "import/no-self-import": "error",
     "import/no-cycle": "error",
     "import/no-useless-path-segments": "error",

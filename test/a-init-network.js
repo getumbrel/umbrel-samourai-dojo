@@ -7,6 +7,7 @@
 import assert from 'assert'
 import bitcoin from 'bitcoinjs-lib'
 import network from '../lib/bitcoin/network.js'
+
 network.key = 'testnet'
 network.network = bitcoin.networks.testnet
 
@@ -14,14 +15,14 @@ network.network = bitcoin.networks.testnet
 /**
  * Force testnet for all the unit tests
  */
-describe('InitTest', function() {
+describe('InitTest', function () {
 
-  describe('initTests()', function() {
+    describe('initTests()', function () {
 
-    it('should successfully initialize testnet', function() {
-      assert(true)
+        it('should successfully initialize testnet', function () {
+            assert(true)
+        })
+
     })
-
-  })
 
 })

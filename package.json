@@ -9,7 +9,7 @@
   "type": "module",
   "scripts": {
     "test": "mocha --recursive --reporter spec",
-    "lint": "eslint accounts/**/*.js lib/**/*.js pushtx/**/*.js tracker/**/*.js scripts/**/*.js keys/**/*.js"
+    "lint": "eslint accounts/**/*.js lib/**/*.js pushtx/**/*.js tracker/**/*.js scripts/**/*.js keys/**/*.js test/**/*.js"
   },
   "repository": {
     "type": "git",
