@@ -11,3 +11,6 @@ RUN     chmod u+x /update-db.sh && \
 
 # Copy content of mysql scripts into /docker-entrypoint-initdb.d
 COPY    ./db-scripts/ /docker-entrypoint-initdb.d
+
+# Remove template extension from SQL init schema
+RUN     bash -c 'for f in /docker-entrypoint-initdb.d/*.tpl; do mv -- "$f" "${f%.tpl}"; done'
