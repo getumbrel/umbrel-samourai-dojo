@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.12.1](#1_12_1)
 - [v1.12.0](#1_12_0)
 - [v1.11.0](#1_11_0)
 - [v1.10.1](#1_10_1)
@@ -18,6 +19,20 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+<a name="1_12_1"/>
+
+## Samourai Dojo v1.12.1 ##
+
+### Change log ###
+
+#### Bug fixes ####
+- [#mr254](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/254) added missing container dependencies for zeromq build
+- [#mr255](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/255) fixed imports/rescans not being processed correctly
+
+#### Credits ####
+- pajasevi
+- Taylor Helsper
 
 <a name="1_12_0"/>
 
