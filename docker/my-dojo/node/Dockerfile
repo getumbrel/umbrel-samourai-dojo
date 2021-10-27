@@ -6,7 +6,7 @@ ENV     APP_DIR                 /home/node/app
 ARG     TOR_LINUX_GID
 
 RUN     set -ex && \
-        apk --no-cache add shadow bash gcc g++ make python3
+        apk --no-cache add shadow bash gcc g++ make python3 curl cmake
 
 # Add node user to tor group
 RUN     addgroup -S -g ${TOR_LINUX_GID} tor && \
