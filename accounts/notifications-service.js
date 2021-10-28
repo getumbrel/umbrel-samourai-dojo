@@ -5,7 +5,7 @@
 
 
 import _ from 'lodash'
-import LRU from 'lru-cache'
+import QuickLRU from 'quick-lru'
 import WebSocket from 'websocket'
 import Logger from '../lib/logger.js'
 import apiHelper from './api-helper.js'
@@ -36,14 +36,12 @@ class NotificationsService {
 
         // Cache registering the most recent subscriptions received
         // Used to filter multiple subscriptions sent by external apps.
-        this.cacheSubs = new LRU({
+        this.cacheSubs = new QuickLRU({
             // Maximum number of subscriptions to store in cache
             // Estimate: 1000 clients with an average of 5 subscriptions
-            max: 5000,
-            // Function used to compute length of item
-            length: () => 1,
+            maxSize: 5000,
             // Maximum age for items in the cache (1mn)
-            maxAge: 60_000
+            maxAge: 60 * 1000
         })
 
         // Initialize the web socket server
@@ -106,7 +104,7 @@ class NotificationsService {
 
                 // Close initiated by client, remove subscriptions from cache
                 if (!forcedClose && this.cacheSubs.has(topic))
-                    this.cacheSubs.del(topic)
+                    this.cacheSubs.delete(topic)
             }
 
             if (this.conn[conn.id]) {

@@ -4,7 +4,7 @@
  */
 
 
-import bodyParser from 'body-parser'
+import { urlencoded } from 'milliparsec'
 
 import Logger from '../lib/logger.js'
 import errors from '../lib/errors.js'
@@ -29,7 +29,7 @@ class WalletRestApi {
         this.httpServer = httpServer
 
         // Establish routes
-        const urlencodedParser = bodyParser.urlencoded({ extended: true })
+        const urlencodedParser = urlencoded()
 
         this.httpServer.app.get(
             '/wallet',

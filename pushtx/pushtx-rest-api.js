@@ -6,7 +6,7 @@
 
 import qs from 'querystring'
 import validator from 'validator'
-import bodyParser from 'body-parser'
+import { json } from 'milliparsec'
 
 import Logger from '../lib/logger.js'
 import errors from '../lib/errors.js'
@@ -34,7 +34,7 @@ class PushTxRestApi {
         this.scheduler = new TransactionsScheduler()
 
         // Establish routes
-        const jsonParser = bodyParser.json()
+        const jsonParser = json()
 
         // Establish routes. Proxy server strips /pushtx
         this.httpServer.app.post(

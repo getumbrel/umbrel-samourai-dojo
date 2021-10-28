@@ -4,7 +4,7 @@
  */
 
 
-import LRU from 'lru-cache'
+import QuickLRU from 'quick-lru'
 
 import util from '../lib/util.js'
 import db from '../lib/db/mysql-db-wrapper.js'
@@ -188,11 +188,9 @@ class TransactionsBundle {
  * Additionally, the transaction comes in a block
  * Orphaned transactions are deleted during the routine check
  */
-TransactionsBundle.cache = new LRU({
+TransactionsBundle.cache = new QuickLRU({
     // Maximum number of txids to store in cache
-    max: 100_000,
-    // Function used to compute length of item
-    length: () => 1,
+    maxSize: 100000,
     // Maximum age for items in the cache. Items do not expire
     maxAge: Number.POSITIVE_INFINITY
 })

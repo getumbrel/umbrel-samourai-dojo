@@ -5,7 +5,7 @@
 
 
 import validator from 'validator'
-import bodyParser from 'body-parser'
+import { urlencoded } from 'milliparsec'
 import errors from '../lib/errors.js'
 import Logger from '../lib/logger.js'
 import hdaHelper from '../lib/bitcoin/hd-accounts-helper.js'
@@ -31,7 +31,7 @@ class XPubRestApi {
         this.httpServer = httpServer
 
         // Establish routes
-        const urlencodedParser = bodyParser.urlencoded({ extended: true })
+        const urlencodedParser = urlencoded()
 
         this.httpServer.app.post(
             '/xpub/',

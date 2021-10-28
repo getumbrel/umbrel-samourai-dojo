@@ -270,7 +270,7 @@ class MempoolProcessor {
                     if (rtx.error) {
                         Logger.error(rtx.error.message, 'Tracker : MempoolProcessor.checkUnconfirmed()')
                         // Transaction not in mempool. Update LRU cache and database
-                        TransactionsBundle.cache.del(rtx.id)
+                        TransactionsBundle.cache.delete(rtx.id)
                         // TODO: Notify clients of orphaned transaction
                         return db.deleteTransaction(rtx.id)
                     } else {

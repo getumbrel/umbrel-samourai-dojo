@@ -145,7 +145,7 @@ class Transaction {
             const txs = await db.getTransactionsById(doubleSpentTxnIDs)
 
             for (let tx of txs)
-                TransactionsBundle.cache.del(tx.txnTxid)
+                TransactionsBundle.cache.delete(tx.txnTxid)
 
             await db.deleteTransactionsByID(doubleSpentTxnIDs)
         }
