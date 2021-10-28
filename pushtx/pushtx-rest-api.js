@@ -6,6 +6,7 @@
 
 import qs from 'querystring'
 import validator from 'validator'
+// eslint-disable-next-line import/no-unresolved
 import { json } from 'milliparsec'
 
 import Logger from '../lib/logger.js'

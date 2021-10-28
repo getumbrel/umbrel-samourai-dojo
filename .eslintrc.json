@@ -53,6 +53,8 @@
     "unicorn/prefer-node-protocol": "off",
     "unicorn/prevent-abbreviations": "off",
     "unicorn/no-array-for-each": "warn",
-    "unicorn/numeric-separators-style": "off"
+    "unicorn/numeric-separators-style": "off",
+    "unicorn/require-post-message-target-origin": "off",
+    "unicorn/no-array-reduce": "off"
   }
 }

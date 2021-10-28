@@ -4,6 +4,7 @@
  */
 
 
+// eslint-disable-next-line import/no-unresolved
 import { urlencoded } from 'milliparsec'
 
 import Logger from '../lib/logger.js'
