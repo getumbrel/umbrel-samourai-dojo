@@ -4,7 +4,6 @@
  */
 
 
-import _ from 'lodash'
 import zmq from 'zeromq/v5-compat.js'
 import { Sema } from 'async-sema'
 
@@ -118,7 +117,7 @@ class BlockchainProcessor {
 
                     // If some blocks are ready for an import in db
                 } else {
-                    const blockRange = _.range(dbMaxHeight + 1, daemonNbBlocks + 1)
+                    const blockRange = util.range(dbMaxHeight + 1, daemonNbBlocks + 1)
 
                     Logger.info(`Tracker : Sync ${blockRange.length} blocks`)
 
@@ -168,7 +167,7 @@ class BlockchainProcessor {
             if (highest == null) return null
             if (daemonNbBlocks === highest.blockHeight) return null
 
-            const blockRange = _.range(highest.blockHeight, daemonNbBlocks + 1)
+            const blockRange = util.range(highest.blockHeight, daemonNbBlocks + 1)
 
             Logger.info(`Tracker : Sync ${blockRange.length} blocks`)
 
@@ -337,7 +336,7 @@ class BlockchainProcessor {
             toHeight = fromHeight
 
         toHeight = Math.min(toHeight, dbMaxHeight)
-        const blockRange = _.range(fromHeight, toHeight + 1)
+        const blockRange = util.range(fromHeight, toHeight + 1)
 
         Logger.info(`Blocks Rescan : starting a rescan for ${blockRange.length} blocks`)
 

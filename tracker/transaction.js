@@ -4,8 +4,6 @@
  */
 
 
-import _ from 'lodash'
-
 import util from '../lib/util.js'
 import Logger from '../lib/logger.js'
 import addrHelper from '../lib/bitcoin/addresses-helper.js'
@@ -178,7 +176,7 @@ class Transaction {
         }
 
         // Array of addresses receiving tx outputs
-        const addresses = _.keys(indexedOutputs)
+        const addresses = Object.keys(indexedOutputs)
 
         // Store a list of known addresses that received funds
         let fundedAddresses = []
@@ -257,7 +255,7 @@ class Transaction {
     async _processOutputsHdAccounts(hdAccounts, indexedOutputs) {
     // Store a list of known addresses that received funds
         const fundedAddresses = []
-        const xpubList = _.keys(hdAccounts)
+        const xpubList = Object.keys(hdAccounts)
 
         if (xpubList.length > 0) {
             await util.parallelCall(xpubList, async xpub => {
@@ -320,7 +318,7 @@ class Transaction {
         // Get the maximum used index in the addresses
         for (let chain of [0,1]) {
             // Get addresses for this account that are on this chain
-            const chainAddresses = _.filter(hdAccount.addresses, v => {
+            const chainAddresses = hdAccount.addresses.filter(v => {
                 return v.hdAddrChain === chain
             })
 
@@ -328,7 +326,7 @@ class Transaction {
                 continue
 
             // Get the maximum used address on this chain
-            const chainMaxUsed = _.maxBy(chainAddresses, a => {
+            const chainMaxUsed = util.maxBy(chainAddresses, a => {
                 return a.hdAddrIndex
             })
 
@@ -366,7 +364,7 @@ class Transaction {
                 // ..and including the gap limit beyond the max used
                 const minIndex = derivedIndices[chain] + 1
                 const maxIndex = chainMaxUsedIndex + gapLimit[chain] + 1
-                const indices = _.range(minIndex, maxIndex)
+                const indices = util.range(minIndex, maxIndex)
 
                 const derived = await hdaHelper.deriveAddresses(xpub, chain, indices, hdType)
 
@@ -393,7 +391,7 @@ class Transaction {
         }
 
         await db.addAddressesToHDAccount(xpub, newAddresses)
-        return _.keys(usedNewAddresses)
+        return Object.keys(usedNewAddresses)
     }
 
 

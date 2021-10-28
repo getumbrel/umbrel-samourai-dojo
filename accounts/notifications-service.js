@@ -4,7 +4,7 @@
  */
 
 
-import _ from 'lodash'
+import cloneDeep from 'lodash.clonedeep'
 import QuickLRU from 'quick-lru'
 import WebSocket from 'websocket'
 import Logger from '../lib/logger.js'
@@ -394,7 +394,7 @@ class NotificationsService {
 
             // Tailor a transaction for each client
             for (let cid in clients) {
-                const context = _.cloneDeep(tx)
+                const context = cloneDeep(tx)
                 context.inputs = []
                 context.out = []
 
@@ -405,7 +405,7 @@ class NotificationsService {
                 for (let input of tx.inputs) {
                     const topic = input.topic
                     if (topic && clientTopics.includes(topic)) {
-                        const cin = _.cloneDeep(input)
+                        const cin = cloneDeep(input)
                         delete cin.topic
                         if (this.cachePubKeys.has(topic))
                             cin.pubkey = this.cachePubKeys.get(topic)
@@ -416,7 +416,7 @@ class NotificationsService {
                 for (let output of tx.out) {
                     const topic = output.topic
                     if (topic && clientTopics.includes(topic)) {
-                        const cout = _.cloneDeep(output)
+                        const cout = cloneDeep(output)
                         delete cout.topic
                         if (this.cachePubKeys.has(topic))
                             cout.pubkey = this.cachePubKeys.get(topic)

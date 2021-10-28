@@ -29,7 +29,7 @@
     "bs58check": "2.1.2",
     "helmet": "4.6.0",
     "jsonwebtoken": "8.5.1",
-    "lodash": "4.17.21",
+    "lodash.clonedeep": "4.5.0",
     "milliparsec": "^2.2.0",
     "minimist": "1.2.5",
     "mysql": "2.18.1",
