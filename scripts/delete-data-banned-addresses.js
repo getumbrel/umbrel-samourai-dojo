@@ -2,12 +2,13 @@
  * scripts/delete-data-banned-addresses.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const mysql = require('mysql')
-const Logger = require('../lib/logger')
-const util = require('../lib/util')
-const db = require('../lib/db/mysql-db-wrapper')
+
+import mysql from 'mysql'
+
+import Logger from '../lib/logger.js'
+import util from '../lib/util.js'
+import db from '../lib/db/mysql-db-wrapper.js'
 
 
 /**

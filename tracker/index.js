@@ -2,57 +2,57 @@
  * tracker/index.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-(async () => {
-
-  'use strict'
-
-  const { waitForBitcoindRpcApi } = require('../lib/bitcoind-rpc/rpc-client')
-  const network = require('../lib/bitcoin/network')
-  const keys = require('../keys')[network.key]
-  const db = require('../lib/db/mysql-db-wrapper')
-  const Logger = require('../lib/logger')
-  const HttpServer = require('../lib/http-server/http-server')
-  const Tracker = require('./tracker')
-  const TrackerRestApi = require('./tracker-rest-api')
 
 
-  Logger.info('Tracker : Process ID: ' + process.pid)
-  Logger.info('Tracker : Preparing the tracker')
+import { waitForBitcoindRpcApi } from '../lib/bitcoind-rpc/rpc-client.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import Logger from '../lib/logger.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import Tracker from './tracker.js'
+import TrackerRestApi from './tracker-rest-api.js'
 
-  // Wait for Bitcoind RPC API
-  // being ready to process requests
-  await waitForBitcoindRpcApi()
+const keys = keysFile[network.key]
 
-  // Initialize the db wrapper
-  const dbConfig = {
-    connectionLimit: keys.db.connectionLimitTracker,
-    acquireTimeout: keys.db.acquireTimeout,
-    host: keys.db.host,
-    user: keys.db.user,
-    password: keys.db.pass,
-    database: keys.db.database
-  }
+try {
+    Logger.info('Tracker : Process ID: ' + process.pid)
+    Logger.info('Tracker : Preparing the tracker')
 
-  db.connect(dbConfig)
+    // Wait for Bitcoind RPC API
+    // being ready to process requests
+    await waitForBitcoindRpcApi()
 
-  // Initialize the tracker
-  const tracker = new Tracker()
+    // Initialize the db wrapper
+    const dbConfig = {
+        connectionLimit: keys.db.connectionLimitTracker,
+        acquireTimeout: keys.db.acquireTimeout,
+        host: keys.db.host,
+        user: keys.db.user,
+        password: keys.db.pass,
+        database: keys.db.database
+    }
 
-  // Initialize the http server
-  const host = keys.apiBind
-  const port = keys.ports.trackerApi
-  const httpServer = new HttpServer(port, host)
+    db.connect(dbConfig)
 
-  // Initialize the rest api endpoints
-  const trackerRestApi = new TrackerRestApi(httpServer, tracker)
+    // Initialize the tracker
+    const tracker = new Tracker()
 
-  // Start the http server
-  httpServer.start()
+    // Initialize the http server
+    const host = keys.apiBind
+    const port = keys.ports.trackerApi
+    const httpServer = new HttpServer(port, host)
 
-  // Start the tracker
-  tracker.start()
+    // Initialize the rest api endpoints
+    new TrackerRestApi(httpServer, tracker)
 
-})().catch(err => {
-  console.error(err)
-  process.exit(1)
-})
+    // Start the http server
+    httpServer.start()
+
+    // Start the tracker
+    tracker.start()
+
+} catch (error) {
+    console.error(error)
+    process.exit(1)
+}

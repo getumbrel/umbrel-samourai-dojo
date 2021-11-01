@@ -2,15 +2,16 @@
  * scripts/createfirstblocks.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bitcoin = require('bitcoinjs-lib')
-const Logger = require('../lib/logger')
-const util = require('../lib/util')
-const db = require('../lib/db/mysql-db-wrapper')
-const network = require('../lib/bitcoin/network')
-const { createRpcClient } = require('../lib/bitcoind-rpc/rpc-client')
-const keys = require('../keys')[network.key]
+
+import Logger from '../lib/logger.js'
+import util from '../lib/util.js'
+import db from '../lib/db/mysql-db-wrapper.js'
+import network from '../lib/bitcoin/network.js'
+import { createRpcClient } from '../lib/bitcoind-rpc/rpc-client.js'
+import keysFile from '../keys/index.js'
+
+const keys = keysFile[network.key]
 
 
 /**
