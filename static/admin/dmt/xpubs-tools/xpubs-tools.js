@@ -102,9 +102,9 @@ const screenXpubsToolsScript = {
     if (derivType === 'bip49' || derivType === 'bip84') {
       jsonData['segwit'] = derivType
     } else if (derivType === 'auto') {
-      if (this.currentXpub.startsWith('ypub'))
+      if (this.currentXpub.startsWith('ypub') || this.currentXpub.startsWith('upub'))
         jsonData['segwit'] = 'bip49'
-      else if (this.currentXpub.startsWith('zpub'))
+      else if (this.currentXpub.startsWith('zpub') || this.currentXpub.startsWith('vpub'))
         jsonData['segwit'] = 'bip84'
     }
 
