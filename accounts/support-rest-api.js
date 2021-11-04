@@ -216,8 +216,8 @@ class SupportRestApi {
                 status: 'Rescan complete',
             }
 
-            const gapLimit = req.query.gap != null ? Number.parseInt(req.query.gap) : 0
-            const startIndex = req.query.startidx != null ? Number.parseInt(req.query.startidx) : 0
+            const gapLimit = req.query.gap != null ? Number.parseInt(req.query.gap, 10) : 0
+            const startIndex = req.query.startidx != null ? Number.parseInt(req.query.startidx, 10) : 0
 
             try {
                 await hdaService.rescan(xpub, gapLimit, startIndex)

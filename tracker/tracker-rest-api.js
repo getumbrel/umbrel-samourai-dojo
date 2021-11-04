@@ -51,8 +51,8 @@ class TrackerRestApi {
             return HttpServer.sendError(res, errors.body.INVDATA)
 
         // Retrieve the req.arguments
-        const fromHeight = Number.parseInt(req.query.fromHeight)
-        const toHeight = req.query.toHeight ? Number.parseInt(req.query.toHeight) : fromHeight
+        const fromHeight = Number.parseInt(req.query.fromHeight, 10)
+        const toHeight = req.query.toHeight ? Number.parseInt(req.query.toHeight, 10) : fromHeight
 
         if (req.query.toHeight && (toHeight < fromHeight))
             return HttpServer.sendError(res, errors.body.INVDATA)

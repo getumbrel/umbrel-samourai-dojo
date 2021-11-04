@@ -6,7 +6,7 @@ import fs from 'fs'
 
 
 // Retrieve active bitcoin network from conf files
-const bitcoinNetwork = (process.env.COMMON_BTC_NETWORK == 'testnet')
+const bitcoinNetwork = (process.env.COMMON_BTC_NETWORK === 'testnet')
     ? 'testnet'
     : 'bitcoin'
 
@@ -19,8 +19,7 @@ if (process.env.EXPLORER_INSTALL === 'on') {
         explorerUrl = fs.readFileSync('/var/lib/tor/hsv3explorer/hostname', 'utf8').replace('\n', '')
         explorerPassword = process.env.EXPLORER_KEY
         explorerActive = 'btc_rpc_explorer'
-    } catch (e) {
-    }
+    } catch {}
 }
 
 
@@ -49,7 +48,7 @@ export default {
                 // IP address
                 host: process.env.BITCOIND_IP,
                 // TCP port
-                port: parseInt(process.env.BITCOIND_RPC_PORT)
+                port: Number.parseInt(process.env.BITCOIND_RPC_PORT, 10)
             },
             // ZMQ Tx notifications
             zmqTx: `tcp://${process.env.BITCOIND_IP}:${process.env.BITCOIND_ZMQ_RAWTXS}`,
@@ -135,11 +134,11 @@ export default {
                 secret: process.env.NODE_JWT_SECRET,
                 accessToken: {
                     // Number of seconds after which the jwt expires
-                    expires: parseInt(process.env.NODE_JWT_ACCESS_EXPIRES)
+                    expires: Number.parseInt(process.env.NODE_JWT_ACCESS_EXPIRES, 10)
                 },
                 refreshToken: {
                     // Number of seconds after which the jwt expires
-                    expires: parseInt(process.env.NODE_JWT_REFRESH_EXPIRES)
+                    expires: Number.parseInt(process.env.NODE_JWT_REFRESH_EXPIRES, 10)
                 }
             }
         },
@@ -160,9 +159,9 @@ export default {
          */
         gap: {
             // Gap for derivation of external addresses
-            external: parseInt(process.env.NODE_GAP_EXTERNAL),
+            external: Number.parseInt(process.env.NODE_GAP_EXTERNAL, 10),
             // Gap for derivation of internal (change) addresses
-            internal: parseInt(process.env.NODE_GAP_INTERNAL)
+            internal: Number.parseInt(process.env.NODE_GAP_INTERNAL, 10)
         },
         /*
          * Multiaddr endpoint
@@ -184,7 +183,7 @@ export default {
                 // IP address or hostname of the local indexer
                 host: process.env.INDEXER_IP,
                 // Port
-                port: parseInt(process.env.INDEXER_RPC_PORT),
+                port: Number.parseInt(process.env.INDEXER_RPC_PORT, 10),
                 // Support of batch requests by the local indexer
                 // Values: active | inactive
                 batchRequests: process.env.INDEXER_BATCH_SUPPORT
@@ -213,7 +212,7 @@ export default {
          * Max number of transactions per address
          * accepted during fast scan
          */
-        addrFilterThreshold: parseInt(process.env.NODE_ADDR_FILTER_THRESHOLD),
+        addrFilterThreshold: Number.parseInt(process.env.NODE_ADDR_FILTER_THRESHOLD, 10),
         /*
          * Pool of child processes
          * for parallel derivation of addresses
@@ -221,33 +220,33 @@ export default {
          */
         addrDerivationPool: {
             // Min number of child processes always running
-            minNbChildren: parseInt(process.env.NODE_ADDR_DERIVATION_MIN_CHILD),
+            minNbChildren: Number.parseInt(process.env.NODE_ADDR_DERIVATION_MIN_CHILD, 10),
             // Max number of child processes allowed
-            maxNbChildren: parseInt(process.env.NODE_ADDR_DERIVATION_MAX_CHILD),
+            maxNbChildren: Number.parseInt(process.env.NODE_ADDR_DERIVATION_MAX_CHILD, 10),
             // Max duration
             acquireTimeoutMillis: 60000,
             // Parallel derivation threshold
             // (use parallel derivation if number of addresses to be derived
             //  is greater than thresholdParalleDerivation)
-            thresholdParallelDerivation: parseInt(process.env.NODE_ADDR_DERIVATION_THRESHOLD),
+            thresholdParallelDerivation: Number.parseInt(process.env.NODE_ADDR_DERIVATION_THRESHOLD, 10),
         },
         /*
          * PushTx - Scheduler
          */
         txsScheduler: {
             // Max number of transactions allowed in a single script
-            maxNbEntries: parseInt(process.env.NODE_TXS_SCHED_MAX_ENTRIES),
+            maxNbEntries: Number.parseInt(process.env.NODE_TXS_SCHED_MAX_ENTRIES, 10),
             // Max number of blocks allowed in the future
-            maxDeltaHeight: parseInt(process.env.NODE_TXS_SCHED_MAX_DELTA_HEIGHT)
+            maxDeltaHeight: Number.parseInt(process.env.NODE_TXS_SCHED_MAX_DELTA_HEIGHT, 10)
         },
         /*
          * Tracker
          */
         tracker: {
             // Processing of mempool (periodicity in ms)
-            mempoolProcessPeriod: parseInt(process.env.NODE_TRACKER_MEMPOOL_PERIOD),
+            mempoolProcessPeriod: Number.parseInt(process.env.NODE_TRACKER_MEMPOOL_PERIOD, 10),
             // Processing of unconfirmed transactions (periodicity in ms)
-            unconfirmedTxsProcessPeriod: parseInt(process.env.NODE_TRACKER_UNCONF_TXS_PERIOD)
+            unconfirmedTxsProcessPeriod: Number.parseInt(process.env.NODE_TRACKER_UNCONF_TXS_PERIOD, 10)
         }
     }
 

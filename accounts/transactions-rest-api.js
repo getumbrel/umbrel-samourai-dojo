@@ -81,8 +81,8 @@ class TransactionsRestApi {
 
             // Parse params
             const active = apiHelper.parseEntities(req.query.active)
-            const page = req.query.page != null ? Number.parseInt(req.query.page) : 0
-            const count = req.query.count != null ? Number.parseInt(req.query.count) : keys.multiaddr.transactions
+            const page = req.query.page != null ? Number.parseInt(req.query.page, 10) : 0
+            const count = req.query.count != null ? Number.parseInt(req.query.count, 10) : keys.multiaddr.transactions
             const excludeNullXfer = req.query.excludeNullXfer != null
 
             const result = await walletService.getWalletTransactions(active, page, count)

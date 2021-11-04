@@ -38,6 +38,7 @@
     "max-len": ["warn", 160],
     "eol-last": "error",
     "eqeqeq": ["error", "smart"],
+    "radix": "error",
     "import/no-self-import": "error",
     "import/no-cycle": "error",
     "import/no-useless-path-segments": "error",
