@@ -17,7 +17,7 @@ try {
     /**
      * PushTx Orchestrator
      */
-    Logger.info('Orchestrator : Process ID: ' + process.pid)
+    Logger.info(`Orchestrator : Process ID: ${process.pid}`)
     Logger.info('Orchestrator : Preparing the pushTx Orchestrator')
 
     // Wait for Bitcoind RPC API

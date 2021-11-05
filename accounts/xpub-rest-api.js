@@ -226,9 +226,9 @@ class XPubRestApi {
 
             const status = hdaService.importInProgress(xpub)
             if (status != null) {
-                returnValue['import_in_progress'] = true
-                returnValue['status'] = status['status']
-                returnValue['hits'] = returnValue['status'] === remoteImporter.STATUS_RESCAN ? status['txs_int'] + status['txs_ext'] : status['txs']
+                returnValue.import_in_progress = true
+                returnValue.status = status.status
+                returnValue.hits = returnValue.status === remoteImporter.STATUS_RESCAN ? status.txs_int + status.txs_ext : status.txs
             }
 
             HttpServer.sendOkData(res, returnValue)
@@ -367,8 +367,8 @@ class XPubRestApi {
                 xpub = hdaHelper.xlatXPUB(origXpub)
                 scheme = isYpub ? hdaHelper.BIP49 : hdaHelper.BIP84
                 if (trace) {
-                    Logger.info('API : Converted: ' + origXpub)
-                    Logger.info('API : Resulting xpub: ' + xpub)
+                    Logger.info(`API : Converted: ${origXpub}`)
+                    Logger.info(`API : Resulting xpub: ${xpub}`)
                 }
             }
 
@@ -407,14 +407,14 @@ class XPubRestApi {
             !req.body.force
             || validator.isAlphanumeric(req.body.force)
 
-        if (!(isValidXpub && isValidSegwit && isValidType && isValidForce)) {
+        if (isValidXpub && isValidSegwit && isValidType && isValidForce) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(
                 req.body,
                 'API : XpubRestApi.validateArgsPostXpub() : Invalid arguments'
             )
-        } else {
-            next()
         }
     }
 
@@ -427,14 +427,14 @@ class XPubRestApi {
     validateArgsGetXpub(req, res, next) {
         const isValidXpub = validator.isAlphanumeric(req.params.xpub)
 
-        if (!isValidXpub) {
+        if (isValidXpub) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(
                 req.params.xpub,
                 'API : XpubRestApi.validateArgsGetXpub() : Invalid arguments'
             )
-        } else {
-            next()
         }
     }
 
@@ -450,15 +450,15 @@ class XPubRestApi {
         const isValidSig = validator.isBase64(req.body.signature)
         const isValidMessage = validator.isAlphanumeric(req.body.message)
 
-        if (!(isValidXpub && isValidAddr && isValidSig && isValidMessage)) {
+        if (isValidXpub && isValidAddr && isValidSig && isValidMessage) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(
                 req.params,
                 'API : XpubRestApi.validateArgsPostLockXpub() : Invalid arguments'
             )
             Logger.error(req.body, '')
-        } else {
-            next()
         }
     }
 
@@ -473,15 +473,15 @@ class XPubRestApi {
         const isValidAddr = validator.isAlphanumeric(req.body.address)
         const isValidSig = validator.isBase64(req.body.signature)
 
-        if (!(isValidXpub && isValidAddr && isValidSig)) {
+        if (isValidXpub && isValidAddr && isValidSig) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(
                 req.params,
                 'API : XpubRestApi.validateArgsDeleteXpub() : Invalid arguments'
             )
             Logger.error(req.body, '')
-        } else {
-            next()
         }
     }
 

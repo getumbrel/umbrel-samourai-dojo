@@ -55,7 +55,7 @@ class Status {
 
         try {
             const chaintip = await remote.getChainTipHeight()
-            indexerMaxHeight = chaintip['chainTipHeight']
+            indexerMaxHeight = chaintip.chainTipHeight
         } catch (error) {
             Logger.error(error, 'API : Status.getCurrent() :')
         }

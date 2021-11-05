@@ -63,9 +63,9 @@ class Status {
         const mem = process.memoryUsage()
         this.status.memory = util.toMb(mem.rss)
 
-        this.status.uptime = +((Date.now() - this.startTime) / 1000).toFixed(1)
+        this.status.uptime = Number(((Date.now() - this.startTime) / 1000).toFixed(1))
 
-        this.status.push.amount = +((this.stats.amount / 1e8).toFixed(3))
+        this.status.push.amount = Number((this.stats.amount / 1e8).toFixed(3))
         this.status.push.count = this.stats.count
 
         try {

@@ -81,14 +81,14 @@ class TransactionsRestApi {
 
             // Parse params
             const active = apiHelper.parseEntities(req.query.active)
-            const page = req.query.page != null ? Number.parseInt(req.query.page, 10) : 0
-            const count = req.query.count != null ? Number.parseInt(req.query.count, 10) : keys.multiaddr.transactions
+            const page = req.query.page == null ? 0 : Number.parseInt(req.query.page, 10)
+            const count = req.query.count == null ? keys.multiaddr.transactions : Number.parseInt(req.query.count, 10)
             const excludeNullXfer = req.query.excludeNullXfer != null
 
             const result = await walletService.getWalletTransactions(active, page, count)
             if (excludeNullXfer) {
                 result.txs = result.txs.filter(tx => {
-                    return tx['result'] !== 0
+                    return tx.result !== 0
                 })
             }
 
@@ -121,15 +121,15 @@ class TransactionsRestApi {
             !req.query.fees
             || validator.isAlphanumeric(req.query.fees)
 
-        if (!(isValidTxid && isValidFees)) {
+        if (isValidTxid && isValidFees) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(
                 req.params,
                 'API : HeadersRestApi.validateArgsGetTransaction() : Invalid arguments'
             )
             Logger.error(req.query, '')
-        } else {
-            next()
         }
     }
 
@@ -152,14 +152,14 @@ class TransactionsRestApi {
             !req.query.excludeNullXfer
             || validator.isAlphanumeric(req.query.excludeNullXfer)
 
-        if (!(isValidPage && isValidCount && isValidExcludeNull)) {
+        if (isValidPage && isValidCount && isValidExcludeNull) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(
                 req.query,
                 'API : HeadersRestApi.validateArgsGetTransactions() : Invalid arguments'
             )
-        } else {
-            next()
         }
     }
 }

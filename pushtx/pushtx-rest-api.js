@@ -225,7 +225,7 @@ class PushTxRestApi {
                 } catch {}
 
                 if (message.code && message.message) {
-                    Logger.error(null, 'PushTx : Error ' + message.code + ': ' + message.message)
+                    Logger.error(null, `PushTx : Error ${message.code}: ${message.message}`)
                     returnValue = message
                 } else {
                     Logger.error(error.message, 'PushTx : ')

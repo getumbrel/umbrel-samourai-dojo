@@ -36,7 +36,6 @@ class Block extends TransactionsBundle {
         } catch (error) {
             Logger.error(error, 'Tracker : Block()')
             Logger.error(null, header)
-            return Promise.reject(error)
         }
     }
 
@@ -55,14 +54,14 @@ class Block extends TransactionsBundle {
         const txsForBroadcast = new Map()
 
         const txsForBroadcast1 = await this.processOutputs()
-        txsForBroadcast1.map(tx => {
+        for (const tx of txsForBroadcast1) {
             txsForBroadcast.set(tx.getId(), tx)
-        })
+        }
 
         const txsForBroadcast2 = await this.processInputs()
-        txsForBroadcast2.map(tx => {
+        for (const tx of txsForBroadcast2) {
             txsForBroadcast.set(tx.getId(), tx)
-        })
+        }
 
         const aTxsForBroadcast = [...txsForBroadcast.values()]
 

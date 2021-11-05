@@ -18,7 +18,7 @@ try {
     /**
      * PushTx API
      */
-    Logger.info('PushTx : Process ID: ' + process.pid)
+    Logger.info(`PushTx : Process ID: ${process.pid}`)
     Logger.info('PushTx : Preparing the pushTx API')
 
     // Wait for Bitcoind RPC API

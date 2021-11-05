@@ -29,7 +29,7 @@ try {
     /**
      * Samourai REST API
      */
-    Logger.info('API : Process ID: ' + process.pid)
+    Logger.info(`API : Process ID: ${process.pid}`)
     Logger.info('API : Preparing the REST API')
 
     // Wait for Bitcoind RPC API

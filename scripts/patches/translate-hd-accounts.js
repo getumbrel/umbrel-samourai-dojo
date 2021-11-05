@@ -103,7 +103,7 @@ async function run() {
  */
 console.log('Start processing')
 
-setTimeout(async function() {
+setTimeout(async () => {
     return run().then(() => {
         console.log('Process completed')
     })
