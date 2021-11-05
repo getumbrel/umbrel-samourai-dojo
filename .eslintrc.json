@@ -19,6 +19,19 @@
     "sourceType": "module"
   },
   "rules": {
+    "array-callback-return": [
+      "error",
+      {
+        "checkForEach": true
+      }
+    ],
+    "complexity": "error",
+    "no-constructor-return": "error",
+    "no-self-compare": "error",
+    "no-template-curly-in-string": "warn",
+    "no-unmodified-loop-condition": "warn",
+    "no-unreachable-loop": "error",
+    "require-atomic-updates": "error",
     "indent": [
       "error",
       4
@@ -35,10 +48,35 @@
       "error",
       "never"
     ],
-    "max-len": ["warn", 160],
+    "max-len": [
+      "warn",
+      160
+    ],
     "eol-last": "error",
-    "eqeqeq": ["error", "smart"],
+    "eqeqeq": [
+      "error",
+      "smart"
+    ],
     "radix": "error",
+    "dot-notation": "warn",
+    "no-array-constructor": "error",
+    "no-extend-native": "error",
+    "no-extra-bind": "error",
+    "no-implicit-coercion": "error",
+    "no-invalid-this": "error",
+    "no-iterator": "error",
+    "no-lonely-if": "error",
+    "no-loop-func": "error",
+    "no-multi-assign": "error",
+    "no-negated-condition": "error",
+    "no-undef-init": "error",
+    "no-useless-call": "error",
+    "no-useless-constructor": "error",
+    "no-useless-return": "error",
+    "prefer-arrow-callback": "warn",
+    "prefer-destructuring": "warn",
+    "prefer-template": "warn",
+
     "import/no-self-import": "error",
     "import/no-cycle": "error",
     "import/no-useless-path-segments": "error",
@@ -48,7 +86,11 @@
     "import/first": "error",
     "import/no-duplicates": "error",
     "import/newline-after-import": "error",
-    "import/extensions": ["error", "ignorePackages"],
+    "import/extensions": [
+      "error",
+      "ignorePackages"
+    ],
+
     "unicorn/no-null": "off",
     "unicorn/no-process-exit": "off",
     "unicorn/prefer-node-protocol": "off",
