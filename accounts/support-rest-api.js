@@ -216,8 +216,8 @@ class SupportRestApi {
                 status: 'Rescan complete',
             }
 
-            const gapLimit = req.query.gap != null ? Number.parseInt(req.query.gap, 10) : 0
-            const startIndex = req.query.startidx != null ? Number.parseInt(req.query.startidx, 10) : 0
+            const gapLimit = req.query.gap == null ? 0 : Number.parseInt(req.query.gap, 10)
+            const startIndex = req.query.startidx == null ? 0 : Number.parseInt(req.query.startidx, 10)
 
             try {
                 await hdaService.rescan(xpub, gapLimit, startIndex)
@@ -331,11 +331,11 @@ class SupportRestApi {
     validateArgsGetXpubInfo(req, res, next) {
         const isValidXpub = validator.isAlphanumeric(req.params.xpub)
 
-        if (!isValidXpub) {
+        if (isValidXpub) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(null, `API : SupportRestApi.validateArgsGetXpubInfo() : Invalid xpub ${req.params.xpub}`)
-        } else {
-            next()
         }
     }
 
@@ -349,11 +349,11 @@ class SupportRestApi {
         const isValidXpub = validator.isAlphanumeric(req.params.xpub)
         const isValidGap = !req.query.gap || validator.isInt(req.query.gap)
 
-        if (!(isValidXpub && isValidGap)) {
+        if (isValidXpub && isValidGap) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(null, 'API : SupportRestApi.validateArgsGetXpubRescan() : Invalid arguments')
-        } else {
-            next()
         }
     }
 
@@ -366,11 +366,11 @@ class SupportRestApi {
     validateArgsGetXpubDelete(req, res, next) {
         const isValidXpub = validator.isAlphanumeric(req.params.xpub)
 
-        if (!isValidXpub) {
+        if (isValidXpub) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(null, `API : SupportRestApi.validateArgsGetXpubDelete() : Invalid xpub ${req.params.xpub}`)
-        } else {
-            next()
         }
     }
 
@@ -383,11 +383,11 @@ class SupportRestApi {
     validateAddress(req, res, next) {
         const isValidAddress = validator.isAlphanumeric(req.params.addr)
 
-        if (!isValidAddress) {
+        if (isValidAddress) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(null, `API : SupportRestApi.validateAddress() : Invalid address ${req.params.addr}`)
-        } else {
-            next()
         }
     }
 }

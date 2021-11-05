@@ -61,14 +61,14 @@ class HeadersRestApi {
     validateArgsGetHeader(req, res, next) {
         const isValidHash = validator.isHash(req.params.hash, 'sha256')
 
-        if (!isValidHash) {
+        if (isValidHash) {
+            next()
+        } else {
             HttpServer.sendError(res, errors.body.INVDATA)
             Logger.error(
                 req.params.hash,
                 'API : HeadersRestApi.validateArgsGetHeader() : Invalid hash'
             )
-        } else {
-            next()
         }
     }
 

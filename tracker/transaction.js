@@ -171,6 +171,7 @@ class Transaction {
                     value: output.value,
                     script: output.script.toString('hex'),
                 })
+                // eslint-disable-next-line no-empty
             } catch{}
             index++
         }

@@ -16,7 +16,7 @@ import TrackerRestApi from './tracker-rest-api.js'
 const keys = keysFile[network.key]
 
 try {
-    Logger.info('Tracker : Process ID: ' + process.pid)
+    Logger.info(`Tracker : Process ID: ${process.pid}`)
     Logger.info('Tracker : Preparing the tracker')
 
     // Wait for Bitcoind RPC API

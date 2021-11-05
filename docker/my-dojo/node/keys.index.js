@@ -19,6 +19,7 @@ if (process.env.EXPLORER_INSTALL === 'on') {
         explorerUrl = fs.readFileSync('/var/lib/tor/hsv3explorer/hostname', 'utf8').replace('\n', '')
         explorerPassword = process.env.EXPLORER_KEY
         explorerActive = 'btc_rpc_explorer'
+        // eslint-disable-next-line no-empty
     } catch {}
 }
 

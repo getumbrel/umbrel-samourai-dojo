@@ -112,6 +112,7 @@ class TransactionsBundle {
                     if (!indexedOutputs[address])
                         indexedOutputs[address] = []
                     indexedOutputs[address].push(index)
+                    // eslint-disable-next-line no-empty
                 } catch {}
             }
         }
@@ -154,7 +155,7 @@ class TransactionsBundle {
                 const spendTxid = Buffer.from(spendHash).reverse().toString('hex')
                 const spendIndex = tx.ins[index_].index
                 inputs.push({ txid: spendTxid, index: spendIndex })
-                const key = spendTxid + '-' + spendIndex
+                const key = `${spendTxid}-${spendIndex}`
                 if (!indexedInputs[key])
                     indexedInputs[key] = []
                 indexedInputs[key].push(index)
@@ -166,7 +167,7 @@ class TransactionsBundle {
         const results = await util.parallelCall(lists, list => db.getOutputSpends(list))
         const inRes = results.flat()
         for (const index in inRes) {
-            const key = inRes[index].txnTxid + '-' + inRes[index].outIndex
+            const key = `${inRes[index].txnTxid}-${inRes[index].outIndex}`
             const indexTxs = indexedInputs[key]
             if (indexTxs) {
                 for (const indexTx of indexTxs)

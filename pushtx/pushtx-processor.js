@@ -95,7 +95,7 @@ class PushTxProcessor {
             const tx = bitcoin.Transaction.fromHex(rawtx)
             for (let output of tx.outs)
                 value += output.value
-            Logger.info('PushTx : Push for ' + (value / 1e8).toFixed(8) + ' BTC')
+            Logger.info(`PushTx : Push for ${(value / 1e8).toFixed(8)} BTC`)
         } catch {
             throw errors.tx.PARSE
         }

@@ -403,7 +403,7 @@ class NotificationsService {
 
                 // Check for topic information on inputs & outputs (added above)
                 for (let input of tx.inputs) {
-                    const topic = input.topic
+                    const {topic} = input
                     if (topic && clientTopics.includes(topic)) {
                         const cin = cloneDeep(input)
                         delete cin.topic
@@ -414,7 +414,7 @@ class NotificationsService {
                 }
 
                 for (let output of tx.out) {
-                    const topic = output.topic
+                    const {topic} = output
                     if (topic && clientTopics.includes(topic)) {
                         const cout = cloneDeep(output)
                         delete cout.topic
