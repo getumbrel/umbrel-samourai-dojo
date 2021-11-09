@@ -93,22 +93,22 @@ const HD_TYPES_VECTORS = [
 ]
 
 
-describe('HdAccountsHelper', function () {
+describe('HdAccountsHelper', () => {
 
-    describe('isXpub()', function () {
-        it('should successfully detect a XPUB', function () {
+    describe('isXpub()', () => {
+        it('should successfully detect a XPUB', () => {
             assert(hdaHelper.isXpub(XPUB))
             assert(!hdaHelper.isXpub(YPUB))
             assert(!hdaHelper.isXpub(ZPUB))
         })
 
-        it('should successfully detect a YPUB', function () {
+        it('should successfully detect a YPUB', () => {
             assert(!hdaHelper.isYpub(XPUB))
             assert(hdaHelper.isYpub(YPUB))
             assert(!hdaHelper.isYpub(ZPUB))
         })
 
-        it('should successfully detect a ZPUB', function () {
+        it('should successfully detect a ZPUB', () => {
             assert(!hdaHelper.isZpub(XPUB))
             assert(!hdaHelper.isZpub(YPUB))
             assert(hdaHelper.isZpub(ZPUB))
@@ -116,23 +116,23 @@ describe('HdAccountsHelper', function () {
     })
 
 
-    describe('isValid()', function () {
-        it('should successfully validate a valid XPUB', function () {
+    describe('isValid()', () => {
+        it('should successfully validate a valid XPUB', () => {
             assert(hdaHelper.isValid(XPUB))
         })
 
-        it('should successfully validate a valid YPUB', function () {
+        it('should successfully validate a valid YPUB', () => {
             assert(hdaHelper.isValid(YPUB))
         })
 
-        it('should successfully validate a valid ZPUB', function () {
+        it('should successfully validate a valid ZPUB', () => {
             assert(hdaHelper.isValid(ZPUB))
         })
     })
 
 
-    describe('classify()', function () {
-        it('should successfully classify the code stored in db', function () {
+    describe('classify()', () => {
+        it('should successfully classify the code stored in db', () => {
             for (const v of HD_TYPES_VECTORS) {
                 const ret = hdaHelper.classify(v[0])
                 assert(ret.type === v[1])
@@ -142,8 +142,8 @@ describe('HdAccountsHelper', function () {
     })
 
 
-    describe('makeType()', function () {
-        it('should successfully compute the code stored in db', function () {
+    describe('makeType()', () => {
+        it('should successfully compute the code stored in db', () => {
             for (const v of HD_TYPES_VECTORS) {
                 const ret = hdaHelper.makeType(v[1], v[2])
                 assert(ret === v[0])
@@ -177,26 +177,26 @@ describe('HdAccountsHelper', function () {
         it('should successfully derive additional change address types for postmix account', async () => {
             const addresses = await hdaHelper.deriveAddresses(POSTMIX_ZPUB, 1, [0, 1, 2, 3, 4], hdaHelper.BIP84)
 
-            POSTMIX_VECTORS.forEach((vector) => {
+            for (const vector of POSTMIX_VECTORS) {
                 assert(addresses.find((addr) => addr.index === vector[1]))
                 assert(addresses.find((addr) => addr.address === vector[2]))
-            })
+            }
         })
     })
 
 
-    describe('xlatXPUB()', function () {
-        it('should successfully translate XPUB in YPUB', function () {
+    describe('xlatXPUB()', () => {
+        it('should successfully translate XPUB in YPUB', () => {
             const xpubXlated = hdaHelper.xlatXPUB(XPUB)
             assert(xpubXlated === XPUB)
         })
 
-        it('should successfully translate YPUB in XPUB', function () {
+        it('should successfully translate YPUB in XPUB', () => {
             const ypubXlated = hdaHelper.xlatXPUB(YPUB)
             assert(ypubXlated === XPUB)
         })
 
-        it('should successfully translate ZPUB in XPUB', function () {
+        it('should successfully translate ZPUB in XPUB', () => {
             const zpubXlated = hdaHelper.xlatXPUB(ZPUB)
             assert(zpubXlated === XPUB)
         })

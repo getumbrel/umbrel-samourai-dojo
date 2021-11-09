@@ -125,6 +125,7 @@ class BlockchainProcessor {
                         try {
                             const blockHash = await this.client.getblockhash({ height })
                             const header = await this.client.getblockheader({ blockhash: blockHash, verbose: true })
+                            // eslint-disable-next-line require-atomic-updates
                             previousBlockId = await this.processBlockHeader(header, previousBlockId)
                         } catch (error) {
                             Logger.error(error, 'Tracker : BlockchainProcessor.catchupIBDMode()')

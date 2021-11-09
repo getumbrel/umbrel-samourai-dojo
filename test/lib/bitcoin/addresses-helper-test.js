@@ -80,10 +80,10 @@ const VECTOR_5 = [
 ]
 
 
-describe('AddressesHelper', function () {
+describe('AddressesHelper', () => {
 
-    describe('p2pkhAddress()', function () {
-        it('should successfully derive P2PKH addresses from pubkeys', function () {
+    describe('p2pkhAddress()', () => {
+        it('should successfully derive P2PKH addresses from pubkeys', () => {
             for (const v of VECTOR_1) {
                 const pkb = Buffer.from(v[0], 'hex')
                 const addr = addrHelper.p2pkhAddress(pkb)
@@ -92,8 +92,8 @@ describe('AddressesHelper', function () {
         })
     })
 
-    describe('p2wpkhP2shAddress()', function () {
-        it('should successfully derive P2WPKH-P2SH addresses from pubkeys', function () {
+    describe('p2wpkhP2shAddress()', () => {
+        it('should successfully derive P2WPKH-P2SH addresses from pubkeys', () => {
             for (const v of VECTOR_1) {
                 const pkb = Buffer.from(v[0], 'hex')
                 const addr = addrHelper.p2wpkhP2shAddress(pkb)
@@ -102,8 +102,8 @@ describe('AddressesHelper', function () {
         })
     })
 
-    describe('p2wpkhAddress()', function () {
-        it('should successfully derive bech32 addresses from pubkeys', function () {
+    describe('p2wpkhAddress()', () => {
+        it('should successfully derive bech32 addresses from pubkeys', () => {
             for (const v of VECTOR_1) {
                 const pkb = Buffer.from(v[0], 'hex')
                 const addr = addrHelper.p2wpkhAddress(pkb)
@@ -112,32 +112,32 @@ describe('AddressesHelper', function () {
         })
     })
 
-    describe('isSupportedPubKey()', function () {
-        it('should successfully detect a compressed pubkey', function () {
+    describe('isSupportedPubKey()', () => {
+        it('should successfully detect a compressed pubkey', () => {
             for (const v of VECTOR_2) {
                 assert(addrHelper.isSupportedPubKey(v[0]) === v[1])
             }
         })
     })
 
-    describe('isBech32()', function () {
-        it('should successfully detect a bech32 address', function () {
+    describe('isBech32()', () => {
+        it('should successfully detect a bech32 address', () => {
             for (const v of VECTOR_3) {
                 assert(addrHelper.isBech32(v[0]) === v[1])
             }
         })
     })
 
-    describe('getScriptHashFromBech32()', function () {
-        it('should successfully extract the script hash from a bech32 address', function () {
+    describe('getScriptHashFromBech32()', () => {
+        it('should successfully extract the script hash from a bech32 address', () => {
             for (const v of VECTOR_4) {
                 assert(addrHelper.getScriptHashFromBech32(v[0]) === v[1])
             }
         })
     })
 
-    describe('verifySignature()', function () {
-        it('should successfully verify signatures', function () {
+    describe('verifySignature()', () => {
+        it('should successfully verify signatures', () => {
             const prefix = activeNet.messagePrefix
 
             for (const tc of VECTOR_5) {

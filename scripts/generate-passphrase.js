@@ -2,7 +2,7 @@
  * scripts/generate_passphrase.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
- 
+
 
 import bip39 from 'bip39'
 
@@ -13,8 +13,8 @@ import bip39 from 'bip39'
  */
 
 function run() {
-  const mnemonic = bip39.generateMnemonic()
-  console.log(`Generated passphrase = ${mnemonic}`)
+    const mnemonic = bip39.generateMnemonic()
+    console.log(`Generated passphrase = ${mnemonic}`)
 }
 
 
