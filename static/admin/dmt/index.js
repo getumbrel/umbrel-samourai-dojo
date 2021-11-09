@@ -60,7 +60,7 @@ function initPages() {
     let lblVersion = sessionStorage.getItem('lblVersion')
     if (lblVersion == null) {
         lib_api.getPairingInfo().then(apiInfo => {
-            lblVersion = `v${apiInfo.pairing.version} beta`
+            lblVersion = `v${apiInfo.pairing.version}`
             sessionStorage.setItem('lblVersion', lblVersion)
             document.querySelector('#dojo-version').textContent = lblVersion
         })
