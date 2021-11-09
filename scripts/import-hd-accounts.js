@@ -16,22 +16,22 @@ import apiHelper from '../accounts/api-helper.js'
  */
 
 async function run(strEntities) {
-  const entities = apiHelper.parseEntities(strEntities)
+    const entities = apiHelper.parseEntities(strEntities)
 
-  if (entities.xpubs.length > 0) {
-    for (let i = 0; i < entities.xpubs.length; i++) {
-      const xpub = entities.xpubs[i]
+    if (entities.xpubs.length > 0) {
+        for (let i = 0; i < entities.xpubs.length; i++) {
+            const xpub = entities.xpubs[i]
 
-      let scheme = hdaHelper.BIP44
+            let scheme = hdaHelper.BIP44
 
-      if (entities.ypubs[i])
-        scheme = hdaHelper.BIP49
-      else if (entities.zpubs[i])
-        scheme = hdaHelper.BIP84
+            if (entities.ypubs[i])
+                scheme = hdaHelper.BIP49
+            else if (entities.zpubs[i])
+                scheme = hdaHelper.BIP84
 
-      await hdaService.createHdAccount(xpub, scheme)
+            await hdaService.createHdAccount(xpub, scheme)
+        }
     }
-  }
 }
 
 
@@ -41,16 +41,16 @@ async function run(strEntities) {
 
 // Retrieves command line arguments
 if (process.argv.length < 3) {
-  Logger.error(null, 'Missing arguments. Command = import-hd-accounts.js <xpub1>|<ypub1>|<zpub1>|...')
-  return
+    Logger.error(null, 'Missing arguments. Command = import-hd-accounts.js <xpub1>|<ypub1>|<zpub1>|...')
+    process.exit(1)
 }
 
 Logger.info('Start processing')
 
 const entities = process.argv[2]
 
-const startupTimeout = setTimeout(async function() {
-  return run(entities).then(() => {
-    Logger.info('Process completed')
-  })
+setTimeout(async () => {
+    return run(entities).then(() => {
+        Logger.info('Process completed')
+    })
 }, 1500)

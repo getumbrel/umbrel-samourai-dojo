@@ -1,144 +1,160 @@
 const screenAddressesToolsScript = {
 
-  explorerInfo: null,
-  currentAddress: null,
+    explorerInfo: null,
+    currentAddress: null,
 
-  initPage: function() {
-    this.getExplorerInfo()
-    // Sets the event handlers
-    $('#btn-address-search-go').click(() => {this.searchAddress()})
-    $('#btn-address-details-reset').click(() => {this.showSearchForm()})
-    $('#btn-address-details-rescan').click(() => {this.showRescanForm()})
-    $('#btn-address-rescan-go').click(() => {this.rescanAddress()})
-    $('#btn-address-rescan-cancel').click(() => {this.hideRescanForm()})
-    $('#btn-address-import-go').click(() => {this.importAddress()})
-    $('#btn-address-import-cancel').click(() => {this.showSearchForm()})
-    $('#addresses-tool').keyup(evt => {
-      if (evt.keyCode === 13) {
-        this.searchAddress()
-      }
-    })
-  },
-
-  preparePage: function() {
-    this.hideRescanForm()
-    this.showSearchForm()
-    $("#address").focus()
-  },
-
-  getExplorerInfo: function() {
-    lib_api.getExplorerPairingInfo().then(explorerInfo => {
-      this.explorerInfo = explorerInfo
-    }).catch(e => {
-      lib_errors.processError(e)
-    })
-  },
-
-  searchAddress: function() {
-    lib_msg.displayMessage('Search in progress...');
-    const address = $('#address').val()
-    this.currentAddress = address
-    return this._searchAddress(address).then(() => {
-      lib_msg.cleanMessagesUi()
-    })
-  },
-
-  _searchAddress: function(address) {
-    return lib_api.getAddressInfo(address).then(addressInfo => {
-      if (addressInfo && addressInfo['tracked']) {
-        this.setAddressDetails(addressInfo)
-        this.showAddressDetails()
-        const jsonData = {'active': address}
-        return lib_api.getWallet(jsonData).then(walletInfo => {
-          // Display the txs
-          const txs = walletInfo['txs']
-          for (let tx of txs)
-            this.setTxDetails(tx)
-          // Display the UTXOs
-          const utxos = walletInfo['unspent_outputs'].sort((a,b) => {
-            return a['confirmations'] - b['confirmations']
-          })
-          $('#addr-nb-utxos').text(utxos.length)
-          for (let utxo of utxos)
-            this.setUtxoDetails(utxo)
+    initPage: () => {
+        screenAddressesToolsScript.getExplorerInfo()
+        // Sets the event handlers
+        document.querySelector('#btn-address-search-go').addEventListener('click', () => {
+            screenAddressesToolsScript.searchAddress()
         })
-      } else {
-        lib_msg.displayErrors('address not found')
-        this.showImportForm(false)
-      }
-    }).catch(e => {
-      lib_errors.processError(e)
-      throw e
-    })
-  },
-
-  importAddress: function() {
-    lib_msg.displayMessage('Processing address import. Please wait...');
-    const jsonData = {'active': this.currentAddress}
-    return lib_api.getWallet(jsonData)
-      .then(result => {
-        this._searchAddress(this.currentAddress).then(() => {
-          lib_msg.displayInfo('Import complete')
+        document.querySelector('#btn-address-details-reset').addEventListener('click', () => {
+            screenAddressesToolsScript.showSearchForm()
         })
-      }).catch(e => {
-        lib_errors.processError(e)
-      })
-  },
-
-  rescanAddress: function() {
-    lib_msg.displayMessage('Processing address rescan. Please wait...');
-    return lib_api.getAddressRescan(this.currentAddress)
-      .then(result => {
-        this.hideRescanForm()
-        this._searchAddress(this.currentAddress).then(() => {
-          lib_msg.displayInfo('Rescan complete')
+        document.querySelector('#btn-address-details-rescan').addEventListener('click', () => {
+            screenAddressesToolsScript.showRescanForm()
         })
-      }).catch(e => {
-        lib_errors.processError(e)
-      })
-  },
+        document.querySelector('#btn-address-rescan-go').addEventListener('click', () => {
+            screenAddressesToolsScript.rescanAddress()
+        })
+        document.querySelector('#btn-address-rescan-cancel').addEventListener('click', () => {
+            screenAddressesToolsScript.hideRescanForm()
+        })
+        document.querySelector('#btn-address-import-go').addEventListener('click', () => {
+            screenAddressesToolsScript.importAddress()
+        })
+        document.querySelector('#btn-address-import-cancel').addEventListener('click', () => {
+            screenAddressesToolsScript.showSearchForm()
+        })
+        document.querySelector('#addresses-tool').addEventListener('keyup', (evt) => {
+            if (evt.key === 'Enter') {
+                screenAddressesToolsScript.searchAddress()
+            }
+        })
+    },
 
-  setAddressDetails: function(addressInfo) {
-    $('tr.tx-row').remove()
-    $('tr.utxo-row').remove()
+    preparePage: () => {
+        screenAddressesToolsScript.hideRescanForm()
+        screenAddressesToolsScript.showSearchForm()
+        document.querySelector('#address').focus()
+    },
 
-    $('#addr-value').text(this.currentAddress)
-    $('#addr-nb-txs').text(addressInfo['n_tx'])
-    $('#addr-nb-utxos').text('-')
+    getExplorerInfo: () => {
+        lib_api.getExplorerPairingInfo().then(explorerInfo => {
+            screenAddressesToolsScript.explorerInfo = explorerInfo
+        }).catch(error => {
+            lib_errors.processError(error)
+        })
+    },
 
-    const balance = parseInt(addressInfo['balance']) / 100000000
-    $('#addr-balance').text(`${balance} BTC`)
+    searchAddress: () => {
+        lib_msg.displayMessage('Search in progress...')
+        const address = document.querySelector('#address').value
+        screenAddressesToolsScript.currentAddress = address
+        return screenAddressesToolsScript._searchAddress(address).then(() => {
+            lib_msg.cleanMessagesUi()
+        })
+    },
 
-    const addrType = (addressInfo['type'] == 'hd') ? 'Derived from an XPUB' : 'Loose address'
-    $('#addr-type').text(addrType)
+    _searchAddress: (address) => lib_api.getAddressInfo(address).then(addressInfo => {
+        if (addressInfo && addressInfo.tracked) {
+            screenAddressesToolsScript.setAddressDetails(addressInfo)
+            screenAddressesToolsScript.showAddressDetails()
+            const jsonData = { 'active': address }
+            return lib_api.getWallet(jsonData).then(walletInfo => {
+                // Display the txs
+                const { txs, unspent_outputs } = walletInfo
+                for (let tx of txs)
+                    screenAddressesToolsScript.setTxDetails(tx)
+                // Display the UTXOs
+                const utxos = unspent_outputs.sort((a, b) => {
+                    return a.confirmations - b.confirmations
+                })
+                document.querySelector('#addr-nb-utxos').textContent = utxos.length
+                for (let utxo of utxos)
+                    screenAddressesToolsScript.setUtxoDetails(utxo)
+            })
+        } else {
+            lib_msg.displayErrors('address not found')
+            screenAddressesToolsScript.showImportForm(false)
+        }
+    }).catch(error => {
+        lib_errors.processError(error)
+        throw error
+    }),
 
-    if (addressInfo['segwit']) {
-      $('#addr-segwit').html('&#10003;')
-      $('#addr-segwit').css('color', '#76d776')
-    } else {
-      $('#addr-segwit').text('-')
-      $('#addr-segwit').css('color', '#f77c7c')
-    }
+    importAddress: () => {
+        lib_msg.displayMessage('Processing address import. Please wait...')
+        const jsonData = { 'active': screenAddressesToolsScript.currentAddress }
+        return lib_api.getWallet(jsonData)
+            .then(() => {
+                screenAddressesToolsScript._searchAddress(screenAddressesToolsScript.currentAddress).then(() => {
+                    lib_msg.displayInfo('Import complete')
+                })
+            }).catch(error => {
+                lib_errors.processError(error)
+            })
+    },
 
-    if (addressInfo['type'] == 'hd') {
-      $('#addr-xpub').text(addressInfo['xpub'])
-      $('#addr-deriv-path').text(addressInfo['path'])
-      $('#addresses-tool-details-row2').show()
-    } else {
-      $('#addresses-tool-details-row2').hide()
-    }
-  },
+    rescanAddress: () => {
+        lib_msg.displayMessage('Processing address rescan. Please wait...')
+        return lib_api.getAddressRescan(screenAddressesToolsScript.currentAddress)
+            .then(() => {
+                screenAddressesToolsScript.hideRescanForm()
+                screenAddressesToolsScript._searchAddress(screenAddressesToolsScript.currentAddress).then(() => {
+                    lib_msg.displayInfo('Rescan complete')
+                })
+            }).catch(error => {
+                lib_errors.processError(error)
+            })
+    },
 
-  setTxDetails: function(tx) {
-    const txid = tx['hash']
-    const txidDisplay = `${txid.substring(0,50)}...`
-    const amount = parseInt(tx['result']) / 100000000
-    const amountLabel = amount < 0 ? amount : `+${amount}`
-    const amountStyle = amount < 0 ? 'amount-sent' : 'amount-received'
-    const date = lib_fmt.unixTsToLocaleString(tx['time'])
-    const txUrl = lib_cmn.getExplorerTxUrl(txid, this.explorerInfo)
+    setAddressDetails: addressInfo => {
+        for (const elem of document.querySelectorAll('tr.tx-row')) {
+            elem.remove()
+        }
+        for (const elem of document.querySelectorAll('tr.utxo-row')) {
+            elem.remove()
+        }
 
-    const newRow = `<tr class="tx-row"><td colspan="2">&nbsp;</td></tr>
+        document.querySelector('#addr-value').textContent = screenAddressesToolsScript.currentAddress
+        document.querySelector('#addr-nb-txs').textContent = addressInfo.n_tx
+        document.querySelector('#addr-nb-utxos').textContent = '-'
+
+        const balance = Number.parseInt(addressInfo.balance, 10) / 100000000
+        document.querySelector('#addr-balance').textContent = `${balance} BTC`
+
+        const addrType = (addressInfo.type === 'hd') ? 'Derived from an XPUB' : 'Loose address'
+        document.querySelector('#addr-type').textContent = addrType
+
+        if (addressInfo.segwit) {
+            document.querySelector('#addr-segwit').innerHTML = '&#10003;'
+            document.querySelector('#addr-segwit').style.color = '#76d776'
+        } else {
+            document.querySelector('#addr-segwit').textContent = '-'
+            document.querySelector('#addr-segwit').style.color = '#f77c7c'
+        }
+
+        if (addressInfo.type === 'hd') {
+            document.querySelector('#addr-xpub').textContent = addressInfo.xpub
+            document.querySelector('#addr-deriv-path').textContent = addressInfo.path
+            document.querySelector('#addresses-tool-details-row2').removeAttribute('hidden')
+        } else {
+            document.querySelector('#addresses-tool-details-row2').setAttribute('hidden', '')
+        }
+    },
+
+    setTxDetails: (tx) => {
+        const txid = tx.hash
+        const txidDisplay = `${txid.slice(0, 50)}...`
+        const amount = Number.parseInt(tx.result, 10) / 100000000
+        const amountLabel = amount < 0 ? amount : `+${amount}`
+        const amountStyle = amount < 0 ? 'amount-sent' : 'amount-received'
+        const date = lib_fmt.unixTsToLocaleString(tx.time)
+        const txUrl = lib_cmn.getExplorerTxUrl(txid, screenAddressesToolsScript.explorerInfo)
+
+        const newRow = `<tr class="tx-row"><td colspan="2">&nbsp;</td></tr>
       <tr class="tx-row">
         <td class="table-label" colspan="2">
           <a href="${txUrl}" target="_blank">${txidDisplay}</a>
@@ -150,23 +166,23 @@ const screenAddressesToolsScript = {
       </tr>
       <tr class="tx-row">
         <td class="table-label">Block height</td>
-        <td class="table-value">${tx['block_height']}</td>
+        <td class="table-value">${tx.block_height}</td>
       </tr>
       <tr class="tx-row">
         <td class="table-label">Date</td>
         <td class="table-value">${date}</td>
       </tr>`
 
-    $('#addr-table-list-txs tr:last').after(newRow)
-  },
+        document.querySelector('#addr-table-list-txs tr:last-child').insertAdjacentHTML('afterend', newRow)
+    },
 
-  setUtxoDetails: function(utxo) {
-    const txid = utxo['tx_hash']
-    const txidVout = `${txid.substring(0,50)}...:${utxo['tx_output_n']}`
-    const amount = parseInt(utxo['value']) / 100000000
-    const txUrl = lib_cmn.getExplorerTxUrl(txid, this.explorerInfo)
+    setUtxoDetails: utxo => {
+        const txid = utxo.tx_hash
+        const txidVout = `${txid.slice(0, 50)}...:${utxo.tx_output_n}`
+        const amount = Number.parseInt(utxo.value, 10) / 100000000
+        const txUrl = lib_cmn.getExplorerTxUrl(txid, screenAddressesToolsScript.explorerInfo)
 
-    const newRow = `<tr class="utxo-row"><td colspan="2">&nbsp;</td></tr>
+        const newRow = `<tr class="utxo-row"><td colspan="2">&nbsp;</td></tr>
       <tr class="utxo-row">
         <td class="table-label" colspan="2">
           <a href="${txUrl}" target="_blank">${txidVout}</a>
@@ -178,47 +194,47 @@ const screenAddressesToolsScript = {
       </tr>
       <tr class="utxo-row">
         <td class="table-label">Address</td>
-        <td class="table-value">${utxo['addr']}</td>
+        <td class="table-value">${utxo.addr}</td>
       </tr>
       <tr class="utxo-row">
         <td class="table-label">Confirmations</td>
-        <td class="table-value">${utxo['confirmations']}</td>
+        <td class="table-value">${utxo.confirmations}</td>
       </tr>`
 
-    $('#addr-table-list-utxos tr:last').after(newRow)
-  },
+        document.querySelector('#addr-table-list-utxos tr:last-child').insertAdjacentHTML('afterend', newRow)
+    },
 
-  showSearchForm: function() {
-    $('#addresses-tool-details').hide()
-    $('#addresses-tool-import').hide()
-    $('#address').val('')
-    $('#addresses-tool-search-form').show()
-    lib_msg.cleanMessagesUi()
-  },
+    showSearchForm: () => {
+        document.querySelector('#addresses-tool-details').setAttribute('hidden', '')
+        document.querySelector('#addresses-tool-import').setAttribute('hidden', '')
+        document.querySelector('#address').value = ''
+        document.querySelector('#addresses-tool-search-form').removeAttribute('hidden')
+        lib_msg.cleanMessagesUi()
+    },
 
-  showImportForm: function() {
-    $('#addresses-tool-search-form').hide()
-    $('#addresses-tool-details').hide()
-    $('#import-address').text(this.currentAddress)
-    $('#addresses-tool-import').show()
-  },
+    showImportForm: () => {
+        document.querySelector('#addresses-tool-search-form').setAttribute('hidden', '')
+        document.querySelector('#addresses-tool-details').setAttribute('hidden', '')
+        document.querySelector('#import-address').textContent = screenAddressesToolsScript.currentAddress
+        document.querySelector('#addresses-tool-import').removeAttribute('hidden')
+    },
 
-  showAddressDetails: function() {
-    $('#addresses-tool-search-form').hide()
-    $('#addresses-tool-import').hide()
-    $('#addresses-tool-details').show()
-  },
+    showAddressDetails: () => {
+        document.querySelector('#addresses-tool-search-form').setAttribute('hidden', '')
+        document.querySelector('#addresses-tool-import').setAttribute('hidden', '')
+        document.querySelector('#addresses-tool-details').removeAttribute('hidden')
+    },
 
-  showRescanForm: function() {
-    $('#addresses-tool-actions').hide()
-    $('#addresses-rescans-actions').show()
-    lib_msg.cleanMessagesUi()
-  },
+    showRescanForm: () => {
+        document.querySelector('#addresses-tool-actions').setAttribute('hidden', '')
+        document.querySelector('#addresses-rescans-actions').removeAttribute('hidden')
+        lib_msg.cleanMessagesUi()
+    },
 
-  hideRescanForm: function() {
-    $('#addresses-rescans-actions').hide()
-    $('#addresses-tool-actions').show()
-  },
+    hideRescanForm: () => {
+        document.querySelector('#addresses-rescans-actions').setAttribute('hidden', '')
+        document.querySelector('#addresses-tool-actions').removeAttribute('hidden')
+    },
 }
 
 screenScripts.set('#screen-addresses-tools', screenAddressesToolsScript)

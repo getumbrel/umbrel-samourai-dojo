@@ -1,63 +1,71 @@
 const screenPairingScript = {
 
-  initPage: function() {},
+    initPage: () => {},
 
-  preparePage: function() {
-    this.displayQRPairing()
-  },
+    preparePage: () => {
+        screenPairingScript.displayQRPairing()
+    },
 
-  loadPairingPayloads: function() {
-    let result = {
-      'api': null,
-      'explorer': null
-    }
-
-    lib_msg.displayMessage('Loading pairing payloads...');
-
-    return lib_api.getPairingInfo().then(apiInfo => {
-      if (apiInfo) {
-        apiInfo['pairing']['url'] = window.location.protocol + '//' + window.location.host + conf['api']['baseUri']
-        result['api'] = apiInfo
-      }
-    }).then(() => {
-      return lib_api.getExplorerPairingInfo()
-    }).then(explorerInfo => {
-      if (explorerInfo)
-        result['explorer'] = explorerInfo
-      lib_msg.cleanMessagesUi()
-      return result
-    }).catch(e => {
-      lib_errors.processError(e)
-      return result
-    })
-  },
-
-  displayQRPairing: function() {
-    this.loadPairingPayloads().then(
-      function (result) {
-        if (result) {
-          if (result['api']) {
-            const textJson = JSON.stringify(result['api'], null, 4)
-            $("#qr-pairing").html('') // clear qrcode first
-            $('#qr-pairing').qrcode({width: 256, height: 256, text: textJson})
-          }
-          if (result['explorer'] && result['explorer']['pairing']['url']) {
-            const textJson = JSON.stringify(result['explorer'], null, 4)
-            $("#qr-explorer-pairing").html('') // clear qrcode first
-            $('#qr-explorer-pairing').qrcode({width: 256, height: 256, text: textJson})
-          } else {
-            $("#qr-label").removeClass('halfwidth')
-            $("#qr-label").addClass('fullwidth')
-            $("#qr-container").removeClass('halfwidth')
-            $("#qr-container").addClass('fullwidth')
-            $("#qr-explorer-label").hide()
-            $("#qr-explorer-container").hide()
-          }
+    loadPairingPayloads: () => {
+        let result = {
+            'api': null,
+            'explorer': null
         }
-      },
-      function (jqxhr) {}
-    );
-  }
+
+        lib_msg.displayMessage('Loading pairing payloads...')
+
+        return Promise.allSettled([lib_api.getPairingInfo(), lib_api.getExplorerPairingInfo()])
+            .then(([apiInfo, explorerInfo]) => {
+                if (apiInfo.status === 'fulfilled') {
+                    result.api = apiInfo.value
+                    result.api.pairing.url = `${window.location.protocol}//${window.location.host}${conf.api.baseUri}`
+                }
+
+                if (explorerInfo.status === 'fulfilled') {
+                    result.explorer = explorerInfo.value
+                }
+
+                lib_msg.cleanMessagesUi()
+                return result
+            })
+            .catch((error) => {
+                lib_errors.processError(error)
+                return result
+            })
+    },
+
+    displayQRPairing: () => {
+        screenPairingScript.loadPairingPayloads().then(
+            (result) => {
+                if (result) {
+                    if (result.api) {
+                        const textJson = JSON.stringify(result.api, null, 4)
+                        document.querySelector('#qr-pairing').innerHTML = '' // clear qrcode first
+                        document.querySelector('#dojo-pairing-payload').value = textJson
+
+                        const pairingQrcode = new QRCode({ content: textJson, join: true, height: 256, width: 256 }).svg()
+                        document.querySelector('#qr-pairing').innerHTML = pairingQrcode
+                    }
+                    if (result.explorer && result.explorer.pairing.url) {
+                        const textJson = JSON.stringify(result.explorer, null, 4)
+                        document.querySelector('#qr-explorer-pairing').innerHTML = '' // clear qrcode first
+                        document.querySelector('#explorer-pairing-payload').value = textJson
+
+                        const pairingExplorerQrcode = new QRCode({ content: textJson, join: true, height: 256, width: 256 }).svg()
+
+                        document.querySelector('#qr-explorer-pairing').innerHTML = pairingExplorerQrcode
+                    } else {
+                        document.querySelector('#qr-label').classList.remove('halfwidth')
+                        document.querySelector('#qr-label').classList.add('fullwidth')
+                        document.querySelector('#qr-container').classList.remove('halfwidth')
+                        document.querySelector('#qr-container').classList.add('fullwidth')
+                        document.querySelector('#qr-explorer-label').setAttribute('hidden', '')
+                        document.querySelector('#qr-explorer-container').setAttribute('hidden', '')
+                    }
+                }
+            }
+        )
+    }
 
 }
 

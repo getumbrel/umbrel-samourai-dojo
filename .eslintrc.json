@@ -1,7 +1,6 @@
 {
   "env": {
     "node": true,
-    "browser": true,
     "es2021": true,
     "mocha": true
   },
@@ -14,6 +13,7 @@
     "plugin:import/recommended",
     "plugin:unicorn/recommended"
   ],
+  "ignorePatterns": ["*.min.js"],
   "parserOptions": {
     "ecmaVersion": 13,
     "sourceType": "module"
@@ -74,7 +74,6 @@
     "no-useless-constructor": "error",
     "no-useless-return": "error",
     "prefer-arrow-callback": "warn",
-    "prefer-destructuring": "warn",
     "prefer-template": "warn",
 
     "import/no-self-import": "error",
@@ -99,5 +98,22 @@
     "unicorn/numeric-separators-style": "off",
     "unicorn/require-post-message-target-origin": "off",
     "unicorn/no-array-reduce": "off"
-  }
+  },
+  "overrides": [{
+    "env": {
+      "browser": true
+    },
+    "files": ["./static/**/*.js"],
+    "globals": {
+      "QRCode": "readonly",
+      "conf": "readonly",
+      "screenScripts": "readonly",
+      "lib_msg": "readonly",
+      "lib_auth": "readonly",
+      "lib_cmn": "readonly",
+      "lib_api": "readonly",
+      "lib_fmt": "readonly",
+      "lib_errors": "readonly"
+    }
+  }]
 }

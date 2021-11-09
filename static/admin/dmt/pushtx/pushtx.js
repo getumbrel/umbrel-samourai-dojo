@@ -1,87 +1,91 @@
 const pushtxScript = {
 
-  processedSchedTxs: new Set(),
+    processedSchedTxs: new Set(),
 
-  initPage: function() {
-    // Refresh PushTx status
-    setInterval(() => {this.refreshPushTxStatus()}, 60000)
-    // Refresh ScheduledTxs list
-    setInterval(() => {this.refreshScheduledTxsList()}, 60000)
-  },
+    initPage: () => {
+        // Refresh PushTx status
+        setInterval(() => {
+            pushtxScript.refreshPushTxStatus()
+        }, 60000)
+        // Refresh ScheduledTxs list
+        setInterval(() => {
+            pushtxScript.refreshScheduledTxsList()
+        }, 60000)
+    },
 
-  preparePage: function() {
-    this.refreshPushTxStatus()
-    this.refreshScheduledTxsList()
-  },
+    preparePage: () => {
+        pushtxScript.refreshPushTxStatus()
+        pushtxScript.refreshScheduledTxsList()
+    },
 
-  refreshPushTxStatus: function() {
-    //lib_msg.displayMessage('Loading PushTx status info...');
-    lib_api.getPushtxStatus().then(pushTxStatus => {
-      if (pushTxStatus) {
-        const data = pushTxStatus['data']
-        const uptime = lib_cmn.timePeriod(data['uptime'])
-        $('#pushed-uptime').text(uptime)
-        $('#pushed-count').text(data['push']['count'])
-        $('#pushed-amount').text(data['push']['amount'])
-        //lib_msg.cleanMessagesUi()
-      }
-    }).catch(e => {
-      $('#pushed-uptime').text('-')
-      $('#pushed-count').text('-')
-      $('#pushed-amount').text('-')
-      lib_errors.processError(e)
-    })
-  },
+    refreshPushTxStatus: () => {
+        //lib_msg.displayMessage('Loading PushTx status info...');
+        lib_api.getPushtxStatus().then(pushTxStatus => {
+            if (pushTxStatus) {
+                const {data} = pushTxStatus
+                const uptime = lib_cmn.timePeriod(data.uptime)
+                document.querySelector('#pushed-uptime').textContent = uptime
+                document.querySelector('#pushed-count').textContent = data.push.count
+                document.querySelector('#pushed-amount').textContent = data.push.amount
+                //lib_msg.cleanMessagesUi()
+            }
+        }).catch(error => {
+            document.querySelector('#pushed-uptime').textContent = '-'
+            document.querySelector('#pushed-count').textContent = '-'
+            document.querySelector('#pushed-amount').textContent = '-'
+            lib_errors.processError(error)
+        })
+    },
 
-  refreshScheduledTxsList: function() {
-    //lib_msg.displayMessage('Loading PushTx orchestrator status info...');
-    lib_api.getOrchestratorStatus().then(orchestrStatus => {
-      if(orchestrStatus) {
-        const data = orchestrStatus['data']
-        for (let tx of data['txs']) {
-          if (!this.processedSchedTxs.has(tx['schTxid'])) {
-            this.displayScheduledTx(tx)
-            this.processedSchedTxs.add(tx['schTxid'])
-          }
-        }
-        //lib_msg.cleanMessagesUi()
-      }
-    }).catch(e => {
-      lib_errors.processError(e)
-    })
-  },
+    refreshScheduledTxsList: () => {
+        //lib_msg.displayMessage('Loading PushTx orchestrator status info...');
+        lib_api.getOrchestratorStatus().then(orchestrStatus => {
+            if (orchestrStatus) {
+                const {data} = orchestrStatus
+                for (let tx of data.txs) {
+                    if (!pushtxScript.processedSchedTxs.has(tx.schTxid)) {
+                        pushtxScript.displayScheduledTx(tx)
+                        pushtxScript.processedSchedTxs.add(tx.schTxid)
+                    }
+                }
+                //lib_msg.cleanMessagesUi()
+            }
+        }).catch(error => {
+            lib_errors.processError(error)
+        })
+    },
 
-  displayScheduledTx: function(tx) {
-    const newRow = `<tr><td colspan="2">&nbsp;</td></tr>
+    displayScheduledTx: (tx) => {
+        const newRow = `<tr><td colspan="2">&nbsp;</td></tr>
       <tr class="table-value">
         <td class="table-label">TXID</td>
-        <td class="table-value" id="scheduled-txid">${tx['schTxid']}</td>
+        <td class="table-value" id="scheduled-txid">${tx.schTxid}</td>
       </tr>
       <tr class="table-value">
         <td class="table-label">Schedule Id</td>
-        <td class="table-value" id="scheduled-txid">${tx['schID']}</td>
+        <td class="table-value" id="scheduled-txid">${tx.schID}</td>
       </tr>
       <tr class="table-value">
         <td class="table-label">Scheduled for block</td>
-        <td class="table-value" id="scheduled-trigger">${tx['schTrigger']}</td>
+        <td class="table-value" id="scheduled-trigger">${tx.schTrigger}</td>
       </tr>
       <tr class="table-value">
         <td class="table-label">Created on</td>
-        <td class="table-value" id="scheduled-created">${lib_fmt.unixTsToLocaleString(tx['schCreated'])}</td>
+        <td class="table-value" id="scheduled-created">${lib_fmt.unixTsToLocaleString(tx.schCreated)}</td>
       </tr>
       <tr class="table-value">
         <td class="table-label">Parent TXID</td>
-        <td class="table-value" id="scheduled-parent-txid">${tx['schParentTxid']}</td>
+        <td class="table-value" id="scheduled-parent-txid">${tx.schParentTxid}</td>
       </tr>
       <tr class="table-value">
         <td class="table-label">Raw Transaction</td>
         <td class="table-value" id="scheduled-tx">
-          <pre class="raw-tx">${tx['schRaw']}</pre>
+          <pre class="raw-tx">${tx.schRaw}</pre>
         </td>
       </tr>`
 
-    $('#table-scheduled-txs tr:last').after(newRow)
-  },
+        document.querySelector('#table-scheduled-txs tr:last-child').insertAdjacentHTML('afterend', newRow)
+    },
 
 }
 

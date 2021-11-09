@@ -15,11 +15,11 @@ network.network = bitcoin.networks.testnet
 /**
  * Force testnet for all the unit tests
  */
-describe('InitTest', function () {
+describe('InitTest', () => {
 
-    describe('initTests()', function () {
+    describe('initTests()', () => {
 
-        it('should successfully initialize testnet', function () {
+        it('should successfully initialize testnet', () => {
             assert(true)
         })
 
