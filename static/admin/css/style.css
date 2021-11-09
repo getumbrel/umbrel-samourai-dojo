@@ -40,6 +40,14 @@ a:hover {
 	color: #2196f3;
 }
 
+.payload-textarea {
+  width: 100%;
+  resize: none;
+  background: #1a1d1f;
+  border: 1px solid #bfbfbf;
+  padding: 4px;
+}
+
 .row {
   margin-left: 0;
   margin-right: 0;

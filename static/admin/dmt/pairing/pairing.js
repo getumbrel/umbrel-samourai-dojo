@@ -41,6 +41,7 @@ const screenPairingScript = {
                     if (result.api) {
                         const textJson = JSON.stringify(result.api, null, 4)
                         document.querySelector('#qr-pairing').innerHTML = '' // clear qrcode first
+                        document.querySelector('#dojo-pairing-payload').value = textJson
 
                         const pairingQrcode = new QRCode({ content: textJson, join: true, height: 256, width: 256 }).svg()
                         document.querySelector('#qr-pairing').innerHTML = pairingQrcode
@@ -48,6 +49,7 @@ const screenPairingScript = {
                     if (result.explorer && result.explorer.pairing.url) {
                         const textJson = JSON.stringify(result.explorer, null, 4)
                         document.querySelector('#qr-explorer-pairing').innerHTML = '' // clear qrcode first
+                        document.querySelector('#explorer-pairing-payload').value = textJson
 
                         const pairingExplorerQrcode = new QRCode({ content: textJson, join: true, height: 256, width: 256 }).svg()
 
