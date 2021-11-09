@@ -1,32 +1,33 @@
+// eslint-disable-next-line no-unused-vars
 const lib_msg = {
 
-  // UI functions
-  addTextinID: function(text, id){
-    $(id).html(text.toUpperCase())
-  },
+    // UI functions
+    addTextinID: (text, id) => {
+        document.querySelector(id).innerHTML = text.toUpperCase()
+    },
 
-  displayMessage: function(text){
-    this.addTextinID('', '#errors')
-    this.addTextinID('', '#info')
-    this.addTextinID(text, '#msg')
-  },
+    displayMessage: (text = '') => {
+        lib_msg.addTextinID('', '#errors')
+        lib_msg.addTextinID('', '#info')
+        lib_msg.addTextinID(text, '#msg')
+    },
 
-  displayErrors: function(text){
-    this.addTextinID('', '#msg')
-    this.addTextinID('', '#info')
-    this.addTextinID(text, '#errors')
-  },
+    displayErrors: (text = '') => {
+        lib_msg.addTextinID('', '#msg')
+        lib_msg.addTextinID('', '#info')
+        lib_msg.addTextinID(text, '#errors')
+    },
 
-  displayInfo: function(text){
-    this.addTextinID('', '#msg')
-    this.addTextinID('', '#errors')
-    this.addTextinID(text, '#info')
-  },
+    displayInfo: (text = '') => {
+        lib_msg.addTextinID('', '#msg')
+        lib_msg.addTextinID('', '#errors')
+        lib_msg.addTextinID(text, '#info')
+    },
 
-  cleanMessagesUi: function() {
-    this.addTextinID('', '#msg')
-    this.addTextinID('', '#errors')
-    this.addTextinID('', '#info')
-  }
+    cleanMessagesUi: () => {
+        lib_msg.addTextinID('', '#msg')
+        lib_msg.addTextinID('', '#errors')
+        lib_msg.addTextinID('', '#info')
+    }
 
 }

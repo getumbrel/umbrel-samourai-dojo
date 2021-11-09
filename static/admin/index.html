@@ -8,14 +8,13 @@
   <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="css/bootstrap-theme.min.css">
   <link rel="stylesheet" type="text/css" href="css/style.css">
-  <script src="lib/jquery-3.5.1.min.js"></script>
-  <script src="conf/index.js"></script>
-  <script src="lib/common-script.js"></script>
-  <script src="lib/api-wrapper.js"></script>
-  <script src="lib/auth-utils.js"></script>
-  <script src="lib/messages.js"></script>
-  <script src="lib/errors-utils.js"></script>
-  <script src="index.js"></script>
+  <script src="conf/index.js" defer></script>
+  <script src="lib/common-script.js" defer></script>
+  <script src="lib/api-wrapper.js" defer></script>
+  <script src="lib/auth-utils.js" defer></script>
+  <script src="lib/messages.js" defer></script>
+  <script src="lib/errors-utils.js" defer></script>
+  <script src="index.js" defer></script>
 </head>
 
 <body class="home">
@@ -44,7 +43,7 @@
   </div>
   <!-- MSG BOX -->
   <div id="box-msg"
-    include-html="dmt/msg-box/msg-box.html">
+    data-include-html="dmt/msg-box/msg-box.html">
   </div>
 </body>
 

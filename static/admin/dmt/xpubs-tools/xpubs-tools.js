@@ -1,240 +1,270 @@
 const screenXpubsToolsScript = {
 
-  explorerInfo: null,
-  currentXpub: null,
-  isReimport: false,
-  rescanStatusTimerId: null,
+    explorerInfo: null,
+    currentXpub: null,
+    isReimport: false,
+    rescanStatusTimerId: null,
 
-  initPage: function() {
-    this.getExplorerInfo()
-    // Sets the event handlers
-    $('#btn-xpub-search-go').click(() => {this.searchXpub()})
-    $('#btn-xpub-details-reset').click(() => {this.showSearchForm()})
-    $('#btn-xpub-details-rescan').click(() => {this.showRescanForm()})
-    $('#btn-xpub-details-delete').click(() => {this.showDeletionForm()})
-    $('#btn-xpub-details-export').click(() => {this.showExportForm()})
-    $('#btn-xpub-rescan-go').click(() => {this.rescanXpub()})
-    $('#btn-xpub-rescan-cancel').click(() => {this.hideRescanForm()})
-    $('#btn-xpub-delete-go').click(() => {this.deleteXpub()})
-    $('#btn-xpub-delete-cancel').click(() => {this.hideDeletionForm()})
-    $('#btn-xpub-export-go').click(() => {this.exportXpubHistory()})
-    $('#btn-xpub-export-cancel').click(() => {this.hideExportForm()})
-    $('#btn-xpub-import-go').click(() => {this.importXpub()})
-    $('#btn-xpub-details-retype').click(() => {this.showImportForm(true)})
-    $('#btn-xpub-import-cancel').click(() => {this.hideImportForm(this.isReimport)})
-    $('#xpubs-tool').keyup(evt => {
-      if (evt.keyCode === 13) {
-        this.searchXpub()
-      }
-    })
-  },
-
-  preparePage: function() {
-    // Disable custom lookahead if data source is a third party explorer
-    const isTPE = sessionStorage.getItem('indexerType') === 'third_party_explorer'
-    const isLRI = sessionStorage.getItem('indexerType') === 'local_rest_indexer'
-    const disableLookahead = isTPE || isLRI
-    $('#rescan-lookahead').prop('disabled', disableLookahead)
-
-    this.hideRescanForm()
-    this.hideDeletionForm()
-    this.hideExportForm()
-    this.showSearchForm()
-    $("#xpub").focus()
-  },
-
-  getExplorerInfo: function() {
-    lib_api.getExplorerPairingInfo().then(explorerInfo => {
-      this.explorerInfo = explorerInfo
-    }).catch(e => {
-      lib_errors.processError(e)
-    })
-  },
-
-  searchXpub: function() {
-    lib_msg.displayMessage('Search in progress...');
-    const xpub = $('#xpub').val()
-    this.currentXpub = xpub
-    return this._searchXpub(xpub).then(() => {
-      lib_msg.cleanMessagesUi()
-    })
-  },
-
-  _searchXpub: function(xpub) {
-    return lib_api.getXpubInfo(xpub).then(xpubInfo => {
-      if (xpubInfo && xpubInfo['tracked']) {
-        this.setXpubDetails(xpubInfo)
-        this.showXpubDetails()
-        const jsonData = {'active': xpub}
-        return lib_api.getWallet(jsonData).then(walletInfo => {
-          // Display the txs
-          const txs = walletInfo['txs']
-          for (let tx of txs)
-            this.setTxDetails(tx)
-          // Display the UTXOs
-          const utxos = walletInfo['unspent_outputs'].sort((a,b) => {
-            return a['confirmations'] - b['confirmations']
-          })
-          $('#xpub-nb-utxos').text(utxos.length)
-          for (let utxo of utxos)
-            this.setUtxoDetails(utxo)
+    initPage: () => {
+        screenXpubsToolsScript.getExplorerInfo()
+        // Sets the event handlers
+        document.querySelector('#btn-xpub-search-go').addEventListener('click', () => {
+            screenXpubsToolsScript.searchXpub()
         })
-      } else {
-        lib_msg.displayErrors('xpub not found')
-        this.showImportForm(false)
-      }
-    }).catch(e => {
-      lib_errors.processError(e)
-      throw e
-    })
-  },
-
-  importXpub: function() {
-    lib_msg.displayMessage('Processing xpub import. Please wait...');
-
-    const jsonData = {
-      'xpub': this.currentXpub,
-      'type': 'restore',
-      'force': true
-    }
-
-    const derivType = $('#import-deriv-type').val()
-    if (derivType === 'bip49' || derivType === 'bip84') {
-      jsonData['segwit'] = derivType
-    } else if (derivType === 'auto') {
-      if (this.currentXpub.startsWith('ypub') || this.currentXpub.startsWith('upub'))
-        jsonData['segwit'] = 'bip49'
-      else if (this.currentXpub.startsWith('zpub') || this.currentXpub.startsWith('vpub'))
-        jsonData['segwit'] = 'bip84'
-    }
-
-    try {
-      lib_api.postXpub(jsonData)
-      // Wait for import completion and display progress
-      this.checkRescanStatus(() => {
-        this._searchXpub(this.currentXpub).then(() => {
-          lib_msg.displayInfo('Import complete')
+        document.querySelector('#btn-xpub-details-reset').addEventListener('click', () => {
+            screenXpubsToolsScript.showSearchForm()
         })
-      })
-    } catch(e) {
-      lib_errors.processError(e)
-    }
-  },
-
-  rescanXpub: function() {
-    lib_msg.displayMessage('Processing xpub rescan. Please wait...');
-    let startIdx = $('#rescan-start-idx').val()
-    startIdx = (startIdx == null) ? 0 : parseInt(startIdx)
-    let lookahead = $('#rescan-lookahead').val()
-    lookahead = (lookahead == null) ? 100 : parseInt(lookahead)
-
-    try {
-      lib_api.getXpubRescan(this.currentXpub, lookahead, startIdx)
-      // Wait for rescan completion and display progress
-      this.checkRescanStatus(() => {
-        this.hideRescanForm()
-        this._searchXpub(this.currentXpub).then(() => {
-          lib_msg.displayInfo('Rescan complete')
+        document.querySelector('#btn-xpub-details-rescan').addEventListener('click', () => {
+            screenXpubsToolsScript.showRescanForm()
         })
-      })
-    } catch(e) {
-      lib_errors.processError(e)
-    }
-  },
+        document.querySelector('#btn-xpub-details-delete').addEventListener('click', () => {
+            screenXpubsToolsScript.showDeletionForm()
+        })
+        document.querySelector('#btn-xpub-details-export').addEventListener('click', () => {
+            screenXpubsToolsScript.showExportForm()
+        })
+        document.querySelector('#btn-xpub-rescan-go').addEventListener('click', () => {
+            screenXpubsToolsScript.rescanXpub()
+        })
+        document.querySelector('#btn-xpub-rescan-cancel').addEventListener('click', () => {
+            screenXpubsToolsScript.hideRescanForm()
+        })
+        document.querySelector('#btn-xpub-delete-go').addEventListener('click', () => {
+            screenXpubsToolsScript.deleteXpub()
+        })
+        document.querySelector('#btn-xpub-delete-cancel').addEventListener('click', () => {
+            screenXpubsToolsScript.hideDeletionForm()
+        })
+        document.querySelector('#btn-xpub-export-go').addEventListener('click', () => {
+            screenXpubsToolsScript.exportXpubHistory()
+        })
+        document.querySelector('#btn-xpub-export-cancel').addEventListener('click', () => {
+            screenXpubsToolsScript.hideExportForm()
+        })
+        document.querySelector('#btn-xpub-import-go').addEventListener('click', () => {
+            screenXpubsToolsScript.importXpub()
+        })
+        document.querySelector('#btn-xpub-details-retype').addEventListener('click', () => {
+            screenXpubsToolsScript.showImportForm(true)
+        })
+        document.querySelector('#btn-xpub-import-cancel').addEventListener('click', () => {
+            screenXpubsToolsScript.hideImportForm(screenXpubsToolsScript.isReimport)
+        })
+        document.querySelector('#xpubs-tool').addEventListener( 'keyup', (evt) => {
+            if (evt.key === 'Enter') {
+                screenXpubsToolsScript.searchXpub()
+            }
+        })
+    },
 
-  deleteXpub: function() {
-    lib_msg.displayMessage('Deleting a xpub. Please wait...')
-    return lib_api.getXpubDelete(this.currentXpub)
-      .then(result => {
-        this.currentXpub = null
-        this.preparePage()
-        lib_msg.displayInfo('Xpub successfully deleted')
-      }).catch(e => {
-        lib_errors.processError(e)
-      })
-  },
+    preparePage: () => {
+        // Disable custom lookahead if data source is a third party explorer
+        const isTPE = sessionStorage.getItem('indexerType') === 'third_party_explorer'
+        const isLRI = sessionStorage.getItem('indexerType') === 'local_rest_indexer'
+        const disableLookahead = isTPE || isLRI
+        document.querySelector('#rescan-lookahead').disabled = disableLookahead
 
-  exportXpubHistory: function() {
-    lib_msg.displayMessage('Exporting the transactional history of this xpub. Please wait...')
+        screenXpubsToolsScript.hideRescanForm()
+        screenXpubsToolsScript.hideDeletionForm()
+        screenXpubsToolsScript.hideExportForm()
+        screenXpubsToolsScript.showSearchForm()
+        document.querySelector('#xpub').focus()
+    },
 
-    const args = {
-      'active': this.currentXpub,
-      'page': 0,
-      'count': 1000000000
-    }
+    getExplorerInfo: () => {
+        lib_api.getExplorerPairingInfo().then(explorerInfo => {
+            screenXpubsToolsScript.explorerInfo = explorerInfo
+        }).catch(error => {
+            lib_errors.processError(error)
+        })
+    },
 
-    if ($('#export-type').val() == 'notNull')
-      args['excludeNullXfer'] = 1
+    searchXpub: () => {
+        lib_msg.displayMessage('Search in progress...')
+        const xpub = document.querySelector('#xpub').value
+        screenXpubsToolsScript.currentXpub = xpub
+        return screenXpubsToolsScript._searchXpub(xpub).then(() => {
+            lib_msg.cleanMessagesUi()
+        })
+    },
 
-    return lib_api.getTransactions(args)
-      .then(result => {
-        if (result['txs'] && result['txs'].length > 0) {
-          let content = 'data:text/csv;charset=utf-8,'
-          content += 'height,txid,date,flow\n'
-          for (let tx of result['txs'])
-            content += `${tx['block_height']},${tx['hash']},${new Date(tx['time']*1000).toString()},${tx['result']/100000000}\n`
-          const encodedURI = encodeURI(content)
-          window.open(encodedURI)
+    _searchXpub: xpub => lib_api.getXpubInfo(xpub).then(xpubInfo => {
+        if (xpubInfo && xpubInfo.tracked) {
+            screenXpubsToolsScript.setXpubDetails(xpubInfo)
+            screenXpubsToolsScript.showXpubDetails()
+            const jsonData = { 'active': xpub }
+            return lib_api.getWallet(jsonData).then(walletInfo => {
+                // Display the txs
+                const { txs, unspent_outputs } = walletInfo
+                for (let tx of txs)
+                    screenXpubsToolsScript.setTxDetails(tx)
+                // Display the UTXOs
+                const utxos = unspent_outputs.sort((a, b) => {
+                    return a.confirmations - b.confirmations
+                })
+                document.querySelector('#xpub-nb-utxos').textContent = utxos.length
+                for (let utxo of utxos)
+                    screenXpubsToolsScript.setUtxoDetails(utxo)
+            })
+        } else {
+            lib_msg.displayErrors('xpub not found')
+            screenXpubsToolsScript.showImportForm(false)
         }
-        this.hideExportForm()
-        lib_msg.displayInfo('Transactional history successfully exported.')
-      }).catch(e => {
-        lib_errors.processError(e)
-      })
-  },
+    }).catch(error => {
+        lib_errors.processError(error)
+        throw error
+    }),
 
-  checkRescanStatus: function(callback) {
-    this.rescanStatusTimerId = setTimeout(() => {
-      lib_api.getXpubRescanStatus(this.currentXpub)
-        .then(result => {
-          const data = result['data']
-          if (data['import_in_progress']) {
-            const lblOp = (data['status'] == 'rescan') ? 'Rescan' : 'Import'
-            const lblHits = (data['status'] == 'rescan') ? 'hits detected' : 'transactions imported'
-            const msg = `${lblOp} in progress (${data['hits']} ${lblHits})`
-            lib_msg.displayMessage(msg)
-            return this.checkRescanStatus(callback)
-          } else {
-            clearTimeout(this.rescanStatusTimerId)
-            return callback()
-          }
-        }).catch(e => {
-          lib_errors.processError(e)
-          lib_msg.displayMessage('Rescan in progress. Please wait...')
-          return this.checkRescanStatus(callback)
-        })
-      }, 1000)
-  },
+    importXpub: () => {
+        lib_msg.displayMessage('Processing xpub import. Please wait...')
 
-  setXpubDetails: function(xpubInfo) {
-    $('tr.tx-row').remove()
-    $('tr.utxo-row').remove()
+        const jsonData = {
+            'xpub': screenXpubsToolsScript.currentXpub,
+            'type': 'restore',
+            'force': true
+        }
 
-    $('#xpub-value').text(this.currentXpub)
-    $('#xpub-import-date').text(xpubInfo['created'])
-    $('#xpub-deriv-type').text(xpubInfo['derivation'])
-    $('#xpub-nb-txs').text(xpubInfo['n_tx'])
-    $('#xpub-nb-utxos').text('-')
-    const balance = parseInt(xpubInfo['balance']) / 100000000
-    $('#xpub-balance').text(`${balance} BTC`)
-    $('#xpub-deriv-account').text(xpubInfo['account'])
-    $('#xpub-deriv-depth').text(xpubInfo['depth'])
-    $('#xpub-idx-unused-ext').text(xpubInfo['unused']['external'])
-    $('#xpub-idx-derived-ext').text(xpubInfo['derived']['external'])
-    $('#xpub-idx-unused-int').text(xpubInfo['unused']['internal'])
-    $('#xpub-idx-derived-int').text(xpubInfo['derived']['internal'])
-  },
+        const derivType = document.querySelector('#import-deriv-type').value
+        if (derivType === 'bip49' || derivType === 'bip84') {
+            jsonData.segwit = derivType
+        } else if (derivType === 'auto') {
+            if (screenXpubsToolsScript.currentXpub.startsWith('ypub') || screenXpubsToolsScript.currentXpub.startsWith('upub'))
+                jsonData.segwit = 'bip49'
+            else if (screenXpubsToolsScript.currentXpub.startsWith('zpub') || screenXpubsToolsScript.currentXpub.startsWith('vpub'))
+                jsonData.segwit = 'bip84'
+        }
 
-  setTxDetails: function(tx) {
-    const txid = tx['hash']
-    const txidDisplay = `${txid.substring(0,50)}...`
-    const amount = parseInt(tx['result']) / 100000000
-    const amountLabel = amount < 0 ? amount : `+${amount}`
-    const amountStyle = amount < 0 ? 'amount-sent' : 'amount-received'
-    const date = lib_fmt.unixTsToLocaleString(tx['time'])
-    const txUrl = lib_cmn.getExplorerTxUrl(txid, this.explorerInfo)
+        try {
+            lib_api.postXpub(jsonData)
+            // Wait for import completion and display progress
+            screenXpubsToolsScript.checkRescanStatus(() => {
+                screenXpubsToolsScript._searchXpub(screenXpubsToolsScript.currentXpub).then(() => {
+                    lib_msg.displayInfo('Import complete')
+                })
+            })
+        } catch (error) {
+            lib_errors.processError(error)
+        }
+    },
 
-    const newRow = `<tr class="tx-row"><td colspan="2">&nbsp;</td></tr>
+    rescanXpub: () => {
+        lib_msg.displayMessage('Processing xpub rescan. Please wait...')
+        let startIdx = document.querySelector('#rescan-start-idx').value
+        startIdx = (startIdx == null) ? 0 : Number.parseInt(startIdx, 10)
+        let lookahead = document.querySelector('#rescan-lookahead').value
+        lookahead = (lookahead == null) ? 100 : Number.parseInt(lookahead, 10)
+
+        try {
+            lib_api.getXpubRescan(screenXpubsToolsScript.currentXpub, lookahead, startIdx)
+            // Wait for rescan completion and display progress
+            screenXpubsToolsScript.checkRescanStatus(() => {
+                screenXpubsToolsScript.hideRescanForm()
+                screenXpubsToolsScript._searchXpub(screenXpubsToolsScript.currentXpub).then(() => {
+                    lib_msg.displayInfo('Rescan complete')
+                })
+            })
+        } catch (error) {
+            lib_errors.processError(error)
+        }
+    },
+
+    deleteXpub: () => {
+        lib_msg.displayMessage('Deleting a xpub. Please wait...')
+        return lib_api.getXpubDelete(screenXpubsToolsScript.currentXpub)
+            .then(() => {
+                screenXpubsToolsScript.currentXpub = null
+                screenXpubsToolsScript.preparePage()
+                lib_msg.displayInfo('Xpub successfully deleted')
+            }).catch(error => {
+                lib_errors.processError(error)
+            })
+    },
+
+    exportXpubHistory: () => {
+        lib_msg.displayMessage('Exporting the transactional history of this xpub. Please wait...')
+
+        const args = {
+            'active': screenXpubsToolsScript.currentXpub,
+            'page': 0,
+            'count': 1000000000
+        }
+
+        if (document.querySelector('#export-type').value === 'notNull')
+            args.excludeNullXfer = 1
+
+        return lib_api.getTransactions(args)
+            .then(result => {
+                if (result.txs && result.txs.length > 0) {
+                    let content = 'data:text/csv;charset=utf-8,'
+                    content += 'height,txid,date,flow\n'
+                    for (let tx of result.txs)
+                        content += `${tx.block_height},${tx.hash},${new Date(tx.time * 1000).toString()},${tx.result / 100000000}\n`
+                    const encodedURI = encodeURI(content)
+                    window.open(encodedURI)
+                }
+                screenXpubsToolsScript.hideExportForm()
+                lib_msg.displayInfo('Transactional history successfully exported.')
+            }).catch(error => {
+                lib_errors.processError(error)
+            })
+    },
+
+    checkRescanStatus: callback => {
+        screenXpubsToolsScript.rescanStatusTimerId = setTimeout(() => {
+            lib_api.getXpubRescanStatus(screenXpubsToolsScript.currentXpub)
+                .then(result => {
+                    const {data} = result
+                    if (data.import_in_progress) {
+                        const lblOp = (data.status === 'rescan') ? 'Rescan' : 'Import'
+                        const lblHits = (data.status === 'rescan') ? 'hits detected' : 'transactions imported'
+                        const msg = `${lblOp} in progress (${data.hits} ${lblHits})`
+                        lib_msg.displayMessage(msg)
+                        return screenXpubsToolsScript.checkRescanStatus(callback)
+                    } else {
+                        clearTimeout(screenXpubsToolsScript.rescanStatusTimerId)
+                        return callback()
+                    }
+                }).catch(error => {
+                    lib_errors.processError(error)
+                    lib_msg.displayMessage('Rescan in progress. Please wait...')
+                    return screenXpubsToolsScript.checkRescanStatus(callback)
+                })
+        }, 1000)
+    },
+
+    setXpubDetails: xpubInfo => {
+        for (const elem of document.querySelectorAll('tr.tx-row')) {
+            elem.remove()
+        }
+        for (const elem of document.querySelectorAll('tr.utxo-row')) {
+            elem.remove()
+        }
+
+        document.querySelector('#xpub-value').textContent = screenXpubsToolsScript.currentXpub
+        document.querySelector('#xpub-import-date').textContent = xpubInfo.created
+        document.querySelector('#xpub-deriv-type').textContent = xpubInfo.derivation
+        document.querySelector('#xpub-nb-txs').textContent = xpubInfo.n_tx
+        document.querySelector('#xpub-nb-utxos').textContent = '-'
+        const balance = Number.parseInt(xpubInfo.balance, 10) / 100000000
+        document.querySelector('#xpub-balance').textContent = `${balance} BTC`
+        document.querySelector('#xpub-deriv-account').textContent = xpubInfo.account
+        document.querySelector('#xpub-deriv-depth').textContent = xpubInfo.depth
+        document.querySelector('#xpub-idx-unused-ext').textContent = xpubInfo.unused.external
+        document.querySelector('#xpub-idx-derived-ext').textContent = xpubInfo.derived.external
+        document.querySelector('#xpub-idx-unused-int').textContent = xpubInfo.unused.internal
+        document.querySelector('#xpub-idx-derived-int').textContent = xpubInfo.derived.internal
+    },
+
+    setTxDetails: tx => {
+        const txid = tx.hash
+        const txidDisplay = `${txid.slice(0, 50)}...`
+        const amount = Number.parseInt(tx.result, 10) / 100000000
+        const amountLabel = amount < 0 ? amount : `+${amount}`
+        const amountStyle = amount < 0 ? 'amount-sent' : 'amount-received'
+        const date = lib_fmt.unixTsToLocaleString(tx.time)
+        const txUrl = lib_cmn.getExplorerTxUrl(txid, screenXpubsToolsScript.explorerInfo)
+
+        const newRow = `<tr class="tx-row"><td colspan="2">&nbsp;</td></tr>
       <tr class="tx-row">
         <td class="table-label" colspan="2">
           <a href="${txUrl}" target="_blank">${txidDisplay}</a>
@@ -246,23 +276,23 @@ const screenXpubsToolsScript = {
       </tr>
       <tr class="tx-row">
         <td class="table-label">Block height</td>
-        <td class="table-value">${tx['block_height']}</td>
+        <td class="table-value">${tx.block_height}</td>
       </tr>
       <tr class="tx-row">
         <td class="table-label">Date</td>
         <td class="table-value">${date}</td>
       </tr>`
 
-    $('#xpub-table-list-txs tr:last').after(newRow)
-  },
+        document.querySelector('#xpub-table-list-txs tr:last-child').insertAdjacentHTML('afterend', newRow)
+    },
 
-  setUtxoDetails: function(utxo) {
-    const txid = utxo['tx_hash']
-    const txidVout = `${txid.substring(0,50)}...:${utxo['tx_output_n']}`
-    const amount = parseInt(utxo['value']) / 100000000
-    const txUrl = lib_cmn.getExplorerTxUrl(txid, this.explorerInfo)
+    setUtxoDetails: utxo => {
+        const txid = utxo.tx_hash
+        const txidVout = `${txid.slice(0, 50)}...:${utxo.tx_output_n}`
+        const amount = Number.parseInt(utxo.value, 10) / 100000000
+        const txUrl = lib_cmn.getExplorerTxUrl(txid, screenXpubsToolsScript.explorerInfo)
 
-    const newRow = `<tr class="utxo-row"><td colspan="2">&nbsp;</td></tr>
+        const newRow = `<tr class="utxo-row"><td colspan="2">&nbsp;</td></tr>
       <tr class="utxo-row">
         <td class="table-label" colspan="2">
           <a href="${txUrl}" target="_blank">${txidVout}</a>
@@ -274,89 +304,89 @@ const screenXpubsToolsScript = {
       </tr>
       <tr class="utxo-row">
         <td class="table-label">Address</td>
-        <td class="table-value">${utxo['addr']}</td>
+        <td class="table-value">${utxo.addr}</td>
       </tr>
       <tr class="utxo-row">
         <td class="table-label">Confirmations</td>
-        <td class="table-value">${utxo['confirmations']}</td>
+        <td class="table-value">${utxo.confirmations}</td>
       </tr>`
 
-    $('#xpub-table-list-utxos tr:last').after(newRow)
-  },
+        document.querySelector('#xpub-table-list-utxos tr:last-child').insertAdjacentHTML('afterend', newRow)
+    },
 
-  showSearchForm: function() {
-    $('#xpubs-tool-details').hide()
-    $('#xpubs-tool-import').hide()
-    $('#xpub').val('')
-    $('#xpubs-tool-search-form').show()
-    lib_msg.cleanMessagesUi()
-  },
+    showSearchForm: () => {
+        document.querySelector('#xpubs-tool-details').setAttribute('hidden', '')
+        document.querySelector('#xpubs-tool-import').setAttribute('hidden', '')
+        document.querySelector('#xpub').value = ''
+        document.querySelector('#xpubs-tool-search-form').removeAttribute('hidden')
+        lib_msg.cleanMessagesUi()
+    },
 
-  showImportForm: function(isReimport) {
-    this.isReimport = isReimport
+    showImportForm: isReimport => {
+        screenXpubsToolsScript.isReimport = isReimport
 
-    $('#xpubs-tool-search-form').hide()
-    $('#xpubs-tool-details').hide()
+        document.querySelector('#xpubs-tool-search-form').setAttribute('hidden', '')
+        document.querySelector('#xpubs-tool-details').setAttribute('hidden', '')
 
-    if (isReimport) {
-      $('#import-deriv-first-import-msg').hide()
-      $('#import-deriv-reimport-msg').show()
-    } else {
-      $('#import-deriv-reimport-msg').hide()
-      $('#import-deriv-first-import-msg').show()
-    }
+        if (isReimport) {
+            document.querySelector('#import-deriv-first-import-msg').setAttribute('hidden', '')
+            document.querySelector('#import-deriv-reimport-msg').removeAttribute('hidden')
+        } else {
+            document.querySelector('#import-deriv-reimport-msg').setAttribute('hidden', '')
+            document.querySelector('#import-deriv-first-import-msg').removeAttribute('hidden')
+        }
 
-    const xpubLen = this.currentXpub.length
-    const xpubShortLbl = `"${this.currentXpub.substring(0, 20)}...${this.currentXpub.substring(xpubLen-20, xpubLen)}"`
-    $('#import-xpub').text(xpubShortLbl)
-    $('#xpubs-tool-import').show()
-  },
+        const xpubLen = screenXpubsToolsScript.currentXpub.length
+        const xpubShortLbl = `"${screenXpubsToolsScript.currentXpub.slice(0, 20)}...${screenXpubsToolsScript.currentXpub.slice(xpubLen - 20, xpubLen)}"`
+        document.querySelector('#import-xpub').textContent = xpubShortLbl
+        document.querySelector('#xpubs-tool-import').removeAttribute('hidden')
+    },
 
-  hideImportForm: function(isReimport) {
-    if (isReimport)
-      this.showXpubDetails()
-    else
-      this.showSearchForm()
-  },
+    hideImportForm: isReimport => {
+        if (isReimport)
+            screenXpubsToolsScript.showXpubDetails()
+        else
+            screenXpubsToolsScript.showSearchForm()
+    },
 
-  showXpubDetails: function() {
-    $('#xpubs-tool-search-form').hide()
-    $('#xpubs-tool-import').hide()
-    $('#xpubs-tool-details').show()
-  },
+    showXpubDetails: () => {
+        document.querySelector('#xpubs-tool-search-form').setAttribute('hidden', '')
+        document.querySelector('#xpubs-tool-import').setAttribute('hidden', '')
+        document.querySelector('#xpubs-tool-details').removeAttribute('hidden')
+    },
 
-  showRescanForm: function() {
-    $('#xpubs-tool-actions').hide()
-    $('#xpubs-rescans-actions').show()
-    lib_msg.cleanMessagesUi()
-  },
+    showRescanForm: () => {
+        document.querySelector('#xpubs-tool-actions').setAttribute('hidden', '')
+        document.querySelector('#xpubs-rescans-actions').removeAttribute('hidden')
+        lib_msg.cleanMessagesUi()
+    },
 
-  hideRescanForm: function() {
-    $('#xpubs-rescans-actions').hide()
-    $('#xpubs-tool-actions').show()
-  },
+    hideRescanForm: () => {
+        document.querySelector('#xpubs-rescans-actions').setAttribute('hidden', '')
+        document.querySelector('#xpubs-tool-actions').removeAttribute('hidden')
+    },
 
-  showDeletionForm: function() {
-    $('#xpubs-tool-actions').hide()
-    $('#xpubs-deletion-actions').show()
-    lib_msg.cleanMessagesUi()
-  },
+    showDeletionForm: () => {
+        document.querySelector('#xpubs-tool-actions').setAttribute('hidden', '')
+        document.querySelector('#xpubs-deletion-actions').removeAttribute('hidden')
+        lib_msg.cleanMessagesUi()
+    },
 
-  hideDeletionForm: function() {
-    $('#xpubs-deletion-actions').hide()
-    $('#xpubs-tool-actions').show()
-  },
+    hideDeletionForm: () => {
+        document.querySelector('#xpubs-deletion-actions').setAttribute('hidden', '')
+        document.querySelector('#xpubs-tool-actions').removeAttribute('hidden')
+    },
 
-  showExportForm: function() {
-    $('#xpubs-tool-actions').hide()
-    $('#xpubs-export-actions').show()
-    lib_msg.cleanMessagesUi()
-  },
+    showExportForm: () => {
+        document.querySelector('#xpubs-tool-actions').setAttribute('hidden', '')
+        document.querySelector('#xpubs-export-actions').removeAttribute('hidden')
+        lib_msg.cleanMessagesUi()
+    },
 
-  hideExportForm: function() {
-    $('#xpubs-export-actions').hide()
-    $('#xpubs-tool-actions').show()
-  },
+    hideExportForm: () => {
+        document.querySelector('#xpubs-export-actions').setAttribute('hidden', '')
+        document.querySelector('#xpubs-tool-actions').removeAttribute('hidden')
+    },
 
 }
 

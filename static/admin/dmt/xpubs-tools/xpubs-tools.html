@@ -19,10 +19,10 @@
     <!-- XPUB IMPORT -->
     <div id="xpubs-tool-import" class="fullwidth box">
       <div class="box-body">
-        <div id="import-deriv-first-import-msg">
+        <div id="import-deriv-first-import-msg" hidden>
           <span>This XPUB isn't tracked by your Dojo. Do you want to import it and track its activity?</span>
         </div>
-        <div id="import-deriv-reimport-msg">
+        <div id="import-deriv-reimport-msg" hidden>
           <span>Do you want to reimport this XPUB with a new derivation type?</span>
           <br/><br/>
           <span>WARNING: Are you sure you need to retype this XPUB? Generally, the 'auto' derivation will type your XPUB correctly.</span>
@@ -36,7 +36,7 @@
           <span>Import </span>
           <span id="import-xpub"></span>
           <span> with a </span>
-          <select id="import-deriv-type" type="select" value="auto">
+          <select id="import-deriv-type">
             <option value="auto" selected>auto</option>
             <option value="bip44">BIP44</option>
             <option value="bip49">BIP49</option>
@@ -203,4 +203,4 @@
   </div>
 </div>
 
-<script include-js="xpubs-tools/xpubs-tools.js"></script>
+<script data-include-js="xpubs-tools/xpubs-tools.js"></script>
