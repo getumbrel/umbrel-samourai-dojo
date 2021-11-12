@@ -40,15 +40,15 @@
     "rpc-bitcoin": "2.0.0",
     "sirv": "1.0.18",
     "socks-proxy-agent": "6.1.0",
-    "validator": "13.6.0",
+    "validator": "13.7.0",
     "websocket": "1.0.34",
     "workerpool": "6.1.5",
     "zeromq": "6.0.0-beta.5"
   },
   "devDependencies": {
-    "eslint": "^8.1.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-unicorn": "^37.0.1",
+    "eslint": "^8.2.0",
+    "eslint-plugin-import": "^2.25.3",
+    "eslint-plugin-unicorn": "^38.0.1",
     "mocha": "9.1.3"
   }
 }
