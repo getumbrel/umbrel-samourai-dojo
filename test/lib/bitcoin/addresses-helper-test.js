@@ -79,6 +79,29 @@ const VECTOR_5 = [
     ]
 ]
 
+const SCRIPT_PUBKEY_VECTORS = [
+    [
+        '76a914ad4308d34646441b365fb71089b25b9a8454d91388ac', // P2PKH
+        'mwK5VsrRPki1DdGfGtX5srtisxdJwnqrao'
+    ],
+    [
+        'a91422d760255d1fb03d44538c0340f8e7fa59c5fe8587', // P2SH
+        '2MvRSyN1sefUKSEb6QGq8ZEuDXcTA2Df2S4'
+    ],
+    [
+        '0014f60834ef165253c571b11ce9fa74e46692fc5ec1', // P2WPKH
+        'tb1q7cyrfmck2ffu2ud3rn5l5a8yv6f0chkp9y62q6'
+    ],
+    [
+        '0020b1de16ca69d3946907ac5e5fe19b609eea46c06b7bd366d1ae0a831e547f014c', // P2WSH v0
+        'tb1qk80pdjnf6w2xjpavte07rxmqnm4ydsrt00fkd5dwp2p3u4rlq9xq65vqf8'
+    ],
+    [
+        '5120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc487053f1dc6880949dc684c', // P2WSH v1 (P2TR)
+        'tb1p5cyxnuxmeuwuvkwfem96lqzszd02n6xdcjrs20cac6yqjjwudpxqp3mvzv'
+    ]
+]
+
 
 describe('AddressesHelper', () => {
 
@@ -160,6 +183,88 @@ describe('AddressesHelper', () => {
                     assert(result)
                 }
             }
+        })
+    })
+
+    describe('isP2pkhScript()', () => {
+        const p2pkhScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[0][0], 'hex')
+        const p2shScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[1][0], 'hex')
+
+        it('should successfully detect P2PKH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2pkhScript(p2pkhScriptPubKey), true)
+        })
+
+        it('should return false for non P2PKH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2pkhScript(p2shScriptPubKey), false)
+        })
+    })
+
+    describe('isP2shScript()', () => {
+        const p2shScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[1][0], 'hex')
+        const p2wpkhScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[2][0], 'hex')
+
+        it('should successfully detect P2SKH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2shScript(p2shScriptPubKey), true)
+        })
+
+        it('should return false for non P2SKH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2shScript(p2wpkhScriptPubKey), false)
+        })
+    })
+
+    describe('isP2wpkhScript()', () => {
+        const p2wpkhScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[2][0], 'hex')
+        const p2pkhScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[3][0], 'hex')
+
+        it('should successfully detect P2WPKH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2wpkhScript(p2wpkhScriptPubKey), true)
+        })
+
+        it('should return false for non P2WPKH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2wpkhScript(p2pkhScriptPubKey), false)
+        })
+    })
+
+    describe('isP2wshScript()', () => {
+        const p2wshhScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[3][0], 'hex')
+        const p2wpkhScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[2][0], 'hex')
+
+        it('should successfully detect P2WSH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2wshScript(p2wshhScriptPubKey), true)
+        })
+
+        it('should return false for non P2WSH scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2wshScript(p2wpkhScriptPubKey), false)
+        })
+    })
+
+    describe('isP2trScript()', () => {
+        const p2trScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[4][0], 'hex')
+        const p2wshScriptPubKey = Buffer.from(SCRIPT_PUBKEY_VECTORS[3][0], 'hex')
+
+        it('should successfully detect P2TR scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2trScript(p2trScriptPubKey), true)
+        })
+
+        it('should return false for non P2TR scriptpubkey', () => {
+            assert.strictEqual(addrHelper.isP2trScript(p2wshScriptPubKey), false)
+        })
+    })
+
+    describe('outputScript2Address()', () => {
+        it('should return correct address corresponding to scriptpubkey', () => {
+            for (const [scriptPubKey, address] of SCRIPT_PUBKEY_VECTORS) {
+                const scriptPubKeyBuffer = Buffer.from(scriptPubKey, 'hex')
+                const convertedAddress = addrHelper.outputScript2Address(scriptPubKeyBuffer)
+
+                assert.strictEqual(convertedAddress, address)
+            }
+        })
+
+        it('should throw an error on invalid sciptpubkey', () => {
+            const randomData = Buffer.from('5120a60869f0dbcf1dc659c9cecbaf8050135ea9e8cdc48705', 'hex')
+
+            assert.throws(() => addrHelper.outputScript2Address(randomData))
         })
     })
 
