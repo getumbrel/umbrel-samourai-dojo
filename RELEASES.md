@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.13.0](#1_13_0)
 - [v1.12.1](#1_12_1)
 - [v1.12.0](#1_12_0)
 - [v1.11.0](#1_11_0)
@@ -19,6 +20,35 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+<a name="1_13_0"/>
+
+## Samourai Dojo v1.13.0 ##
+
+### Notable changes ###
+
+#### Added support for P2TR ouputs ####
+Thanks to updated bitcoinjs-lib, Dojo now supports P2TR outputs
+
+### Change log ###
+
+#### Features ####
+- [#mr245](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/245) make Tor socks port customizable
+- [#mr259](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/259) removed need to use deprecated RPC field
+- [#mr260](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/260) testnet: choose correct XPUB type in testnet DMT
+- [#mr262](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/262) added ability to copy pairing payload from DMT
+- [#mr263](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/263) raise indexer RPC timeout
+- [#mr264](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/264) updated bitcoinjs-lib, added support for P2TR outputs
+
+#### Architecture ####
+- refactored codebase to use ES modules for more efficiency
+- updated dependencies and removed unnecessary dependencies
+
+#### Credits ####
+- pajasevi
+- Aaron Dewes
+- ElkimXOC
+- Crazyk031
 
 <a name="1_12_1"/>
 
