@@ -165,7 +165,6 @@ class BlockchainProcessor {
             const [highest, info] = await Promise.all([db.getHighestBlock(), this.client.getblockchaininfo()])
             const daemonNbBlocks = info.blocks
 
-            if (highest == null) return null
             if (daemonNbBlocks === highest.blockHeight) return null
 
             const blockRange = util.range(highest.blockHeight, daemonNbBlocks + 1)
