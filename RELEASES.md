@@ -32,6 +32,9 @@ Thanks to updated bitcoinjs-lib, Dojo now supports P2TR outputs
 
 ### Change log ###
 
+#### Bug fixes ####
+- [#mr268](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/268) fixed postmix ZPUB missing some transactions on import/rescan
+
 #### Features ####
 - [#mr245](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/245) make Tor socks port customizable
 - [#mr259](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/259) removed need to use deprecated RPC field
@@ -39,6 +42,7 @@ Thanks to updated bitcoinjs-lib, Dojo now supports P2TR outputs
 - [#mr262](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/262) added ability to copy pairing payload from DMT
 - [#mr263](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/263) raise indexer RPC timeout
 - [#mr264](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/264) updated bitcoinjs-lib, added support for P2TR outputs
+- [#mr266](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/266) updated BTC-RPC Explorer to v3.3.0 
 
 #### Architecture ####
 - refactored codebase to use ES modules for more efficiency
