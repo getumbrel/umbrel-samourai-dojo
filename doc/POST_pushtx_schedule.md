@@ -3,7 +3,7 @@
 Schedule the delayed push of an ordered list of transactions (used for programmable Ricochet).
 
 
-```
+```http request
 POST /pushtx/schedule
 ```
 

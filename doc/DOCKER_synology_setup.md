@@ -58,7 +58,7 @@ db          | WARNING: no logs are available with the 'db' log driver
 
 ## Usage
 - Retrieve the Tor onion addresses (v3) of the API and block explorer of your Dojo
-```
+```sh
 ./dojo.sh onion
 ```
 Use Tor Browser for:
@@ -68,16 +68,16 @@ Use Tor Browser for:
 ## Upgrade
 - Open SSH terminal to your Synology
 - Stop Dojo
-```
+```sh
 cd <dojo_dir>
 ./docker/my-dojo/dojo.sh stop
 ```
 - Backup
-```
+```sh
 cp -r ./ ../dojo-backup
 ```
 - Download latest Dojo from [Gitlab releases](https://code.samourai.io/dojo/samourai-dojo/-/releases)
-```
+```sh
   mkdir newDojo
   cd newDojo
   wget https://code.samourai.io/dojo/samourai-dojo/-/archive/v1.7.0/samourai-dojo-v1.7.0.tar.gz
@@ -86,10 +86,10 @@ cp -r ./ ../dojo-backup
   cd ..
 ```
 - Upgrade
-```
+```sh
   ./docker/my-dojo/dojo.sh upgrade
 ```
 - Clean
-```
+```sh
   rm -Rf newDojo
 ```
