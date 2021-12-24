@@ -1,6 +1,6 @@
 {
   "name": "samourai-dojo",
-  "version": "1.12.1",
+  "version": "1.13.0",
   "description": "Backend server for Samourai Wallet",
   "main": "accounts/index.js",
   "engines": {
@@ -22,7 +22,7 @@
     "@tinyhttp/app": "2.0.12",
     "async-sema": "3.1.1",
     "axios": "0.24.0",
-    "bip32": "3.0.0",
+    "bip32": "3.0.1",
     "bip39": "3.0.4",
     "bitcoinjs-lib": "6.0.0",
     "bitcoinjs-message": "2.2.0",
