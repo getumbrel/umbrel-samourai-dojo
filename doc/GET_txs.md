@@ -4,7 +4,7 @@ Request a paginated list of transactions related to a collection of HD accounts 
 
 Note that loose addresses that are also part of one of the HD accounts requested will be ignored. Their transactions are listed as part of the HD account result.
 
-```
+```http request
 GET /txs?active=...
 ```
 
@@ -17,7 +17,7 @@ GET /txs?active=...
 
 ### Examples
 
-```
+```http request
 GET /txs?active=xpub0123456789
 GET /txs?active=xpub0123456789|address1|address2|pubkey1
 ```

@@ -54,7 +54,7 @@ First, we must prepare our host system for MyDojo by installing required operati
 
 #### 3.1.1/ Install OS dependencies
 
-```
+```sh
 > cd ~
 > sudo apt-get update
 > sudo apt-get install apt-transport-https ca-certificates curl gnupg-agent software-properties-common unzip
@@ -66,13 +66,13 @@ For an installation of Docker and Docker Compose with a different Linux distribu
 
 If Docker is already installed on the host machine remove old Docker versions installed on the computer
 
-```
+```sh
 > sudo apt-get remove docker docker-engine docker.io containerd runc
 ```
 
 __Download Docker's official PGP key__
 
-```
+```sh
 > curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 > sudo apt-key fingerprint 0EBFCD88
 ```
@@ -81,7 +81,7 @@ Verify that you now have the key with the fingerprint `9DC8 5822 9FC7 DD38 854A 
 
 __Install Docker__
 
-```
+```sh
 > sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 > sudo apt-get update
 > sudo apt-get install docker-ce docker-ce-cli containerd.io
@@ -89,7 +89,7 @@ __Install Docker__
 
 __Test the installation of Docker__
 
-```
+```sh
 > sudo docker --version
 ```
 
@@ -98,14 +98,14 @@ This command should return the version of Docker if installation was successful.
 
 __Install Docker Compose__
 
-```
+```sh
 > sudo curl -L "https://github.com/docker/compose/releases/download/1.25.3/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 > sudo chmod +x /usr/local/bin/docker-compose
 ```
 
 __Test the installation of Docker Compose__
 
-```
+```sh
 > sudo docker-compose --version
 ```
 
@@ -118,7 +118,7 @@ Creating a segregated user account for MyDojo is a good idea for security reason
 
 #### 3.1.3/ Create a dojo user
 
-```
+```sh
 > sudo useradd -s /bin/bash -d /home/dojo -m -G sudo dojo
 > sudo passwd dojo
 ```
@@ -127,19 +127,19 @@ Enter and confirm the password for the `dojo` user.
 
 __Add the user to the docker group__
 
-```
+```sh
 > sudo usermod -aG docker dojo
 ```
 
 __Restart Host System__
 
-```
+```sh
 > sudo shutdown -r now
 ```
 
 Log back into the Host System with the `dojo` user and test the Docker installation
 
-```
+```sh
 > docker run hello-world
 ```
 
@@ -152,19 +152,19 @@ This step should be applied if you don't want to store MyDojo and Docker data un
 
 __Stop the Docker Service__
 
-```
+```sh
 > sudo systemctl stop docker
 ```
 
 Create the directory that will store Docker data (replace `/path/to/target/directory/` by the correct path).
 
-```
+```sh
 > sudo mkdir /path/to/target/directory/
 ```
 
 Temporarily switch to root and create the daemon.json file storing the path to your Docker direct (replace `/path/to/target/directory/` by the correct path).
 
-```
+```sh
 > sudo su - root
 > sudo echo '{ "data-root": "/path/to/target/directory/" }' > /etc/docker/daemon.json
 > exit
@@ -180,7 +180,7 @@ Now that the Host System has been prepared, we will download the latest version 
 
 We first create a directory for housing our MyDojo files. In this guide we are naming this directory `dojo-app` and it will be located in the home directory of the `dojo` user.
 
-```
+```sh
 > mkdir ~/dojo-app
 ```
 
@@ -188,7 +188,7 @@ We first create a directory for housing our MyDojo files. In this guide we are n
 
 Download and unpack the source archive for the latest version of MyDojo and copy these files to the newly created `dojo-app` directory with the following commands.
 
-```
+```sh
 > cd ~
 > wget https://code.samourai.io/dojo/samourai-dojo/-/archive/master/samourai-dojo-master.zip
 > unzip samourai-dojo-master.zip -d .
@@ -197,7 +197,7 @@ Download and unpack the source archive for the latest version of MyDojo and copy
 
 Delete the source archive now that we have copied the files to our directory.
 
-```
+```sh
 > rm -rf samourai-dojo-master
 > rm samourai-dojo-master.zip
 ```
@@ -207,7 +207,7 @@ Delete the source archive now that we have copied the files to our directory.
 
 Change the working directory to the MyDojo configuration directory.
 
-```
+```sh
 > cd ~/dojo-app/docker/my-dojo/conf
 ```
 
@@ -215,7 +215,7 @@ __Note:__
 
 You will be required to generate various random alphanumeric passwords to secure various aspects of your Dojo installation. You can generate these in any way you wish, but you may wish to use the following command in a terminal session to generate these passwords with sufficient entropy:
 
-```
+```sh
 > cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 64 | head -n 1
 ```
 
@@ -223,13 +223,13 @@ You will be required to generate various random alphanumeric passwords to secure
 
 Edit the `docker-bitcoind.conf.tpl` file.
 
-```
+```sh
 > nano docker-bitcoind.conf.tpl
 ```
 
 Customize the content of the file
 
-```
+```sh
 BITCOIND_RPC_USER=<provide_this_value>
 BITCOIND_RPC_PASSWORD=<provide_this_value>
 ```
@@ -245,13 +245,13 @@ Save and exit the file with `CTRL+X`, `Y` and `ENTER`.
 
 Edit the ``docker-mysql.conf.tpl`` file.
 
-```
+```sh
 > nano docker-mysql.conf.tpl
 ```
 
 Customize the content of the file
 
-```
+```sh
 MYSQL_ROOT_PASSWORD=<provide_this_value>
 MYSQL_USER=<provide_this_value>
 MYSQL_PASSWORD=<provide_this_value>
@@ -264,13 +264,13 @@ Save and exit the file with `CTRL+X`, `Y` and `ENTER`.
 
 Edit the `docker-node.conf.tpl` file.
 
-```
+```sh
 > nano docker-node.conf.tpl
 ```
 
 Customize the content of the file
 
-```
+```sh
 NODE_API_KEY=<provide_this_value>
 NODE_ADMIN_KEY=<provide_this_value>
 NODE_JWT_SECRET=<provide_this_value>
@@ -284,13 +284,13 @@ Save and exit the file with `CTRL+X`, `Y` and `ENTER`.
 
 Edit the `docker-indexer.conf.tpl` file.
 
-```
+```sh
 > nano docker-indexer.conf.tpl
 ```
 
 Customize the content of the file
 
-```
+```sh
 INDEXER_INSTALL=on
 ```
 
@@ -301,13 +301,13 @@ Save and exit the file with `CTRL+X`, `Y` and `ENTER`.
 
 Edit the `docker-explorer.conf.tpl` file.
 
-```
+```sh
 > nano docker-explorer.conf.tpl
 ```
 
 Customize the content of the file
 
-```
+```sh
 EXPLORER_KEY=<provide_this_value>
 ```
 
@@ -318,7 +318,7 @@ Save and exit the file with `CTRL+X`, `Y` and `ENTER`.
 
 From this point on the install process is automatic. Launch the installation of MyDojo
 
-```
+```sh
 > cd ~/dojo-app/docker/my-dojo
 > ./dojo.sh install
 ```
@@ -371,7 +371,7 @@ Note: You may notice errors returned by the Block Explorer during all these oper
 
 Retrieve the onion address of the DMT with the commands
 
-```
+```sh
 > cd ~/dojo-app/docker/my-dojo
 > ./dojo.sh onion
 ```
@@ -395,7 +395,7 @@ This procedure allows to upgrade MyDojo to the latest version.
 
 #### 4.1.1/ Stop MyDojo
 
-```
+```sh
 > cd ~/dojo-app/docker/my-dojo
 > ./dojo.sh stop
 ```
@@ -404,20 +404,20 @@ This procedure allows to upgrade MyDojo to the latest version.
 
 Download the archive of latest version
 
-```
+```sh
 > cd ~
 > wget https://code.samourai.io/dojo/samourai-dojo/-/archive/master/samourai-dojo-master.zip
 ```
 
 Uncompress the archive
 
-```
+```sh
 > unzip samourai-dojo-master.zip -d .
 ```
 
 Overwrite the dojo-app directory with the content of the archive
 
-```
+```sh
 > cp -a samourai-dojo-master/. dojo-app/
 ```
 
@@ -430,7 +430,7 @@ If applicable, edit the templates files stored in `~/dojo-app/docker/my-dojo/con
 
 #### 4.1.4/ Start Upgrade
 
-```
+```sh
 > cd ~/dojo-app/docker/my-dojo
 > ./dojo.sh upgrade
 ```
@@ -442,7 +442,7 @@ The shell script is going to rebuild the Docker containers. MyDojo will be autom
 
 #### 4.1.5/ Cleanup
 
-```
+```sh
 > cd ~
 > rm -rf samourai-dojo-master
 > rm samourai-dojo-master.zip
@@ -455,7 +455,7 @@ This procedure allows to upgrade MyDojo to a specific version `X.Y.Z`
 
 #### 4.2.1/ Stop MyDojo
 
-```
+```sh
 > cd ~/dojo-app/docker/my-dojo
 > ./dojo.sh stop
 ```
@@ -464,20 +464,20 @@ This procedure allows to upgrade MyDojo to a specific version `X.Y.Z`
 
 Download the archive of version `X.Y.Z`
 
-```
+```sh
 > cd ~
 > wget https://code.samourai.io/dojo/samourai-dojo/-/archive/vX.Y.Z/samourai-dojo-vX.Y.Z.zip
 ```
 
 Uncompress the archive
 
-```
+```sh
 > unzip samourai-dojo-vX.Y.Z.zip -d .
 ```
 
 Overwrite the dojo-app directory with the content of the archive
 
-```
+```sh
 > cp -a samourai-dojo-vX.Y.Z/. dojo-app/
 ```
 
@@ -490,7 +490,7 @@ If applicable, edit the templates files stored in `~/dojo-app/docker/my-dojo/con
 
 #### 4.2.4/ Start Upgrade
 
-```
+```sh
 > cd ~/dojo-app/docker/my-dojo
 > ./dojo.sh upgrade
 ```
@@ -502,7 +502,7 @@ The shell script is going to rebuild the Docker containers. MyDojo will be autom
 
 #### 4.2.5/ Cleanup
 
-```
+```sh
 > cd ~
 > rm -rf samourai-dojo-vX.Y.Z
 > rm samourai-dojo-vX.Y.Z.zip

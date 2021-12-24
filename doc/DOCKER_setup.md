@@ -100,7 +100,7 @@ During an upgrade (dojo.sh upgrade), the content of the template files is merged
 
 Most options provided in the configuration files can be later modified. New values will become active after a call to
 
-```
+```sh
 ./dojo.sh restart
 ```
 
@@ -174,7 +174,7 @@ This procedure allows to install a new Dojo from scratch.
 
 * Launch the installation of your Dojo with
 
-```
+```sh
 ./dojo.sh install
 ```
 
@@ -183,7 +183,7 @@ Docker and Docker Compose are going to build the images and containers of your D
 
 * Monitor the progress made for the initialization of the database with this command displaying the logs of the tracker
 
-```
+```sh
 ./dojo.sh logs nodejs
 ```
 
@@ -192,7 +192,7 @@ Exit the logs with CTRL+C when the syncing of the database has completed.
 
 * Retrieve the Tor onion addresses (v3) of the API and block explorer of your Dojo
 
-```
+```sh
 ./dojo.sh onion
 ```
 
@@ -207,7 +207,7 @@ This procedure allows to upgrade your Dojo with a new version.
 
 * Stop your Dojo with
 
-```
+```sh
 ./dojo.sh stop
 ```
 
@@ -219,7 +219,7 @@ This procedure allows to upgrade your Dojo with a new version.
 
 * Launch the upgrade of your Dojo with
 
-```
+```sh
 ./dojo.sh upgrade
 ```
 
@@ -234,7 +234,7 @@ Note: The upgrade process will override all manual modifications of the files st
 
 dojo.sh is a multifeature tool allowing to interact with your Dojo.
 
-```
+```sh
 Usage: ./dojo.sh command [module] [options]
 
 Available commands:
@@ -306,7 +306,7 @@ A block explorer ([BTC RPC Explorer](https://github.com/janoside/btc-rpc-explore
 
 You can retrieve the onion address of the block explorer with the command
 
-```
+```sh
 ./dojo.sh onion
 ```
 

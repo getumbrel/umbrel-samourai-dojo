@@ -5,7 +5,7 @@ Notify the server of the new HD account for tracking. When new accounts are sent
 Response time for restored accounts might be long if there is much previous activity.
 
 
-```
+```http request
 POST /xpub
 ```
 
@@ -22,7 +22,7 @@ Parameters must be passed in the body of the request as url encoded arguments.
 
 ### Example
 
-```
+```http request
 POST /xpub
 
 xpub=xpub0123456789&type=restore&segwit=bip84

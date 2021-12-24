@@ -2,7 +2,7 @@
 
 Push a transaction to the network.
 
-```
+```http request
 POST /pushtx/
 ```
 Parameters must be passed in the body of the request as url encoded arguments.
@@ -15,7 +15,7 @@ Parameters must be passed in the body of the request as url encoded arguments.
 
 ### Example
 
-```
+```http request
 POST /pushtx/
 
 tx=abcdef0123456789
