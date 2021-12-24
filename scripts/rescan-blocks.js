@@ -2,10 +2,10 @@
  * scripts/tracker.index.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const Logger = require('../lib/logger')
-const BlockchainProcessor = require('../tracker/blockchain-processor')
+
+import Logger from '../lib/logger.js'
+import BlockchainProcessor from '../tracker/blockchain-processor.js'
 
 
 /**
@@ -13,11 +13,11 @@ const BlockchainProcessor = require('../tracker/blockchain-processor')
  */
 
 async function run(height) {
-  const processor = new BlockchainProcessor()
-  // Rewind the chain
-  await processor.rewind(height - 1)
-  // Catchup
-  await processor.catchup()
+    const processor = new BlockchainProcessor()
+    // Rewind the chain
+    await processor.rewind(height - 1)
+    // Catchup
+    await processor.catchup()
 }
 
 
@@ -27,16 +27,16 @@ async function run(height) {
 
 // Retrieves command line arguments
 if (process.argv.length < 3) {
-  Logger.error(null, 'Missing arguments. Command = node rescan-blocks.js <from_block_height>')
-  return
+    Logger.error(null, 'Missing arguments. Command = node rescan-blocks.js <from_block_height>')
+    process.exit(1)
 }
 
 Logger.info('Start processing')
 
-const height = parseInt(process.argv[2])
+const height = Number.parseInt(process.argv[2], 10)
 
-const startupTimeout = setTimeout(async function() {
-  return run(height).then(() => {
-    Logger.info('Process completed')
-  })
+setTimeout(async () => {
+    return run(height).then(() => {
+        Logger.info('Process completed')
+    })
 }, 1500)

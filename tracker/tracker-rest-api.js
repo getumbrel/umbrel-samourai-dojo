@@ -2,72 +2,74 @@
  * tracker/tracker-rest-api.js
  * Copyright (c) 2016-2019, Samourai Wallet (CC BY-NC-ND 4.0 License).
  */
-'use strict'
 
-const validator = require('validator')
-const errors = require('../lib/errors')
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const network = require('../lib/bitcoin/network')
-const keys = require('../keys')[network.key]
 
+import validator from 'validator'
+
+import errors from '../lib/errors.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+import network from '../lib/bitcoin/network.js'
+import keysFile from '../keys/index.js'
+
+const keys = keysFile[network.key]
 
 /**
  * Tracker API endpoints
  */
 class TrackerRestApi {
 
-  /**
+    /**
    * Constructor
-   * @param {pushtx.HttpServer} httpServer - HTTP server
-   * @param {tracker.Tracker} tracker - tracker
+   * @param {HttpServer} httpServer - HTTP server
+   * @param {Tracker} tracker - tracker
    */
-  constructor(httpServer, tracker) {
-    this.httpServer = httpServer
-    this.tracker = tracker
+    constructor(httpServer, tracker) {
+        this.httpServer = httpServer
+        this.tracker = tracker
 
-    // Establish routes. Proxy server strips /pushtx
-    this.httpServer.app.get(
-      `/${keys.prefixes.support}/rescan`,
-      authMgr.checkHasAdminProfile.bind(authMgr),
-      this.getBlocksRescan.bind(this),
-    )
-  }
+        // Establish routes. Proxy server strips /pushtx
+        this.httpServer.app.get(
+            `/${keys.prefixes.support}/rescan`,
+            authMgr.checkHasAdminProfile.bind(authMgr),
+            this.getBlocksRescan.bind(this),
+        )
+    }
 
-  /**
+    /**
    * Rescan a range of blocks
    */
-  async getBlocksRescan(req, res) {
-    // Check request arguments
-    if (!req.query)
-      return HttpServer.sendError(res, errors.body.INVDATA)
+    async getBlocksRescan(req, res) {
+    // Check req.arguments
+        if (!req.query)
+            return HttpServer.sendError(res, errors.body.INVDATA)
 
-    if (!req.query.fromHeight || !validator.isInt(req.query.fromHeight))
-      return HttpServer.sendError(res, errors.body.INVDATA)
+        if (!req.query.fromHeight || !validator.isInt(req.query.fromHeight))
+            return HttpServer.sendError(res, errors.body.INVDATA)
 
-    if (req.query.toHeight && !validator.isInt(req.query.toHeight))
-      return HttpServer.sendError(res, errors.body.INVDATA)
+        if (req.query.toHeight && !validator.isInt(req.query.toHeight))
+            return HttpServer.sendError(res, errors.body.INVDATA)
 
-    // Retrieve the request arguments
-    const fromHeight = parseInt(req.query.fromHeight)
-    const toHeight = req.query.toHeight ? parseInt(req.query.toHeight) : fromHeight
+        // Retrieve the req.arguments
+        const fromHeight = Number.parseInt(req.query.fromHeight, 10)
+        const toHeight = req.query.toHeight ? Number.parseInt(req.query.toHeight, 10) : fromHeight
 
-    if (req.query.toHeight && (toHeight < fromHeight))
-      return HttpServer.sendError(res, errors.body.INVDATA)
+        if (req.query.toHeight && (toHeight < fromHeight))
+            return HttpServer.sendError(res, errors.body.INVDATA)
 
-    try {
-      await this.tracker.blockchainProcessor.rescanBlocks(fromHeight, toHeight)
-      const ret = {
-        status: 'Rescan complete',
-        fromHeight: fromHeight,
-        toHeight: toHeight
-      }
-      HttpServer.sendRawData(res, JSON.stringify(ret, null, 2))
-    } catch(e) {
-      return HttpServer.sendError(res, e)
+        try {
+            await this.tracker.blockchainProcessor.rescanBlocks(fromHeight, toHeight)
+            const returnValue = {
+                status: 'Rescan complete',
+                fromHeight: fromHeight,
+                toHeight: toHeight
+            }
+            HttpServer.sendRawData(res, JSON.stringify(returnValue, null, 2))
+        } catch(error) {
+            return HttpServer.sendError(res, error)
+        }
     }
-  }
 
 }
 
-module.exports = TrackerRestApi
+export default TrackerRestApi

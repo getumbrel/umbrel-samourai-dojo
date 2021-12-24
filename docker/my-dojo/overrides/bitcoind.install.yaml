@@ -14,8 +14,9 @@ services:
       - ./.env
       - ./conf/docker-common.conf
       - ./conf/docker-bitcoind.conf
+      - ./conf/docker-tor.conf
     restart: always
-    command: "/wait-for-it.sh tor:9050 --timeout=720 --strict -- /restart.sh"
+    command: "/wait-for-it.sh tor:${TOR_SOCKS_PORT} --timeout=720 --strict -- /restart.sh"
     expose:
       - "8333"
       - "28256"

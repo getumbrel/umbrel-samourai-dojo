@@ -98,7 +98,7 @@ RUN     chown tor:tor /wait-for-it.sh && \
         chmod g+x /wait-for-it.sh
 
 # Expose socks port
-EXPOSE  9050
+EXPOSE  ${TOR_SOCKS_PORT}
 
 # Switch to user tor
 USER    tor

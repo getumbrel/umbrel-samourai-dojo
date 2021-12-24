@@ -1,115 +1,122 @@
 const screenTxsToolsScript = {
 
-  explorerInfo: null,
-  currentTxid: null,
+    explorerInfo: null,
+    currentTxid: null,
 
-  initPage: function() {
-    this.getExplorerInfo()
-    // Sets the event handlers
-    $('#btn-tx-search-go').click(() => {this.searchTx()})
-    $('#btn-txs-details-reset').click(() => {this.showSearchForm()})
-    $('#txs-tool').keyup(evt => {
-      if (evt.keyCode === 13) {
-        this.searchTx()
-      }
-    })
-  },
+    initPage: () => {
+        screenTxsToolsScript.getExplorerInfo()
+        // Sets the event handlers
+        document.querySelector('#btn-tx-search-go').addEventListener('click', () => {
+            screenTxsToolsScript.searchTx()
+        })
+        document.querySelector('#btn-txs-details-reset').addEventListener('click', () => {
+            screenTxsToolsScript.showSearchForm()
+        })
+        document.querySelector('#txs-tool').addEventListener('keyup',evt => {
+            if (evt.key === 'Enter') {
+                screenTxsToolsScript.searchTx()
+            }
+        })
+    },
 
-  preparePage: function() {
-    this.showSearchForm()
-    $("#txid").focus()
-  },
+    preparePage: () => {
+        screenTxsToolsScript.showSearchForm()
+        document.querySelector('#txid').focus()
+    },
 
-  getExplorerInfo: function() {
-    lib_api.getExplorerPairingInfo().then(explorerInfo => {
-      this.explorerInfo = explorerInfo
-    }).catch(e => {
-      lib_errors.processError(e)
-    })
-  },
+    getExplorerInfo: () => {
+        lib_api.getExplorerPairingInfo().then(explorerInfo => {
+            screenTxsToolsScript.explorerInfo = explorerInfo
+        }).catch(error => {
+            lib_errors.processError(error)
+        })
+    },
 
-  searchTx: function() {
-    lib_msg.displayMessage('Search in progress...');
-    const txid = $('#txid').val()
-    this.currentTxid = txid
-    return this._searchTx(txid).then(() => {
-      lib_msg.cleanMessagesUi()
-    })
-  },
+    searchTx: () => {
+        lib_msg.displayMessage('Search in progress...')
+        const txid = document.querySelector('#txid').value
+        screenTxsToolsScript.currentTxid = txid
+        return screenTxsToolsScript._searchTx(txid).then(() => {
+            lib_msg.cleanMessagesUi()
+        })
+    },
 
-  _searchTx: function(txid) {
-    return lib_api.getTransaction(txid).then(txInfo => {
-      if (txInfo) {
-        console.log(txInfo)
-        this.setTxDetails(txInfo)
-        this.showTxDetails()
-      }
-    }).catch(e => {
-      lib_msg.displayErrors('No transaction found')
-      console.log(e)
-      throw e
-    })
-  },
+    _searchTx: (txid) => lib_api.getTransaction(txid).then((txInfo) => {
+        if (txInfo) {
+            console.log(txInfo)
+            screenTxsToolsScript.setTxDetails(txInfo)
+            screenTxsToolsScript.showTxDetails()
+        }
+    }).catch((error) => {
+        lib_msg.displayErrors('No transaction found')
+        console.log(error)
+        throw error
+    }),
 
-  setTxDetails: function(txInfo) {
-    $('tr.input-row').remove()
-    $('tr.output-row').remove()
+    setTxDetails: (txInfo) => {
+        for (const elem of document.querySelectorAll('tr.input-row')) {
+            elem.remove()
+        }
 
-    const txUrl = lib_cmn.getExplorerTxUrl(this.currentTxid, this.explorerInfo)
-    $('#txid-value').text(this.currentTxid)
-    $('#txid-value').attr('href', txUrl)
+        for (const elem of document.querySelectorAll('tr.output-row')) {
+            elem.remove()
+        }
 
-    const firstseen = txInfo['created'] ? lib_fmt.unixTsToLocaleString(txInfo['created']) : '--'
-    $('#tx-firstseen').text(firstseen)
+        const txUrl = lib_cmn.getExplorerTxUrl(screenTxsToolsScript.currentTxid, screenTxsToolsScript.explorerInfo)
+        document.querySelector('#txid-value').textContent = screenTxsToolsScript.currentTxid
+        document.querySelector('#txid-value').setAttribute('href', txUrl)
 
-    if (txInfo.hasOwnProperty('block'))
-      $('#tx-location').text(` Block ${txInfo['block']['height']}`)
-    else
-      $('#tx-location').text(' Mempool')
+        const firstseen = txInfo.created ? lib_fmt.unixTsToLocaleString(txInfo.created) : '--'
+        document.querySelector('#tx-firstseen').textContent = firstseen
+
+        if ('block' in txInfo)
+            document.querySelector('#tx-location').textContent = ` Block ${txInfo.block.height}`
+        else
+            document.querySelector('#tx-location').textContent = ' Mempool'
 
 
-    const nbInputs = txInfo['inputs'].length
-    $('#tx-nb-inputs').text(nbInputs)
+        const nbInputs = txInfo.inputs.length
+        document.querySelector('#tx-nb-inputs').textContent = nbInputs
 
-    const nbOutputs = txInfo['outputs'].length
-    $('#tx-nb-outputs').text(nbOutputs)
+        const nbOutputs = txInfo.outputs.length
+        document.querySelector('#tx-nb-outputs').textContent = nbOutputs
 
-    $('#tx-vfeerate').text(`${txInfo['vfeerate']} sats/vbyte`)
+        document.querySelector('#tx-vfeerate').textContent = `${txInfo.vfeerate} sats/vbyte`
 
-    const fees = parseInt(txInfo['fees'])
-    $('#tx-fees').text(`${fees} sats`)
+        const fees = Number.parseInt(txInfo.fees, 10)
+        document.querySelector('#tx-fees').textContent = `${fees} sats`
 
-    let amount = fees
-    for (let o of txInfo['outputs']) {
-      amount += parseInt(o['value'])
-    }
-    amount = amount / 100000000
-    $('#tx-amount').text(`${amount} BTC`)
+        let amount = fees
+        for (let o of txInfo.outputs) {
+            amount += Number.parseInt(o.value, 10)
+        }
+        amount = amount / 100000000
+        document.querySelector('#tx-amount').textContent = `${amount} BTC`
 
-    $('#tx-size').text(`${txInfo['size']} bytes`)
-    $('#tx-vsize').text(`${txInfo['vsize']} vbytes`)
-    $('#tx-version').text(txInfo['version'])
+        document.querySelector('#tx-size').textContent = `${txInfo.size} bytes`
+        document.querySelector('#tx-vsize').textContent = `${txInfo.vsize} vbytes`
+        document.querySelector('#tx-version').textContent = txInfo.version
 
-    let nlocktime = parseInt(txInfo['locktime'])
-    if (nlocktime < 500000000) {
-      $('#tx-nlocktime').text(`Block ${nlocktime}`)
-    } else {
-      locktime = lib_fmt.unixTsToLocaleString(locktime)
-      $('#tx-nlocktime').text(locktime)
-    }
-  },
+        let nlocktime = Number.parseInt(txInfo.locktime, 10)
+        if (nlocktime < 500000000) {
+            document.querySelector('#tx-nlocktime').textContent = `Block ${nlocktime}`
+        } else {
+            nlocktime = lib_fmt.unixTsToLocaleString(nlocktime)
+            document.querySelector('#tx-nlocktime').textContent = nlocktime
+        }
+    },
 
-  showSearchForm: function() {
-    $('#txs-tool-details').hide()
-    $('#txid').val('')
-    $('#txs-tool-search-form').show()
-    lib_msg.cleanMessagesUi()
-  },
+    showSearchForm: () => {
+        document.querySelector('#txs-tool-details').setAttribute('hidden', '')
+        document.querySelector('#txid').value = ''
+        document.querySelector('#txs-tool-search-form').removeAttribute('hidden')
+        lib_msg.cleanMessagesUi()
+    },
 
-  showTxDetails: function() {
-    $('#txs-tool-search-form').hide()
-    $('#txs-tool-details').show()
-  },
+    showTxDetails: () => {
+        document.querySelector('#txs-tool-search-form').setAttribute('hidden', '')
+        document.querySelector('#txs-tool-details').removeAttribute('hidden')
+    },
 
 }
 

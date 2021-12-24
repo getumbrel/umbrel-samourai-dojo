@@ -2,28 +2,27 @@
  * test/a-init-network.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const assert = require('assert')
-const bitcoin = require('bitcoinjs-lib')
-const network = require('../lib/bitcoin/network')
+
+import assert from 'assert'
+import bitcoin from 'bitcoinjs-lib'
+import network from '../lib/bitcoin/network.js'
+
 network.key = 'testnet'
 network.network = bitcoin.networks.testnet
-const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
-const addrHelper = require('../lib/bitcoin/addresses-helper')
 
 
 /**
  * Force testnet for all the unit tests
  */
-describe('InitTest', function() {
-  
-  describe('initTests()', function() {
+describe('InitTest', () => {
 
-    it('should successfully initialize testnet', function() {
-      assert(true)
+    describe('initTests()', () => {
+
+        it('should successfully initialize testnet', () => {
+            assert(true)
+        })
+
     })
-
-  })
 
 })

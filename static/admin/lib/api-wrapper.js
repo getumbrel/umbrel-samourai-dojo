@@ -1,274 +1,226 @@
+// eslint-disable-next-line no-unused-vars
 const lib_api = {
 
-  /**
-   * Base URI
-   */
-  baseUri: conf['api']['baseUri'],
+    /**
+     * Base URI
+     */
+    baseUri: conf.api.baseUri,
 
-  /**
-   * Authentication
-   */
-  signin: function(data) {
-    let uri = this.baseUri + '/auth/login'
-    return this.sendPostUriEncoded(uri, data)
-  },
+    /**
+     * Authentication
+     */
+    signin: (data) => {
+        let uri = `${lib_api.baseUri}/auth/login`
+        return lib_api.sendPostUriEncoded(uri, data)
+    },
 
-  /**
-   * Gets a new access token
-   */
-  refreshToken: function(data) {
-    let uri = this.baseUri + '/auth/refresh'
-    return this.sendPostUriEncoded(uri, data)
-  },
+    /**
+     * Gets a new access token
+     */
+    refreshToken: (data) => {
+        let uri = `${lib_api.baseUri}/auth/refresh`
+        return lib_api.sendPostUriEncoded(uri, data)
+    },
 
-  /**
-   * API Status
-   */
-  getApiStatus: function() {
-    let prefix = conf['prefixes']['status']
-    let uri = this.baseUri + '/' + prefix
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * API Status
+     */
+    getApiStatus: () => {
+        let prefix = conf.prefixes.status
+        let uri = `${lib_api.baseUri}/${prefix}`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Get pairing info
-   */
-  getPairingInfo: function() {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/' + prefix + '/pairing'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Get pairing info
+     */
+    getPairingInfo: () => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/${prefix}/pairing`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Get block explorer pairing info
-   */
-  getExplorerPairingInfo: function() {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/' + prefix + '/pairing/explorer'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Get block explorer pairing info
+     */
+    getExplorerPairingInfo: () => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/${prefix}/pairing/explorer`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * PushTx Status
-   */
-  getPushtxStatus: function() {
-    let prefix = conf['prefixes']['statusPushtx']
-    let uri = this.baseUri + '/pushtx/' + prefix
-    //let uri = 'http://127.0.0.1:8081/' + prefix
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * PushTx Status
+     */
+    getPushtxStatus: () => {
+        let prefix = conf.prefixes.statusPushtx
+        let uri = `${lib_api.baseUri}/pushtx/${prefix}`
+        //let uri = 'http://127.0.0.1:8081/' + prefix
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Orchestrztor Status
-   */
-  getOrchestratorStatus: function() {
-    let prefix = conf['prefixes']['statusPushtx']
-    let uri = this.baseUri + '/pushtx/' + prefix + '/schedule'
-    //let uri = 'http://127.0.0.1:8081/' + prefix + '/schedule'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Orchestrztor Status
+     */
+    getOrchestratorStatus: () => {
+        let prefix = conf.prefixes.statusPushtx
+        let uri = `${lib_api.baseUri}/pushtx/${prefix}/schedule`
+        //let uri = 'http://127.0.0.1:8081/' + prefix + '/schedule'
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Gets information about an address
-   */
-  getAddressInfo: function(address) {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/' + prefix + '/address/' + address + '/info'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Gets information about an address
+     */
+    getAddressInfo: (address) => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/${prefix}/address/${address}/info`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Rescans an address
-   */
-  getAddressRescan: function(address) {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/' + prefix + '/address/' + address + '/rescan'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Rescans an address
+     */
+    getAddressRescan: (address) => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/${prefix}/address/${address}/rescan`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Gets information about a xpub
-   */
-  getXpubInfo: function(xpub) {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/' + prefix + '/xpub/' + xpub + '/info'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Gets information about a xpub
+     */
+    getXpubInfo: (xpub) => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/${prefix}/xpub/${xpub}/info`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Rescans a xpub
-   */
-  getXpubRescan: function(xpub, nbAddr, startIdx) {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/' + prefix + '/xpub/' + xpub + '/rescan'
-    return this.sendGetUriEncoded(
-      uri,
-      {
-        'gap': nbAddr,
-        'startidx': startIdx
-      }
-    )
-  },
+    /**
+     * Rescans a xpub
+     */
+    getXpubRescan: (xpub, nbAddr, startIdx) => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/${prefix}/xpub/${xpub}/rescan`
+        return lib_api.sendGetUriEncoded(
+            uri,
+            {
+                'gap': nbAddr,
+                'startidx': startIdx
+            }
+        )
+    },
 
-  /**
-   * Deletes a xpub
-   */
-  getXpubDelete: function(xpub) {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/' + prefix + '/xpub/' + xpub + '/delete'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Deletes a xpub
+     */
+    getXpubDelete: (xpub) => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/${prefix}/xpub/${xpub}/delete`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Gets the status of a xpub rescan
-   */
-  getXpubRescanStatus: function(xpub) {
-    let uri = this.baseUri + '/xpub/' + xpub + '/import/status'
-    return this.sendGetUriEncoded(uri, {})
-  },
+    /**
+     * Gets the status of a xpub rescan
+     */
+    getXpubRescanStatus: (xpub) => {
+        let uri = `${lib_api.baseUri}/xpub/${xpub}/import/status`
+        return lib_api.sendGetUriEncoded(uri, {})
+    },
 
-  /**
-   * Notifies the server of the new HD account for tracking.
-   */
-  postXpub: function(arguments) {
-    let uri = this.baseUri + '/xpub'
-    return this.sendPostUriEncoded(uri, arguments)
-  },
+    /**
+     * Notifies the server of the new HD account for tracking.
+     */
+    postXpub: (args) => {
+        let uri = `${lib_api.baseUri}/xpub`
+        return lib_api.sendPostUriEncoded(uri, args)
+    },
 
-  /**
-   * Wallet
-   */
-  getWallet: function(arguments) {
-    let uri = this.baseUri + '/wallet'
-    return this.sendGetUriEncoded(uri, arguments)
-  },
+    /**
+     * Wallet
+     */
+    getWallet: (args) => {
+        let uri = `${lib_api.baseUri}/wallet`
+        return lib_api.sendGetUriEncoded(uri, args)
+    },
 
-  /**
-   * Transaction
-   */
-  getTransaction: function(txid) {
-    let uri = this.baseUri + '/tx/' + txid
-    return this.sendGetUriEncoded(
-      uri,
-      {
-        'fees': 1
-      }
-    )
-  },
+    /**
+     * Transaction
+     */
+    getTransaction: (txid) => {
+        let uri = `${lib_api.baseUri}/tx/${txid}`
+        return lib_api.sendGetUriEncoded(
+            uri,
+            {
+                'fees': 1
+            }
+        )
+    },
 
-  /**
-   * Transactions
-   */
-  getTransactions: function(arguments) {
-    let uri = this.baseUri + '/txs'
-    return this.sendGetUriEncoded(uri, arguments)
-  },
+    /**
+     * Transactions
+     */
+    getTransactions: (args) => {
+        let uri = `${lib_api.baseUri}/txs`
+        return lib_api.sendGetUriEncoded(uri, args)
+    },
 
-  /**
-   * Rescans a range of blocks
-   */
-  getBlocksRescan: function(fromHeight, toHeight) {
-    let prefix = conf['prefixes']['support']
-    let uri = this.baseUri + '/tracker/' + prefix + '/rescan'
-    //let uri = 'http://127.0.0.1:8082/' + prefix + '/rescan'
-    return this.sendGetUriEncoded(
-      uri,
-      {
-        'fromHeight': fromHeight,
-        'toHeight': toHeight
-      }
-    )
-  },
+    /**
+     * Rescans a range of blocks
+     */
+    getBlocksRescan: (fromHeight, toHeight) => {
+        let prefix = conf.prefixes.support
+        let uri = `${lib_api.baseUri}/tracker/${prefix}/rescan`
+        //let uri = 'http://127.0.0.1:8082/' + prefix + '/rescan'
+        return lib_api.sendGetUriEncoded(
+            uri,
+            {
+                'fromHeight': fromHeight,
+                'toHeight': toHeight
+            }
+        )
+    },
 
-  /**
-   * HTTP requests methods
-   */
-  sendGetUriEncoded: function(uri, data) {
-    data['at'] = lib_auth.getAccessToken()
+    /**
+     * HTTP requests methods
+     */
+    sendGetUriEncoded: async (uri, data) => {
+        data.at = lib_auth.getAccessToken()
 
-    let deferred = $.Deferred(),
-        dataString = $.param(data)
+        const searchParams = new URLSearchParams(data).toString()
 
-    $.when($.ajax({
-      url: uri,
-      method: 'GET',
-      data: dataString,
-      contentType: "application/x-www-form-urlencoded; charset=utf-8"
-    }))
-    .done(function (result) {
-      deferred.resolve(result)
-    })
-    .fail(function (jqxhr, textStatus, error) {
-      deferred.reject(jqxhr)
-    })
+        const response = await fetch(`${uri}?${searchParams}`, { method: 'GET' })
 
-    return deferred.promise()
-  },
+        return response.ok ? Promise.resolve(await response.json()) : Promise.reject(await response.json())
+    },
 
-  sendPostUriEncoded: function(uri, data) {
-    data['at'] = lib_auth.getAccessToken()
+    sendPostUriEncoded: async (uri, data) => {
+        data.at = lib_auth.getAccessToken()
 
-    let deferred = $.Deferred(),
-        dataString = $.param(data)
+        const bodyData = new URLSearchParams(data).toString()
 
-    $.when($.ajax({
-      url: uri,
-      method: 'POST',
-      data: dataString,
-      contentType: "application/x-www-form-urlencoded; charset=utf-8"
-    }))
-    .done(function (result) {
-      deferred.resolve(result)
-    })
-    .fail(function (jqxhr, textStatus, error) {
-      deferred.reject(jqxhr)
-    });
+        const response = await fetch(uri, { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' }, body: bodyData })
 
-    return deferred.promise()
-  },
+        return response.ok ? Promise.resolve(await response.json()) : Promise.reject(await response.json())
+    },
 
-  sendGetJson: function(uri, data) {
-    data['at'] = lib_auth.getAccessToken()
+    sendGetJson: async (uri, data) => {
+        data.at = lib_auth.getAccessToken()
 
-    let deferred = $.Deferred()
+        const searchParams = new URLSearchParams(data).toString()
 
-    $.when($.ajax({
-      url: uri,
-      method: 'GET',
-      data: data,
-    }))
-    .done(function (result) {
-      deferred.resolve(result)
-    })
-    .fail(function (jqxhr, textStatus, error) {
-      deferred.reject(jqxhr)
-    });
+        const response = await fetch(`${uri}?${searchParams}`, { method: 'GET' })
 
-    return deferred.promise()
-  },
+        return response.ok ? Promise.resolve(await response.json()) : Promise.reject(await response.json())
+    },
 
 
-  sendPostJson: function(uri, data) {
-    data['at'] = lib_auth.getAccessToken()
+    sendPostJson: async (uri, data) => {
+        data.at = lib_auth.getAccessToken()
 
-    let deferred = $.Deferred(),
-        dataString = JSON.stringify(data)
+        const response = await fetch(uri, { method: 'POST', headers: { 'Content-Type': 'application/json; charset=utf-8' }, body: JSON.stringify(data) })
 
-    $.when($.ajax({
-      url: uri,
-      method: 'POST',
-      data: dataString,
-      contentType: "application/json; charset=utf-8",
-      dataType: 'json'
-    }))
-    .done(function (result) {
-      deferred.resolve(result)
-    })
-    .fail(function (jqxhr, textStatus, error) {
-      deferred.reject(jqxhr)
-    });
-
-    return deferred.promise()
-  }
+        return response.ok ? Promise.resolve(await response.json()) : Promise.reject(await response.json())
+    }
 
 }

@@ -2,17 +2,17 @@
  * accounts/headers-fees-rest-api.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const validator = require('validator')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const rpcHeaders = require('../lib/bitcoind-rpc/headers')
-const authMgr = require('../lib/auth/authorizations-manager')
-const HttpServer = require('../lib/http-server/http-server')
-const apiHelper = require('./api-helper')
 
-const debugApi = process.argv.indexOf('api-debug') > -1
+import validator from 'validator'
+
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import rpcHeaders from '../lib/bitcoind-rpc/headers.js'
+import authMgr from '../lib/auth/authorizations-manager.js'
+import HttpServer from '../lib/http-server/http-server.js'
+
+const debugApi = process.argv.includes('api-debug')
 
 
 /**
@@ -20,58 +20,58 @@ const debugApi = process.argv.indexOf('api-debug') > -1
  */
 class HeadersRestApi {
 
-  /**
-   * Constructor
-   * @param {pushtx.HttpServer} httpServer - HTTP server
-   */
-  constructor(httpServer) {
-    this.httpServer = httpServer
+    /**
+     * Constructor
+     * @param {HttpServer} httpServer - HTTP server
+     */
+    constructor(httpServer) {
+        this.httpServer = httpServer
 
-    // Establish routes
-    this.httpServer.app.get(
-      '/header/:hash',
-      authMgr.checkAuthentication.bind(authMgr),
-      this.validateArgsGetHeader.bind(this),
-      this.getHeader.bind(this),
-    )
-  }
-
-  /**
-   * Retrieve the block header for a given hash
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   */
-  async getHeader(req, res) {
-    try {
-      const header = await rpcHeaders.getHeader(req.params.hash)
-      HttpServer.sendRawData(res, header)
-    } catch(e) {
-      HttpServer.sendError(res, e)
-    } finally {
-      debugApi && Logger.info(`API : Completed GET /header/${req.params.hash}`)
+        // Establish routes
+        this.httpServer.app.get(
+            '/header/:hash',
+            authMgr.checkAuthentication.bind(authMgr),
+            this.validateArgsGetHeader.bind(this),
+            this.getHeader.bind(this),
+        )
     }
-  }
 
-  /**
-   * Validate request arguments
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   * @param {function} next - next tiny-http middleware
-   */
-  validateArgsGetHeader(req, res, next) {
-    const isValidHash = validator.isHash(req.params.hash, 'sha256')
-
-    if (!isValidHash) {
-      HttpServer.sendError(res, errors.body.INVDATA)
-      Logger.error(
-        req.params.hash,
-        'API : HeadersRestApi.validateArgsGetHeader() : Invalid hash'
-      )
-    } else {
-      next()
+    /**
+     * Retrieve the block header for a given hash
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     */
+    async getHeader(req, res) {
+        try {
+            const header = await rpcHeaders.getHeader(req.params.hash)
+            HttpServer.sendRawData(res, header)
+        } catch (error) {
+            HttpServer.sendError(res, error)
+        } finally {
+            debugApi && Logger.info(`API : Completed GET /header/${req.params.hash}`)
+        }
     }
-  }
+
+    /**
+     * Validate request arguments
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     * @param {function} next - next tiny-http middleware
+     */
+    validateArgsGetHeader(req, res, next) {
+        const isValidHash = validator.isHash(req.params.hash, 'sha256')
+
+        if (isValidHash) {
+            next()
+        } else {
+            HttpServer.sendError(res, errors.body.INVDATA)
+            Logger.error(
+                req.params.hash,
+                'API : HeadersRestApi.validateArgsGetHeader() : Invalid hash'
+            )
+        }
+    }
 
 }
 
-module.exports = HeadersRestApi
+export default HeadersRestApi
