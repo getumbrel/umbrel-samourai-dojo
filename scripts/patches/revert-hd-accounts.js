@@ -4,7 +4,7 @@
  */
 
 
-import mysql from 'mysql'
+import mysql from 'mysql2'
 import bitcoin from 'bitcoinjs-lib'
 import bs58check from 'bs58check'
 import bs58 from 'bs58'

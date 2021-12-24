@@ -33,7 +33,7 @@
     "lodash.clonedeep": "4.5.0",
     "milliparsec": "2.2.0",
     "minimist": "1.2.5",
-    "mysql": "2.18.1",
+    "mysql2": "^2.3.3",
     "nocache": "3.0.1",
     "passport": "0.4.1",
     "passport-localapikey-update": "0.6.0",
