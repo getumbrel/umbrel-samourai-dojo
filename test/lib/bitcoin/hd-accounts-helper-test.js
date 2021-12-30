@@ -135,8 +135,8 @@ describe('HdAccountsHelper', () => {
         it('should successfully classify the code stored in db', () => {
             for (const v of HD_TYPES_VECTORS) {
                 const ret = hdaHelper.classify(v[0])
-                assert(ret.type === v[1])
-                assert(ret.locked === v[2])
+                assert.strictEqual(ret.type, v[1])
+                assert.strictEqual(ret.locked, v[2])
             }
         })
     })
@@ -146,7 +146,7 @@ describe('HdAccountsHelper', () => {
         it('should successfully compute the code stored in db', () => {
             for (const v of HD_TYPES_VECTORS) {
                 const ret = hdaHelper.makeType(v[1], v[2])
-                assert(ret === v[0])
+                assert.strictEqual(ret, v[0])
             }
         })
     })
@@ -156,21 +156,21 @@ describe('HdAccountsHelper', () => {
         it('should successfully derive addresses with BIP44', async () => {
             for (const v of BIP44_VECTORS) {
                 const addresses = await hdaHelper.deriveAddresses(XPUB, v[0], [v[1]], hdaHelper.BIP44)
-                assert(addresses[0].address === v[2])
+                assert.strictEqual(addresses[0].address, v[2])
             }
         })
 
         it('should successfully derive addresses with BIP49', async () => {
             for (const v of BIP49_VECTORS) {
                 const addresses = await hdaHelper.deriveAddresses(XPUB, v[0], [v[1]], hdaHelper.BIP49)
-                assert(addresses[0].address === v[2])
+                assert.strictEqual(addresses[0].address, v[2])
             }
         })
 
         it('should successfully derive addresses with BIP84', async () => {
             for (const v of BIP84_VECTORS) {
                 const addresses = await hdaHelper.deriveAddresses(XPUB, v[0], [v[1]], hdaHelper.BIP84)
-                assert(addresses[0].address === v[2])
+                assert.strictEqual(addresses[0].address, v[2])
             }
         })
 
@@ -188,17 +188,17 @@ describe('HdAccountsHelper', () => {
     describe('xlatXPUB()', () => {
         it('should successfully translate XPUB in YPUB', () => {
             const xpubXlated = hdaHelper.xlatXPUB(XPUB)
-            assert(xpubXlated === XPUB)
+            assert.strictEqual(xpubXlated, XPUB)
         })
 
         it('should successfully translate YPUB in XPUB', () => {
             const ypubXlated = hdaHelper.xlatXPUB(YPUB)
-            assert(ypubXlated === XPUB)
+            assert.strictEqual(ypubXlated, XPUB)
         })
 
         it('should successfully translate ZPUB in XPUB', () => {
             const zpubXlated = hdaHelper.xlatXPUB(ZPUB)
-            assert(zpubXlated === XPUB)
+            assert.strictEqual(zpubXlated, XPUB)
         })
     })
 
