@@ -54,6 +54,12 @@ select_yaml_files() {
   echo "$yamlFiles"
 }
 
+# Docker build
+docker_build() {
+  yamlFiles=$(select_yaml_files)
+  eval "docker-compose $yamlFiles build --parallel"
+}
+
 # Docker up
 docker_up() {
   yamlFiles=$(select_yaml_files)
@@ -201,6 +207,7 @@ install() {
     # Initialize the config files
     init_config_files
     # Build and start Dojo
+    docker_build
     docker_up --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
@@ -334,7 +341,8 @@ upgrade() {
       eval "docker-compose $yamlFiles down --rmi all"
     fi
     echo -e "\nStarting the upgrade of Dojo.\n"
-    docker_up --build --force-recreate --remove-orphans
+    docker_build
+    docker_up --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
       # Post start clean-up
