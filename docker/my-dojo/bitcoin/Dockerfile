@@ -31,8 +31,8 @@ RUN     set -ex && \
 # Build and install bitcoin binaries
 RUN     set -ex && \
         cd /tmp && \
-        gpg --batch --keyserver keyserver.ubuntu.com  --recv-keys $KEYS1 && \
-        gpg --batch --keyserver keys.openpgp.org  --recv-keys $KEYS2 && \
+        gpg --batch --keyserver hkps://keyserver.ubuntu.com:443 --recv-keys $KEYS1 && \
+        gpg --batch --keyserver hkps://keys.openpgp.org:443 --recv-keys $KEYS2 && \
         gpg --list-keys | tail -n +3 | tee /tmp/keys.txt && \
         gpg --list-keys $KEYS | diff - /tmp/keys.txt && \
         wget -qO "$BITCOIN_SHASUMS" "$BITCOIN_URL/$BITCOIN_SHASUMS" && \
