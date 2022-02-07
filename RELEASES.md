@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.14.0](#1_14_0)
 - [v1.13.0](#1_13_0)
 - [v1.12.1](#1_12_1)
 - [v1.12.0](#1_12_0)
@@ -20,6 +21,34 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+<a name="1_14_0"/>
+
+## Samourai Dojo v1.14.0 ##
+
+### Notable changes ###
+
+#### Updated Whirlpool CLI to v0.10.13 ####
+
+#### Faster Docker builds ####
+Docker build when installing or upgrading is now faster thanks to parallelization.
+
+### Change log ###
+
+#### Bug fixes ####
+- [9730cb6b](https://code.samourai.io/dojo/samourai-dojo/-/commit/9730cb6bbfb8cbbf94a9ed28ab95ab85ca8b9aec) - fixed ownership of files in Node.js container
+- [781fe8de](https://code.samourai.io/dojo/samourai-dojo/-/commit/781fe8de169416ecd772ea19160bf524d6e31f6a) - fixed invalid call of electrum RPC
+- [9f45bd90](https://code.samourai.io/dojo/samourai-dojo/-/commit/9f45bd90a39f404fb7d25138415e51cfeaca54dc) - added scheme and port to keyserver URI in bitcoin core Dockerfile
+
+#### Features ####
+- [93a4e9fc](https://code.samourai.io/dojo/samourai-dojo/-/commit/93a4e9fc930117c4bce3aa907e9726a5f82bc0de) - updated Whirlpool CLI to v0.10.13
+
+#### Documentation ####
+- [a64aad87](https://code.samourai.io/dojo/samourai-dojo/-/commit/a64aad87891893e6187f77cc05bba95dff86c276) - updated example of use of Tor bridges
+
+#### Architecture ####
+- [#mr264](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/264) - updated Node.js dependencies
+- [7da28b16](https://code.samourai.io/dojo/samourai-dojo/-/commit/7da28b16db7a63e9b70f6884d07495ef6447167e) - switched to more performant MySQL library and refactored MySQL queries
 
 <a name="1_13_0"/>
 
