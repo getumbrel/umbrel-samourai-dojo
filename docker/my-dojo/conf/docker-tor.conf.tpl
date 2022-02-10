@@ -2,6 +2,10 @@
 # CONFIGURATION OF TOR CONTAINER
 #########################################
 
+# Port of the Tor Socks proxy
+# Type: integer
+TOR_SOCKS_PORT=9050
+
 #
 # USE TOR BRIDGES
 #

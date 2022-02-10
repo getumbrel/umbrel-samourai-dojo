@@ -1,25 +1,27 @@
+// eslint-disable-next-line no-unused-vars
 const lib_errors = {
 
-  // Extract jqxhr error message
-  extractJqxhrErrorMsg: function(jqxhr) {
-    let hasErrorMsg = ('responseJSON' in jqxhr) &&
-      (jqxhr['responseJSON'] != null) &&
-      ('error' in jqxhr['responseJSON']) &&
-      (typeof jqxhr['responseJSON']['error'] == 'string')
+    // Extract jqxhr error message
+    extractErrorMsgFromResponse: (response) => {
+        if (response instanceof Error) return String(response)
 
-    return hasErrorMsg ? jqxhr['responseJSON']['error'] : jqxhr.statusText
-  },
+        let hasErrorMsg =
+            ('error' in response) &&
+            (typeof response.error == 'string')
 
-  // Manage errors
-  processError: function(e) {
-    const errorMsg = this.extractJqxhrErrorMsg(e)
-    // Redirect to sign in page if authentication error
-    if (errorMsg === 'Invalid JSON Web Token' || errorMsg === 'Missing JSON Web Token') {
-      lib_auth.logout()
-    } else {
-      lib_msg.displayErrors(errorMsg)
-      console.log(e)
-    }
-  },
+        return hasErrorMsg ? response.error : response.statusText
+    },
+
+    // Manage errors
+    processError: (error) => {
+        const errorMsg = lib_errors.extractErrorMsgFromResponse(error)
+        // Redirect to sign in page if authentication error
+        if (errorMsg === 'Invalid JSON Web Token' || errorMsg === 'Missing JSON Web Token') {
+            lib_auth.logout()
+        } else {
+            lib_msg.displayErrors(errorMsg)
+            console.log(error)
+        }
+    },
 
 }

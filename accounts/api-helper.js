@@ -2,161 +2,162 @@
  * accounts/api-helper.js
  * Copyright © 2019 – Katana Cryptographic Ltd. All Rights Reserved.
  */
-'use strict'
 
-const bitcoin = require('bitcoinjs-lib')
-const validator = require('validator')
-const Logger = require('../lib/logger')
-const errors = require('../lib/errors')
-const WalletEntities = require('../lib/wallet/wallet-entities')
-const network = require('../lib/bitcoin/network')
+
+import bitcoin from 'bitcoinjs-lib'
+import validator from 'validator'
+
+import Logger from '../lib/logger.js'
+import errors from '../lib/errors.js'
+import WalletEntities from '../lib/wallet/wallet-entities.js'
+import network from '../lib/bitcoin/network.js'
+import hdaHelper from '../lib/bitcoin/hd-accounts-helper.js'
+import addrHelper from '../lib/bitcoin/addresses-helper.js'
+import HttpServer from '../lib/http-server/http-server.js'
+
 const activeNet = network.network
-const hdaHelper = require('../lib/bitcoin/hd-accounts-helper')
-const addrHelper = require('../lib/bitcoin/addresses-helper')
-const HttpServer = require('../lib/http-server/http-server')
-
 
 /**
  * A singleton providing util methods used by the API
  */
 class ApiHelper {
 
-  /**
-   * Parse a string and extract (x|y|z|t|u|v)pubs, addresses and pubkeys
-   * @param {string} str - list of entities separated by '|'
-   * @returns {object} returns a WalletEntities object
-   */
-  parseEntities(str) {
-    const ret = new WalletEntities()
+    /**
+     * Parse a string and extract (x|y|z|t|u|v)pubs, addresses and pubkeys
+     * @param {string} entities - list of entities separated by '|'
+     * @returns {object} returns a WalletEntities object
+     */
+    parseEntities(entities) {
+        const returnValue = new WalletEntities()
 
-    if (typeof str !== 'string')
-      return ret
+        if (typeof entities !== 'string')
+            return returnValue
 
-    for (let item of str.split('|')) {
-      try {
+        for (let item of entities.split('|')) {
+            try {
 
-        if (hdaHelper.isValid(item) && !ret.hasXPub(item)) {
-          const xpub = hdaHelper.xlatXPUB(item)
+                if (hdaHelper.isValid(item) && !returnValue.hasXPub(item)) {
+                    const xpub = hdaHelper.xlatXPUB(item)
 
-          if (hdaHelper.isYpub(item))
-            ret.addHdAccount(xpub, item, false)
-          else if (hdaHelper.isZpub(item))
-            ret.addHdAccount(xpub, false, item)
-          else
-            ret.addHdAccount(item, false, false)
+                    if (hdaHelper.isYpub(item))
+                        returnValue.addHdAccount(xpub, item, false)
+                    else if (hdaHelper.isZpub(item))
+                        returnValue.addHdAccount(xpub, false, item)
+                    else
+                        returnValue.addHdAccount(item, false, false)
 
-        } else if (addrHelper.isSupportedPubKey(item) && !ret.hasPubKey(item)) {
-          // Derive pubkey as 3 addresses (P1PKH, P2WPKH/P2SH, BECH32)
-          const bufItem = Buffer.from(item, 'hex')
+                } else if (addrHelper.isSupportedPubKey(item) && !returnValue.hasPubKey(item)) {
+                    // Derive pubkey as 3 addresses (P1PKH, P2WPKH/P2SH, BECH32)
+                    const bufItem = Buffer.from(item, 'hex')
 
-          const funcs = [
-            addrHelper.p2pkhAddress,
-            addrHelper.p2wpkhP2shAddress,
-            addrHelper.p2wpkhAddress
-          ]
+                    const funcs = [
+                        addrHelper.p2pkhAddress,
+                        addrHelper.p2wpkhP2shAddress,
+                        addrHelper.p2wpkhAddress
+                    ]
 
-          for (let f of funcs) {
-            const addr = f(bufItem)
-            if (ret.hasAddress(addr))
-              ret.updatePubKey(addr, item)
-            else
-              ret.addAddress(addr, item)
-          }
+                    for (let f of funcs) {
+                        const addr = f(bufItem)
+                        if (returnValue.hasAddress(addr))
+                            returnValue.updatePubKey(addr, item)
+                        else
+                            returnValue.addAddress(addr, item)
+                    }
 
-        } else if (bitcoin.address.toOutputScript(item, activeNet) && !ret.hasAddress(item)) {
+                } else if (bitcoin.address.toOutputScript(item, activeNet) && !returnValue.hasAddress(item)) {
 
-          // Bech32 addresses are managed in lower case
-          if (addrHelper.isBech32(item))
-            item = item.toLowerCase()
-          ret.addAddress(item, false)
+                    // Bech32 addresses are managed in lower case
+                    if (addrHelper.isBech32(item))
+                        item = item.toLowerCase()
+                    returnValue.addAddress(item, false)
+                }
+            } catch (error) {
+                Logger.error(error, 'API : ApiHelper.parseEntities() : Invalid arguments')
+            }
         }
-      } catch(e) {
-        Logger.error(e, 'API : ApiHelper.parseEntities() : Invalid arguments')
-      }
+
+        return returnValue
     }
 
-    return ret
-  }
-
-  /**
-   * Check entities passed as url params
-   * @param {object} params - request query or body object
-   * @returns {boolean} return true if conditions are met, false otherwise
-   */
-  checkEntitiesParams(params) {
-    return params.active
-      || params.new
-      || params.pubkey
-      || params.bip49
-      || params.bip84
-  }
-
-  /**
-   * Parse the entities passed as arguments of an url
-   * @param {object} params - request query or body object
-   * @returns {object} return a mapping object
-   *    {active:..., legacy:..., pubkey:..., bip49:..., bip84:...}
-   */
-  parseEntitiesParams(params) {
-    return {
-      active: this.parseEntities(params.active),
-      legacy: this.parseEntities(params.new),
-      pubkey: this.parseEntities(params.pubkey),
-      bip49: this.parseEntities(params.bip49),
-      bip84: this.parseEntities(params.bip84)
+    /**
+     * Check entities passed as url params
+     * @param {object} params - request query or body object
+     * @returns {boolean} return true if conditions are met, false otherwise
+     */
+    checkEntitiesParams(params) {
+        return params.active
+            || params.new
+            || params.pubkey
+            || params.bip49
+            || params.bip84
     }
-  }
 
-  /**
-   * Express middleware validating if entities params are well formed
-   * @param {object} req - http request object
-   * @param {object} res - http response object
-   * @param {function} next - next tiny-http middleware
-   */
-  validateEntitiesParams(req, res, next) {
-    const params = this.checkEntitiesParams(req.query) ? req.query : req.body
-
-    let isValid = true
-
-    if (params.active && !this.subValidateEntitiesParams(params.active))
-      isValid &= false
-
-    if (params.new && !this.subValidateEntitiesParams(params.new))
-      isValid &= false
-
-    if (params.pubkey && !this.subValidateEntitiesParams(params.pubkey))
-      isValid &= false
-
-    if (params.bip49 && !this.subValidateEntitiesParams(params.bip49))
-      isValid &= false
-
-    if (params.bip84 && !this.subValidateEntitiesParams(params.bip84))
-      isValid &= false
-
-    if (isValid) {
-      next()
-    } else {
-      HttpServer.sendError(res, errors.body.INVDATA)
-      Logger.error(
-        params,
-        `API : ApiHelper.validateEntitiesParams() : Invalid arguments`
-      )
+    /**
+     * Parse the entities passed as arguments of an url
+     * @param {object} params - request query or body object
+     * @returns {object} return a mapping object
+     *    {active:..., legacy:..., pubkey:..., bip49:..., bip84:...}
+     */
+    parseEntitiesParams(params) {
+        return {
+            active: this.parseEntities(params.active),
+            legacy: this.parseEntities(params.new),
+            pubkey: this.parseEntities(params.pubkey),
+            bip49: this.parseEntities(params.bip49),
+            bip84: this.parseEntities(params.bip84)
+        }
     }
-  }
 
-  /**
-   * Validate a request argument
-   * @param {string} arg - request argument
-   */
-  subValidateEntitiesParams(arg) {
-    for (let item of arg.split('|')) {
-      const isValid = validator.isAlphanumeric(item)
-      if (!isValid)
-        return false
+    /**
+     * Express middleware validating if entities params are well formed
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     * @param {function} next - next tiny-http middleware
+     */
+    validateEntitiesParams(req, res, next) {
+        const parameters = this.checkEntitiesParams(req.query) ? req.query : req.body
+
+        let isValid = true
+
+        if (parameters.active && !this.subValidateEntitiesParams(parameters.active))
+            isValid &= false
+
+        if (parameters.new && !this.subValidateEntitiesParams(parameters.new))
+            isValid &= false
+
+        if (parameters.pubkey && !this.subValidateEntitiesParams(parameters.pubkey))
+            isValid &= false
+
+        if (parameters.bip49 && !this.subValidateEntitiesParams(parameters.bip49))
+            isValid &= false
+
+        if (parameters.bip84 && !this.subValidateEntitiesParams(parameters.bip84))
+            isValid &= false
+
+        if (isValid) {
+            next()
+        } else {
+            HttpServer.sendError(res, errors.body.INVDATA)
+            Logger.error(
+                parameters,
+                'API : ApiHelper.validateEntitiesParams() : Invalid arguments'
+            )
+        }
     }
-    return true
-  }
+
+    /**
+     * Validate a request argument
+     * @param {string} arg - request argument
+     */
+    subValidateEntitiesParams(arg) {
+        for (let item of arg.split('|')) {
+            const isValid = validator.isAlphanumeric(item)
+            if (!isValid)
+                return false
+        }
+        return true
+    }
 
 }
 
-module.exports = new ApiHelper()
+export default new ApiHelper()
