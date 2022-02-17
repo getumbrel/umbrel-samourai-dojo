@@ -35,7 +35,7 @@ export default {
         /*
          * Dojo version
          */
-        dojoVersion: process.env.DOJO_NODEJS_VERSION_TAG,
+        dojoVersion: process.env.DOJO_VERSION_TAG,
         /*
          * Bitcoind
          */
