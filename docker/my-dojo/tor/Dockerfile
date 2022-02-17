@@ -1,24 +1,16 @@
-FROM    debian:buster-slim
+FROM    golang:1.16.6-buster AS builder
 
-ENV     TOR_HOME            /var/lib/tor
 ENV     TOR_URL             https://dist.torproject.org
 ENV     TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     TOR_VERSION         0.4.6.7
-ENV     TOR_GPG_KS_URI      hkp://keyserver.ubuntu.com:80
+ENV     TOR_VERSION         0.4.6.9
+ENV     TOR_GPG_KS_URI      hkps://keyserver.ubuntu.com:443
 ENV     TOR_GPG_KEY1        0xEB5A896A28988BF5
 ENV     TOR_GPG_KEY2        0xC218525819F78451
 ENV     TOR_GPG_KEY3        0x21194EBB165733EA
 ENV     TOR_GPG_KEY4        0x6AFEE6D49E92B601
 
-ENV     GOLANG_DL_URL       https://dl.google.com/go
-ENV     GOLANG_ARCHIVE      go1.16.6.linux-amd64.tar.gz
-ENV     GOLANG_SHA256       be333ef18b3016e9d7cb7b1ff1fdb0cac800ca0be4cf2290fe613b3d069dfe0d
-
 ENV     OBFS4_URL           https://github.com/Yawning/obfs4.git
-ENV     OBFS4_VERSION       0.0.11
-
-ARG     TOR_LINUX_UID
-ARG     TOR_LINUX_GID
+ENV     OBFS4_VERSION       0.0.13
 
 
 # Install Tor
@@ -37,10 +29,7 @@ RUN     set -ex && \
         if [ $res -gt 0 ]; then \
           wget -qO "tor-$TOR_VERSION.tar.gz.asc" "$TOR_MIRROR_URL/tor-$TOR_VERSION.tar.gz.asc"; \
         fi && \
-        gpg --keyserver "$TOR_GPG_KS_URI" --recv-keys "$TOR_GPG_KEY1" && \
-        gpg --keyserver "$TOR_GPG_KS_URI" --recv-keys "$TOR_GPG_KEY2" && \
-        gpg --keyserver "$TOR_GPG_KS_URI" --recv-keys "$TOR_GPG_KEY3" && \
-        gpg --keyserver "$TOR_GPG_KS_URI" --recv-keys "$TOR_GPG_KEY4" && \
+        gpg --batch --keyserver "$TOR_GPG_KS_URI" --recv-keys $TOR_GPG_KEY1 $TOR_GPG_KEY2 $TOR_GPG_KEY3 $TOR_GPG_KEY4 && \
         gpg --verify "tor-$TOR_VERSION.tar.gz.asc" && \
         tar -xzvf "tor-$TOR_VERSION.tar.gz" -C /usr/local/src && \
         cd "/usr/local/src/tor-$TOR_VERSION" && \
@@ -55,20 +44,33 @@ RUN     set -ex && \
         rm "tor-$TOR_VERSION.tar.gz.asc"
 
 # Install Golang & OBFS4 proxy
-RUN     cd /usr/local/src && \
-        echo "$GOLANG_SHA256 *$GOLANG_ARCHIVE" > GO_CHECKSUMS && \
-        wget "$GOLANG_DL_URL/$GOLANG_ARCHIVE" && \
-        sha256sum -c GO_CHECKSUMS 2>&1 | grep OK && \
-        tar -C /usr/local/lib -xzf "$GOLANG_ARCHIVE" && \
-        ln -s /usr/local/lib/go/bin/go /usr/local/bin/ && \
-        git clone "$OBFS4_URL" /usr/local/src/obfs4proxy && \
-        cd obfs4proxy && \
+RUN     git clone "$OBFS4_URL" /usr/local/src/obfs4proxy && \
+        cd /usr/local/src/obfs4proxy && \
         git checkout "tags/obfs4proxy-$OBFS4_VERSION" && \
         go build -o obfs4proxy/obfs4proxy ./obfs4proxy && \
         cp ./obfs4proxy/obfs4proxy /usr/local/bin && \
         cd .. && \
-        rm "$GOLANG_ARCHIVE" && \
         rm -rf obfs4proxy
+
+FROM    debian:buster-slim
+
+ENV     TOR_HOME        /var/lib/tor
+ENV     TOR_BIN         /usr/local/bin/tor
+ENV     TOR_CONF        /etc/tor
+ENV     TOR_MAN         /usr/local/share/man
+ENV     OBFS_PROXY      /usr/local/bin/obfs4proxy
+
+ARG     TOR_LINUX_UID
+ARG     TOR_LINUX_GID
+
+COPY    --from=builder $TOR_BIN $TOR_BIN
+COPY    --from=builder $TOR_CONF $TOR_CONF
+COPY    --from=builder $TOR_MAN $TOR_MAN
+COPY    --from=builder $OBFS_PROXY $OBFS_PROXY
+
+RUN     set -ex && \
+        apt-get update && \
+        apt-get install -y libevent-dev
 
 # Create group & user tor
 RUN     addgroup --system -gid ${TOR_LINUX_GID} tor && \
