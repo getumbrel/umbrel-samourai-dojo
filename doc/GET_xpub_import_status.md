@@ -2,7 +2,7 @@
 
 Check if an import or a rescan is currently processed by Dojo for a given HD Account.
 
-```
+```http request
 GET /xpub/:xpub/import/status
 ```
 
@@ -12,7 +12,7 @@ GET /xpub/:xpub/import/status
 
 ### Example
 
-```
+```http request
 GET /xpub/xpub0123456789/import/status
 ```
 

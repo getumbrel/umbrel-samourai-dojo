@@ -16,8 +16,7 @@ RUN     addgroup -S -g ${TOR_LINUX_GID} tor && \
 RUN     npm install -g forever
 
 # Create app directory
-RUN     mkdir "$APP_DIR" && \
-        chown -R node:node "$APP_DIR"
+RUN     mkdir "$APP_DIR"
 
 # Copy app source files into APP_DIR
 COPY    . "$APP_DIR"
@@ -28,20 +27,20 @@ RUN     cd "$APP_DIR" && \
 
 # Copy config file
 COPY    ./docker/my-dojo/node/keys.index.js "$APP_DIR/keys/index.js"
-RUN     chown node:node "$APP_DIR/keys/index.js"
 
 # Copy restart script
 COPY    ./docker/my-dojo/node/restart.sh "$APP_DIR/restart.sh"
 
-RUN     chown node:node "$APP_DIR/restart.sh" && \
-        chmod u+x "$APP_DIR/restart.sh" && \
+RUN     chmod u+x "$APP_DIR/restart.sh" && \
         chmod g+x "$APP_DIR/restart.sh"
 
 # Copy wait-for-it script
 COPY    ./docker/my-dojo/node/wait-for-it.sh "$APP_DIR/wait-for-it.sh"
 
-RUN     chown node:node "$APP_DIR/wait-for-it.sh" && \
-        chmod u+x "$APP_DIR/wait-for-it.sh" && \
+RUN     chmod u+x "$APP_DIR/wait-for-it.sh" && \
         chmod g+x "$APP_DIR/wait-for-it.sh"
+
+# Change ownership of all files
+RUN     chown -R node:node "$APP_DIR"
 
 USER    node

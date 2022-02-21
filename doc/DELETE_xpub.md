@@ -4,7 +4,7 @@ Remove an HD account from the server. All addresses and transactions associated 
 
 Note: this endpoint uses the HTTP `DELETE` verb.
 
-```
+```http request
 DELETE /xpub/:xpub
 ```
 
@@ -15,7 +15,7 @@ DELETE /xpub/:xpub
 
 ### Example
 
-```
+```http request
 DELETE /xpub/xpub0123456789?address=1address&signature=Base64X==
 ```
 

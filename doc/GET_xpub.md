@@ -4,7 +4,7 @@ Request details about an HD account. If account does not exist, it must be creat
 
 Data returned includes the unspent `balance`, the next `unused` address indices for external and internal chains, the `derivation` path of addresses, and the `created` timestamp when the server first saw this HD account.
 
-```
+```http request
 GET /xpub/:xpub
 ```
 
@@ -14,7 +14,7 @@ GET /xpub/:xpub
 
 ### Example
 
-```
+```http request
 GET /xpub/xpub0123456789
 ```
 

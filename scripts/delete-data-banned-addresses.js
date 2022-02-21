@@ -4,7 +4,7 @@
  */
 
 
-import mysql from 'mysql'
+import mysql from 'mysql2'
 
 import Logger from '../lib/logger.js'
 import util from '../lib/util.js'

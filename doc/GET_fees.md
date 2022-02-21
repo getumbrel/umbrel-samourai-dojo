@@ -3,7 +3,7 @@
 Returns `bitcoind`'s estimated fee rates for inclusion in blocks at various delays. Fee rates are in Satoshi/byte.
 
 
-```
+```http request
 GET /fees
 ```
 
@@ -13,7 +13,7 @@ GET /fees
 
 ### Examples
 
-```
+```http request
 GET /fees
 ```
 

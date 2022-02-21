@@ -110,7 +110,7 @@ describe('AddressesHelper', () => {
             for (const v of VECTOR_1) {
                 const pkb = Buffer.from(v[0], 'hex')
                 const addr = addrHelper.p2pkhAddress(pkb)
-                assert(addr === v[1])
+                assert.strictEqual(addr, v[1])
             }
         })
     })
@@ -120,7 +120,7 @@ describe('AddressesHelper', () => {
             for (const v of VECTOR_1) {
                 const pkb = Buffer.from(v[0], 'hex')
                 const addr = addrHelper.p2wpkhP2shAddress(pkb)
-                assert(addr === v[2])
+                assert.strictEqual(addr, v[2])
             }
         })
     })
@@ -130,7 +130,7 @@ describe('AddressesHelper', () => {
             for (const v of VECTOR_1) {
                 const pkb = Buffer.from(v[0], 'hex')
                 const addr = addrHelper.p2wpkhAddress(pkb)
-                assert(addr === v[3])
+                assert.strictEqual(addr, v[3])
             }
         })
     })
@@ -138,7 +138,7 @@ describe('AddressesHelper', () => {
     describe('isSupportedPubKey()', () => {
         it('should successfully detect a compressed pubkey', () => {
             for (const v of VECTOR_2) {
-                assert(addrHelper.isSupportedPubKey(v[0]) === v[1])
+                assert.strictEqual(addrHelper.isSupportedPubKey(v[0]), v[1])
             }
         })
     })
@@ -146,7 +146,7 @@ describe('AddressesHelper', () => {
     describe('isBech32()', () => {
         it('should successfully detect a bech32 address', () => {
             for (const v of VECTOR_3) {
-                assert(addrHelper.isBech32(v[0]) === v[1])
+                assert.strictEqual(addrHelper.isBech32(v[0]), v[1])
             }
         })
     })
@@ -154,7 +154,7 @@ describe('AddressesHelper', () => {
     describe('getScriptHashFromBech32()', () => {
         it('should successfully extract the script hash from a bech32 address', () => {
             for (const v of VECTOR_4) {
-                assert(addrHelper.getScriptHashFromBech32(v[0]) === v[1])
+                assert.strictEqual(addrHelper.getScriptHashFromBech32(v[0]), v[1])
             }
         })
     })
@@ -176,7 +176,7 @@ describe('AddressesHelper', () => {
                     const sig = btcMessage.sign(msg, privKey, true, prefix)
 
                     // Check that library returns valid result
-                    assert((sig.compare(targetSig) === 0) === expectedResult)
+                    assert.strictEqual((sig.compare(targetSig) === 0), expectedResult)
 
                     // Check method
                     const result = addrHelper.verifySignature(msg, address, sig)
