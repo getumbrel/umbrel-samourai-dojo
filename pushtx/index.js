@@ -29,7 +29,6 @@ try {
     const dbConfig = {
         connectionLimit: keys.db.connectionLimitPushTxApi,
         acquireTimeout: keys.db.acquireTimeout,
-        namedPlaceholders: true,
         host: keys.db.host,
         user: keys.db.user,
         password: keys.db.pass,
