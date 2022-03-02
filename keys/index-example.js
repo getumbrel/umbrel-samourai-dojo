@@ -303,7 +303,8 @@ export default {
             localIndexer: {
                 host: '127.0.0.1',
                 port: 50001,
-                batchRequests: 'inactive'
+                batchRequests: 'inactive',
+                protocol: 'tcp'
             },
             socks5Proxy: null,
             esplora: 'https://blockstream.info/testnet'
