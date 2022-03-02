@@ -22,7 +22,7 @@ explorer_options+=(--rpc-blacklist "addnode,analyzepsbt,clearbanned,combinepsbt,
 # Use the local indexer if one is defined for Dojo
 if [ "$NODE_ACTIVE_INDEXER" == "local_indexer" ]; then
   explorer_options+=(--address-api electrumx)
-  explorer_options+=(--electrumx-servers "tcp://$INDEXER_IP:$INDEXER_RPC_PORT")
+  explorer_options+=(--electrumx-servers "$INDEXER_PROTOCOL://$INDEXER_IP:$INDEXER_RPC_PORT")
 
   # Wait for the local indexer
   timeout="720"
