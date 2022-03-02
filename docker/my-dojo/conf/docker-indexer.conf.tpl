@@ -23,6 +23,10 @@ INDEXER_RPC_PORT=50001
 # Value: active | inactive
 INDEXER_BATCH_SUPPORT=inactive
 
+# Choose between TCP and TLS transport
+# Value: tcp | tls
+INDEXER_PROTOCOL=tcp
+
 
 #
 # EXPERT SETTINGS
