@@ -86,7 +86,7 @@ nano ./conf/docker-node.conf
 
 ## Local Electrum server used as data source for imports/rescans ##
 
-If you're running an instance of ElectrumX or Electrs on your local network, Dojo allows you to define this instance as the data source used for imports and rescans. This setup is an alternative to the local indexer provided by MyDojo.
+If you're running an instance of ElectrumX, Electrs or Fulcrum on your local network, Dojo allows you to define this instance as the data source used for imports and rescans. This setup is an alternative to the local indexer provided by MyDojo.
 
 Important: Do not use an Electrum server operated by a third party or hosted on a different local network.
 
@@ -104,7 +104,8 @@ nano ./conf/docker-indexer.conf
 # Set the value of INDEXER_INSTALL to "off"
 # Set the value of INDEXER_IP with the IP address of your Electrum server
 # Set the value of INDEXER_RPC_PORT with the port used by the RPC API of your Electrum server (default= 50001)
-# Set the value of INDEXER_BATCH_SUPPORT to "active" if your Electrum server is ElectrumX, otherwise set the value to "inactive"
+# Set the value of INDEXER_BATCH_SUPPORT to "active" if your Electrum server is ElectrumX or Fulcrum >=1.6.0, otherwise set the value to "inactive"
+# Set the value of INDEXER_PROTOCOL to "tcp" or "tls" based on Electrum server configuration - over SSL/TLS or plain TCP (unencrypted)
 # Save and exit nano
 #
 
