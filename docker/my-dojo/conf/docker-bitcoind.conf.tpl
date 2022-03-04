@@ -51,8 +51,8 @@ BITCOIND_LISTEN_MODE=on
 
 
 #
-# EPHEMERAL ONION ADDRESS FOR BITCOIND
-# THIS PARAMETER HAS NO EFFECT IF BITCOIND_INSTALL IS SET TO OFF
+# EPHEMERAL ONION ADDRESS AND BLOOM FILTERS FOR BITCOIND
+# THESE PARAMETERS HAVE NO EFFECT IF BITCOIND_INSTALL IS SET TO OFF
 #
 
 # Generate a new onion address for bitcoind when Dojo is launched
@@ -60,6 +60,10 @@ BITCOIND_LISTEN_MODE=on
 # Values: on | off
 BITCOIND_EPHEMERAL_HS=on
 
+# Enable bloom filters for other apps to leverage light client mode
+# BITCOIND_EPHEMERAL_HS should be set to "off" otherwise new connection will need to be setup after restart
+# Values: on | off
+BITCOIND_BLOOM_FILTERS=off
 
 #
 # EXPOSE BITCOIND RPC API AND ZMQ NOTIFICATIONS TO EXTERNAL APPS
