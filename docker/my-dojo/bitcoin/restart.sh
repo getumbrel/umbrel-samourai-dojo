@@ -30,7 +30,6 @@ bitcoind_options=(
   -txindex=1
   -zmqpubhashblock=tcp://0.0.0.0:9502
   -zmqpubrawtx=tcp://0.0.0.0:9501
-  -deprecatedrpc=addresses
 )
 
 if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
@@ -42,6 +41,10 @@ fi
 if [ "$BITCOIND_RPC_EXTERNAL" == "on" ]; then
   bitcoind_options+=(-zmqpubhashtx=tcp://0.0.0.0:9500)
   bitcoind_options+=(-zmqpubrawblock=tcp://0.0.0.0:9503)
+fi
+
+if [ "$BITCOIND_BLOOM_FILTERS" == "on" ]; then
+  bitcoind_options+=(-peerbloomfilters=1)
 fi
 
 if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
