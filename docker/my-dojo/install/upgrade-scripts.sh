@@ -24,6 +24,13 @@ else
   source ./conf/docker-whirlpool.conf.tpl
 fi
 
+if [ -f ./conf/docker-indexer.conf ]; then
+  source ./conf/docker-indexer.conf
+else
+  source ./conf/docker-indexer.conf.tpl
+fi
+
+
 source ./conf/docker-bitcoind.conf
 
 # Confirm upgrade operation

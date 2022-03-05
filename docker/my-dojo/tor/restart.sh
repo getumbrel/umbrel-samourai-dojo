@@ -49,4 +49,14 @@ if [ "$TOR_USE_BRIDGES" == "on" ]; then
   tor_options+=(--Bridge "$TOR_BRIDGE_3")
 fi
 
+if [ "$INDEXER_INSTALL" == "on" ]; then
+  if [ "$INDEXER_TYPE" == "fulcrum" ]; then
+    tor_options+=(--HiddenServiceDir /var/lib/tor/hsv3fulcrum)
+    tor_options+=(--HiddenServiceVersion 3)
+    tor_options+=(--HiddenServicePort "80 $NET_DOJO_INDEXER_IPV4:50001")
+    tor_options+=(--HiddenServiceDirGroupReadable 1)
+  fi
+fi
+
+
 tor "${tor_options[@]}"
