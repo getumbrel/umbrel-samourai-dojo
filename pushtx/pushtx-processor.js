@@ -18,10 +18,11 @@ import status from './status.js'
 
 const keys = keysFile[network.key]
 
-let Sources = network.key === 'bitcoin'
-    ? (await import('../lib/remote-importer/sources-mainnet.js')).default
-    : (await import('../lib/remote-importer/sources-testnet.js')).default
+const SourcesFile = network.key === 'bitcoin'
+    ? (await import('../lib/remote-importer/sources-mainnet.js'))
+    : (await import('../lib/remote-importer/sources-testnet.js'))
 
+const Sources = SourcesFile.default
 
 /**
  * A singleton providing a wrapper

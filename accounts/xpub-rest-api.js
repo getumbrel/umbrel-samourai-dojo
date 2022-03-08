@@ -177,7 +177,7 @@ class XPubRestApi {
 
             const info = await hdaInfo.loadInfo()
             if (!info)
-                return Promise.reject()
+                throw 'Unable to load Xpub info'
 
             const returnValue = {
                 balance: hdaInfo.finalBalance,
