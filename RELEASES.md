@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.15.0](#1_15_0)
 - [v1.14.0](#1_14_0)
 - [v1.13.0](#1_13_0)
 - [v1.12.1](#1_12_1)
@@ -21,6 +22,36 @@
 - [v1.3.0](#1_3_0)
 - [v1.2.0](#1_2_0)
 - [v1.1.0](#1_1_0)
+
+<a name="1_15_0"/>
+
+## Samourai Dojo v1.15.0 ##
+
+### Notable changes ###
+
+#### Added option to use Fulcrum as an indexer ####
+
+#### Added option to enable bloom filters in Bitcoin Core ####
+
+### Change log ###
+
+#### Features ####
+- [4768e8eb](https://code.samourai.io/dojo/samourai-dojo/-/commit/4768e8eb) - added option to Fulcrum as an indexer
+- [fafa773b](https://code.samourai.io/dojo/samourai-dojo/-/commit/fafa773b) - added option to enable bloom filters in bitcoin core
+- [306bca58](https://code.samourai.io/dojo/samourai-dojo/-/commit/306bca58) - check for duplicate TX output addresses instrict mode
+- [b1b2b90a](https://code.samourai.io/dojo/samourai-dojo/-/commit/b1b2b90a) - better docker cleanup after upgrade
+
+#### Architecture ####
+- [47acfbde](https://code.samourai.io/dojo/samourai-dojo/-/commit/47acfbde) - added new electrum client for communication with Electrum RPC
+- [e452a289](https://code.samourai.io/dojo/samourai-dojo/-/commit/e452a289) - fixed ESLint errors
+- [56be1821](https://code.samourai.io/dojo/samourai-dojo/-/commit/56be1821) - updated Node.js dependencies
+- [ff3f2525](https://code.samourai.io/dojo/samourai-dojo/-/commit/ff3f2525) - removed unnecessary Node.js package
+
+### Credits ###
+- pajasevi
+- BTCxZelko
+- dammkewl
+- K3tan
 
 <a name="1_14_0"/>
 
@@ -71,7 +102,7 @@ Thanks to updated bitcoinjs-lib, Dojo now supports P2TR outputs
 - [#mr262](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/262) added ability to copy pairing payload from DMT
 - [#mr263](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/263) raise indexer RPC timeout
 - [#mr264](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/264) updated bitcoinjs-lib, added support for P2TR outputs
-- [#mr266](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/266) updated BTC-RPC Explorer to v3.3.0 
+- [#mr266](https://code.samourai.io/dojo/samourai-dojo/-/merge_requests/266) updated BTC-RPC Explorer to v3.3.0
 
 #### Architecture ####
 - refactored codebase to use ES modules for more efficiency
