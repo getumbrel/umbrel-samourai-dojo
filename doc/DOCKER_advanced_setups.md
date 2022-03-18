@@ -8,11 +8,13 @@ A word of caution, though, the default values of these options try to maximize y
 
 ## Table of Content ##
 - [Local indexer of Bitcoin addresses](#local_indexer)
+- [Local Fulcrum as a source of imports and use with external apps](#local_fulcrum)
 - [Local Electrum server used as data source for imports/rescans](#local_electrum)
 - [Local Whirlpool client](#local_whirlpool)
 - [External Bitcoin full node](#external_bitcoind)
 - [bitcoind RPC API and ZMQ notifications exposed to external apps](#exposed_rpc_zmq)
 - [Static onion address for bitcoind hidden service](#static_onion)
+- [Enable Bloom filters in Bitcoin Core](#bloom_filters)
 - [Configure Tor Bridges](#tor_bridges)
 - [Support of testnet](#testnet)
 
@@ -26,7 +28,7 @@ By default, Dojo uses the local full node as its data source for imports and res
 
 ### Requirements ###
 
-To date, the initial installation of the indexer requires 120GB of additionnal disk space.
+To date, the initial installation of the indexer requires 60GB of additionnal disk space.
 
 
 ### Main benefits ###
@@ -54,6 +56,8 @@ nano ./conf/docker-indexer.conf
 
 #
 # Set the value of INDEXER_INSTALL to "on"
+# Set the value of INDEXER_TYPE to "addrindexrs"
+# Set the value of INDEXER_BATCH_SUPPORT to "inactive"
 # Save and exit nano
 #
 
@@ -81,6 +85,71 @@ nano ./conf/docker-node.conf
 #
 ```
 
+<a name="local_fulcrum"/>
+
+## Local Fulcrum as a source of imports and use with external apps ##
+
+If you want to use external apps (such as Sparrow Wallet) which are able to connect to a trusted Electrum server, it is possible to use Fulcrum instead of default addrindexrs.
+
+### Requirements ###
+
+To date, the initial installation of the indexer requires 120GB of additionnal disk space.
+
+
+### Main benefits ###
+
+- Fast, private and exhaustive real time rescans
+- Allows the block explorer to display the detailed activity of Bitcoin addresses
+- Allows external apps to use this personal electrum server API over Tor
+
+
+### Known drawbacks ###
+
+* Additionnal disk space consumed by the index
+* Slight increase of startup duration,
+* First indexation will require a 1-2 days.
+
+### Procedure ###
+
+```sh
+# If you're installing a new Dojo or if you're upgrading from a Dojo version <= 1.4.1, edit the docker-indexer.conf.tpl file
+nano ./conf/docker-indexer.conf.tpl
+
+# Otherwise, edit the docker-indexer.conf file
+nano ./conf/docker-indexer.conf
+
+#
+# Set the value of INDEXER_INSTALL to "on"
+# Set the value of INDEXER_TYPE to "fulcrum"
+# Set the value of INDEXER_BATCH_SUPPORT to "active"
+# Save and exit nano
+#
+
+# Edit the nodejs config file (or the corresponding template file if it's your first installation of Dojo)
+nano ./conf/docker-node.conf
+
+#
+# Set the value of NODE_ACTIVE_INDEXER to "local_indexer"
+# Save and exit nano
+#
+
+#
+# Launch the installation or the upgrade of your Dojo
+# with the commands `dojo.sh install` or `dojo.sh upgrade`
+#
+
+#
+# Be patient!
+# First indexation of all Bitcoin addresses will require a few days.
+# Let Fulcrum complete all these operations before trying to use it for an import or a rescan.
+# You can follow the progress made by the indexer with the commands:
+#   `dojo.sh logs`
+# or
+#   `dojo.sh logs fulcrum`
+#
+# Afterwards, you can get the onion URI of your Fulcrum server with command:
+#   `dojo.sh onion`
+```
 
 <a name="local_electrum"/>
 
@@ -145,7 +214,7 @@ nano ./conf/docker-whirlpool.conf
 
 ### Installation of Whirlpool GUI ###
 
-The [Whirlpool GUI application]((https://code.samourai.io/whirlpool/whirlpool-gui)) provides a graphical interface for your Whirlpool client.  
+The [Whirlpool GUI application]((https://code.samourai.io/whirlpool/whirlpool-gui)) provides a graphical interface for your Whirlpool client.
 
 These steps describe how to install the Whirlpool GUI application how a computer and how to connect it to your Whirlpool client.
 
@@ -156,7 +225,7 @@ These steps describe how to install the Whirlpool GUI application how a computer
 - Whirlpool client has been activated in MyDojo,
 - Your Samourai Wallet is paired to MyDojo,
 - MyDojo is running.
-- Tor browser is installed on the computer that will run the Whirlpool GUI application. 
+- Tor browser is installed on the computer that will run the Whirlpool GUI application.
 
 
 **Procedure**
@@ -165,7 +234,7 @@ These steps describe how to install the Whirlpool GUI application how a computer
 
   ```sh
   # Open a terminal console on the computer hosting your Dojo
-  
+
   # Retrieve the onion address of the Whirlpool API
   ./dojo.sh onion
   ```
@@ -177,7 +246,7 @@ These steps describe how to install the Whirlpool GUI application how a computer
   # Launch the Tor browser
 
   # Install the Whirlpool GUI application on the computer and launch it
-  
+
   # Select 'Advanced: remote CLI'
   # Set 'CLI address' with 'http://your_onion_address' where your_onion_address is the address of the Whirlpool API
   # Check that the 'Tor proxy' field has the correct socks5 port used by your Tor browser.
@@ -187,8 +256,8 @@ These steps describe how to install the Whirlpool GUI application how a computer
   #   Select the Samourai Wallet Menu (3 dots top right),
   #   Go to Settings -> Transactions -> Pair to Whirlpool GUI,
   #   Copy the payload and send to your main computer using any method you prefer,
-  #   Paste the payload. 
-  
+  #   Paste the payload.
+
   # The GUI will restart and prompt for you to enter your Samourai Wallet passphrase.
   # You are all set and ready to mix!
   ```
@@ -219,7 +288,7 @@ txindex=1
 
 # Check that bitcoind accepts connections from 127.0.0.1 (linux)
 # or from the IP address of the Docker Virtual Machine (MacOS, Windows)
-rpcallowip=... 
+rpcallowip=...
 
 # Check that a port is defined for the RPC API (or 8332 will be used as default value)
 rpcport=...
@@ -291,7 +360,7 @@ By default, access to the RPC API of your bitcoind is restricted to Docker conta
 The following steps allow to expose the RPC API and ZMQ notifications to applications running on your local machine but outside of Docker.
 
 ```sh
-# 
+#
 # If your Docker runs on macos or windows,
 # retrieve the local IP address of the VM
 # hosting your Docker containers
@@ -333,7 +402,7 @@ Note: this option has no effect if your setup relies on a external full node (i.
 
 ## Static onion address for bitcoind hidden service ##
 
-By default, Dojo creates a new onion address for your bitcoind at each startup. 
+By default, Dojo creates a new onion address for your bitcoind at each startup.
 
 The following steps allow to keep a static onion address (not recommended).
 
@@ -357,6 +426,37 @@ nano ./conf/docker-bitcoind.conf
 
 Note: this option has no effect if your setup relies on a external full node (i.e. if BITCOIND_INSTALL is set to "off").
 
+<a name="bloom_filters"/>
+
+## Enable Bloom filters ##
+
+By default, Bitcoin Core doesn't have bloom filters enabled. This functionality can be useful for light wallets leveraging bloom filter capability, such as Bisq.
+
+The following steps allow to enable this functionality.
+
+```sh
+# Stop your Dojo
+./dojo.sh stop
+
+# If you're installing a new Dojo, edit the docker-bitcoind.conf.tpl file
+nano ./conf/docker-bitcoind.conf.tpl
+
+# Otherwise, edit the docker-bitcoind.conf file
+nano ./conf/docker-bitcoind.conf
+
+#
+# Set the value of BITCOIND_BLOOM_FILTERS to "on"
+#
+
+# Additionally, it might be useful to keep the same onion address for bitcoin core hidden service
+# Set the value of BITCOIND_EPHEMERAL_HS to "off"
+#
+
+# Save and exit nano
+
+# Start your Dojo
+./dojo.sh start
+```
 
 <a name="tor_bridges"/>
 
