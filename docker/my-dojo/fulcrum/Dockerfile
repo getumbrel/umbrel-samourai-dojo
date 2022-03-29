@@ -22,7 +22,7 @@ RUN     set -ex && \
             INDEXER_FILE="Fulcrum-$INDEXER_VERSION-$INDEXER_BUILD_AMD64.tar.gz"; \
             ;; \
           'arm64') \
-            INDEXER_FILE="Fulcrum-${INDEXER_VERSION}-${INDEXER_BUILD_ARM64}.tar.gz"; \
+            INDEXER_FILE="Fulcrum-$INDEXER_VERSION-$INDEXER_BUILD_ARM64.tar.gz"; \
             ;; \
           *) echo >&2 "error: unsupported architecture '$arch' (likely packaging update needed)"; exit 1 ;; \
         esac; \
