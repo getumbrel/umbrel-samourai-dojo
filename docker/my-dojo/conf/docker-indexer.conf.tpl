@@ -8,6 +8,12 @@
 # Value: on | off
 INDEXER_INSTALL=off
 
+# Choice which Indexer you would like to install:
+# addrindexrs - basic but fast indexer for your Dojo - takes 8-12 hrs to index
+# Fulcrum - fast indexer, can be used as Electrum server for personal use - takes a 2-3 days to index
+# Value: addrindexrs | fulcrum
+INDEXER_TYPE=addrindexrs
+
 # IP address of the local indexer used by Dojo
 # Set value to 172.28.1.6 if INDEXER_INSTALL is set to 'on'
 # Type: string
@@ -19,9 +25,13 @@ INDEXER_IP=172.28.1.6
 INDEXER_RPC_PORT=50001
 
 # Support of batch requests by the local indexer
-# Set value to inactive if INDEXER_INSTALL is set to 'on'
+# Set value to active if INDEXER_TYPE is set to 'fulcrum' or you're using external electrum server with RPC batching support
 # Value: active | inactive
 INDEXER_BATCH_SUPPORT=inactive
+
+# Choose between TCP and TLS transport when using external electrum server
+# Value: tcp | tls
+INDEXER_PROTOCOL=tcp
 
 
 #

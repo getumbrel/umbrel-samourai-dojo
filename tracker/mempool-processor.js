@@ -74,7 +74,7 @@ class MempoolProcessor {
     /**
      * Stop processing
      */
-    async stop() {
+    stop() {
         clearInterval(this.checkUnconfirmedId)
         clearInterval(this.processMempoolId)
         //clearInterval(this.displayStatsId)
@@ -82,14 +82,12 @@ class MempoolProcessor {
         this.txSock.disconnect(keys.bitcoind.zmqTx).close()
         this.pushTxSock.disconnect(keys.ports.notifpushtx).close()
         this.orchestratorSock.disconnect(keys.ports.orchestrator).close()
-
-        return Promise.resolve()
     }
 
     /**
      * Initialiaze ZMQ sockets
      */
-    async initSockets() {
+    initSockets() {
         // Socket listening to pushTx
         this.pushTxSock = zmq.socket('sub')
         this.pushTxSock.connect(`tcp://127.0.0.1:${keys.ports.notifpushtx}`)
@@ -191,11 +189,9 @@ class MempoolProcessor {
                 this.mempoolBuffer.addTransaction(tx)
             } catch (error) {
                 Logger.error(error, 'Tracker : MempoolProcessor.onTx()')
-                return Promise.reject(error)
+                throw error
             }
         }
-
-        return Promise.resolve()
     }
 
 
@@ -221,7 +217,7 @@ class MempoolProcessor {
             }
         } catch (error) {
             Logger.error(error, 'Tracker : MempoolProcessor.onPushTx()')
-            return Promise.reject(error)
+            throw error
         }
     }
 

@@ -67,7 +67,7 @@ class Transaction {
 
         } catch(error) {
             Logger.error(error, 'Tracker : Transaction.checkTransaction()')
-            return Promise.reject(error)
+            throw error
         }
     }
 
@@ -243,7 +243,7 @@ class Transaction {
             }
         }
 
-        return Promise.resolve(fundedAddresses)
+        return fundedAddresses
     }
 
     /**
