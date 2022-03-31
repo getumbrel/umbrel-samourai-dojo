@@ -30,7 +30,7 @@ Note that loose addresses that are also part of one of the HD accounts requested
 The `POST` version of multiaddr is identical, except the parameters are in the POST body.
 
 
-```
+```http request
 GET /multiaddr?active=...[&new=...][&bip49=...][&bip84=...][&pubkey=...]
 ```
 
@@ -44,7 +44,7 @@ GET /multiaddr?active=...[&new=...][&bip49=...][&bip84=...][&pubkey=...]
 
 ### Examples
 
-```
+```http request
 GET /multiaddr?active=xpub0123456789&new=address2|address3&pubkey=pubkey4
 GET /multiaddr?active=xpub0123456789|address1|address2
 GET /multiaddr?bip49=xpub0123456789

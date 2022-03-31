@@ -4,7 +4,7 @@ Authenticate to the backend by providing the API key expected by the server. If 
 
 Authentication is activated in /keys/index.js configuration file
 
-```
+```js
 auth: {
   // Name of the authentication strategy used
   // Available values:
@@ -40,7 +40,7 @@ auth: {
 ```
 
 
-```
+```http request
 POST /auth/login
 ```
 
@@ -53,7 +53,7 @@ The API Key must be passed in the body of the request as an url encoded argument
 
 ### Example
 
-```
+```http request
 POST /auth/login
 
 apikey=myAPIKey

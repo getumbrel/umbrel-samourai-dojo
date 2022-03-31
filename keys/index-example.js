@@ -16,7 +16,7 @@ export default {
         /*
          * Dojo version
          */
-        dojoVersion: '1.13.0',
+        dojoVersion: '1.15.0',
         /*
          * Bitcoind
          */
@@ -233,7 +233,7 @@ export default {
    * Testnet parameters
    */
     testnet: {
-        dojoVersion: '1.13.0',
+        dojoVersion: '1.15.0',
         bitcoind: {
             rpc: {
                 user: 'user',
@@ -303,7 +303,8 @@ export default {
             localIndexer: {
                 host: '127.0.0.1',
                 port: 50001,
-                batchRequests: 'inactive'
+                batchRequests: 'inactive',
+                protocol: 'tcp'
             },
             socks5Proxy: null,
             esplora: 'https://blockstream.info/testnet'

@@ -3,7 +3,7 @@
 To avoid errors related to `POST xpub` and SegWit derivation type, this endpoint allows locking of the type of an xpub in the database.
 
 
-```
+```http request
 POST /xpub/:xpub/lock
 ```
 
@@ -19,7 +19,7 @@ Parameters must be passed in the body of the request as url encoded arguments.
 
 ### Example
 
-```
+```http request
 POST /xpub/xpub0123456789/lock
 
 address=1address&message=lock&signature=Base64X==

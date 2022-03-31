@@ -18,10 +18,11 @@ import status from './status.js'
 
 const keys = keysFile[network.key]
 
-let Sources = network.key === 'bitcoin'
-    ? (await import('../lib/remote-importer/sources-mainnet.js')).default
-    : (await import('../lib/remote-importer/sources-testnet.js')).default
+const SourcesFile = network.key === 'bitcoin'
+    ? (await import('../lib/remote-importer/sources-mainnet.js'))
+    : (await import('../lib/remote-importer/sources-testnet.js'))
 
+const Sources = SourcesFile.default
 
 /**
  * A singleton providing a wrapper
@@ -48,12 +49,15 @@ class PushTxProcessor {
     /**
      * Enforce a strict verification mode on a list of outputs
      * @param {string} rawtx - raw bitcoin transaction in hex format
-     * @param {array} vouts - output indices (integer)
-     * @returns {array} returns the indices of the faulty outputs
+     * @param {number[]} vouts - output indices (integer)
+     * @returns {number[]} returns the indices of the faulty outputs
      */
     async enforceStrictModeVouts(rawtx, vouts) {
+        /** @type {number[]} */
         const faultyOutputs = []
-        const addrMap = {}
+        /** @type {Map<string, number>} */
+        const addrMap = new Map()
+
         let tx
         try {
             tx = bitcoin.Transaction.fromHex(rawtx)
@@ -61,23 +65,29 @@ class PushTxProcessor {
             throw errors.tx.PARSE
         }
         // Check in db if addresses are known and have been used
+        // Check if TX contains outputs to duplicate address
         for (let vout of vouts) {
             if (vout >= tx.outs.length)
                 throw errors.txout.VOUT
             const output = tx.outs[vout]
             const address = addrHelper.outputScript2Address(output.script)
             const nbTxs = await db.getAddressNbTransactions(address)
-            if (nbTxs == null || nbTxs > 0)
+            if (nbTxs == null || nbTxs > 0 || addrMap.has(address)) {
                 faultyOutputs.push(vout)
-            else
-                addrMap[address] = vout
+            } else {
+                addrMap.set(address, vout)
+            }
         }
+
         // Checks with indexer if addresses are known and have been used
-        if (Object.keys(addrMap).length > 0 && keys.indexer.active !== 'local_bitcoind') {
-            const results = await this.sources.getAddresses(Object.keys(addrMap))
-            for (let r of results)
-                if (r.ntx > 0)
-                    faultyOutputs.push(addrMap[r.address])
+        if (addrMap.size > 0 && keys.indexer.active !== 'local_bitcoind') {
+            const results = await this.sources.getAddresses([...addrMap.keys()])
+
+            for (let r of results) {
+                if (r.ntx > 0) {
+                    faultyOutputs.push(addrMap.get(r.address))
+                }
+            }
         }
         return faultyOutputs
     }

@@ -43,7 +43,11 @@ select_yaml_files() {
   fi
 
   if [ "$INDEXER_INSTALL" == "on" ]; then
-    yamlFiles="$yamlFiles -f $DIR/overrides/indexer.install.yaml"
+    if [ "$INDEXER_TYPE" == "addrindexrs" ]; then
+      yamlFiles="$yamlFiles -f $DIR/overrides/indexer.install.yaml"
+    elif [ "$INDEXER_TYPE" == "fulcrum" ]; then
+      yamlFiles="$yamlFiles -f $DIR/overrides/fulcrum.install.yaml"
+    fi
   fi
 
   if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
@@ -52,6 +56,12 @@ select_yaml_files() {
 
   # Return yamlFiles
   echo "$yamlFiles"
+}
+
+# Docker build
+docker_build() {
+  yamlFiles=$(select_yaml_files)
+  eval "docker-compose $yamlFiles build --parallel $@"
 }
 
 # Docker up
@@ -201,6 +211,7 @@ install() {
     # Initialize the config files
     init_config_files
     # Build and start Dojo
+    docker_build --no-cache
     docker_up --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
@@ -272,7 +283,10 @@ clean() {
   del_images_for samouraiwallet/dojo-nginx "$DOJO_NGINX_VERSION_TAG"
   del_images_for samouraiwallet/dojo-tor "$DOJO_TOR_VERSION_TAG"
   del_images_for samouraiwallet/dojo-indexer "$DOJO_INDEXER_VERSION_TAG"
+  del_images_for samouraiwallet/dojo-fulcrum "$DOJO_FULCRUM_VERSION_TAG"
   del_images_for samouraiwallet/dojo-whirlpool "$DOJO_WHIRLPOOL_VERSION_TAG"
+  docker container prune -f
+  docker volume prune -f
   docker image prune -f
 }
 
@@ -334,7 +348,12 @@ upgrade() {
       eval "docker-compose $yamlFiles down --rmi all"
     fi
     echo -e "\nStarting the upgrade of Dojo.\n"
-    docker_up --build --force-recreate --remove-orphans
+    if [ $noCache -eq 0 ]; then
+      docker_build --no-cache
+    else
+      docker_build
+    fi
+    docker_up --remove-orphans
     buildResult=$?
     if [ $buildResult -eq 0 ]; then
       # Post start clean-up
@@ -385,6 +404,14 @@ onion() {
     if [ "$BITCOIND_LISTEN_MODE" == "on" ]; then
       V3_ADDR_BTCD=$( docker exec -it tor cat /var/lib/tor/hsv3bitcoind/hostname )
       echo "Your local bitcoind (do not share) = $V3_ADDR_BTCD"
+      echo " "
+    fi
+  fi
+
+  if [ "$INDEXER_INSTALL" == "on" ]; then
+    if [ "$INDEXER_TYPE" == "fulcrum" ]; then
+      V3_ADDR_FULCRUM=$( docker exec -it tor cat /var/lib/tor/hsv3fulcrum/hostname )
+      echo "Fulcrum hidden service address = $V3_ADDR_FULCRUM"
       echo " "
     fi
   fi
@@ -447,10 +474,17 @@ logs() {
       fi
       ;;
     indexer )
-      if [ "$INDEXER_INSTALL" == "on" ]; then
+      if [ "$INDEXER_INSTALL" == "on" ] && [ "$INDEXER_TYPE" == "addrindexrs" ]; then
         display_logs $1 $2
       else
         echo -e "Command not supported for your setup.\nCause: Your Dojo is not running the internal indexer"
+      fi
+      ;;
+    fulcrum )
+      if [ "$INDEXER_INSTALL" == "on" ] && [ "$INDEXER_TYPE" == "fulcrum" ]; then
+        display_logs $1 $2
+      else
+        echo -e "Command not supported for your setup.\nCause: Your Dojo is not running the Fulcrum indexer"
       fi
       ;;
     explorer )
@@ -476,7 +510,11 @@ logs() {
         services="$services explorer"
       fi
       if [ "$INDEXER_INSTALL" == "on" ]; then
-        services="$services indexer"
+        if [ "$INDEXER_TYPE" == "addrindexrs" ]; then
+          services="$services indexer"
+        elif [ "$INDEXER_TYPE" == "fulcrum" ]; then
+          services="$services fulcrum"
+        fi
       fi
       if [ "$WHIRLPOOL_INSTALL" == "on" ]; then
         services="$services whirlpool"
@@ -515,6 +553,7 @@ help() {
   echo "                                  dojo.sh logs tor            : display the logs of tor"
   echo "                                  dojo.sh logs nginx          : display the logs of nginx"
   echo "                                  dojo.sh logs indexer        : display the logs of the internal indexer"
+  echo "                                  dojo.sh logs fulcrum        : display the logs of the Fulcrum indexer"
   echo "                                  dojo.sh logs node           : display the logs of NodeJS modules (API, Tracker, PushTx API, Orchestrator)"
   echo "                                  dojo.sh logs explorer       : display the logs of the Explorer"
   echo "                                  dojo.sh logs whirlpool      : display the logs of the Whirlpool client"

@@ -3,7 +3,7 @@
 Request a new access token from the backend. 
 
 
-```
+```http request
 POST /auth/refresh
 ```
 
@@ -16,7 +16,7 @@ The Refresh Token must be passed in the body of the request as an url encoded ar
 
 ### Example
 
-```
+```http request
 POST /auth/refresh
 
 rt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJTYW1vdXJhaSBXYWxsZXQgYmFja2VuZCIsInR5cGUiOiJyZWZyZXNoLXRva2VuIiwiaWF0IjoxNTQ0MTAzOTI5LCJleHAiOjE1NDQxMTExMjl9.6gykKq31WL4Jq7hfmoTwi1fpmBTtAeFb4KjfmSO6l00

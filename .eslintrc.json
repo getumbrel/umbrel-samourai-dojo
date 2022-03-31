@@ -97,7 +97,8 @@
     "unicorn/no-array-for-each": "warn",
     "unicorn/numeric-separators-style": "off",
     "unicorn/require-post-message-target-origin": "off",
-    "unicorn/no-array-reduce": "off"
+    "unicorn/no-array-reduce": "off",
+    "unicorn/prefer-dom-node-dataset": "off"
   },
   "overrides": [{
     "env": {

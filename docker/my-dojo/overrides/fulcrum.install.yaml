@@ -1,0 +1,36 @@
+version: "3.2"
+
+services:
+  fulcrum:
+    image: "samouraiwallet/dojo-fulcrum:${DOJO_FULCRUM_VERSION_TAG}"
+    container_name: fulcrum
+    build:
+      context: ./fulcrum
+      args:
+        FULCRUM_LINUX_UID: ${FULCRUM_LINUX_UID}
+        FULCRUM_LINUX_GID: ${FULCRUM_LINUX_GID}
+    env_file:
+      - ./.env
+      - ./conf/docker-common.conf
+      - ./conf/docker-bitcoind.conf
+      - ./conf/docker-indexer.conf
+      - ./conf/docker-tor.conf
+    restart: on-failure
+    command: "/wait-for-it.sh tor:${TOR_SOCKS_PORT} --timeout=360 --strict -- /restart.sh"
+    expose:
+      - "50001"
+    volumes:
+      - data-fulcrum:/home/fulcrum
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "10"
+    depends_on:
+      - tor
+    networks:
+      dojonet:
+        ipv4_address: ${NET_DOJO_INDEXER_IPV4}
+
+volumes:
+  data-fulcrum:

@@ -35,7 +35,7 @@ export default {
         /*
          * Dojo version
          */
-        dojoVersion: process.env.DOJO_NODEJS_VERSION_TAG,
+        dojoVersion: process.env.DOJO_VERSION_TAG,
         /*
          * Bitcoind
          */
@@ -187,7 +187,9 @@ export default {
                 port: Number.parseInt(process.env.INDEXER_RPC_PORT, 10),
                 // Support of batch requests by the local indexer
                 // Values: active | inactive
-                batchRequests: process.env.INDEXER_BATCH_SUPPORT
+                batchRequests: process.env.INDEXER_BATCH_SUPPORT,
+                // Protocol for communication (TCP or TLS)
+                protocol: process.env.INDEXER_PROTOCOL
             },
             // Use a SOCKS5 proxy for all communications with external services
             // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy

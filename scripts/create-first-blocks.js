@@ -43,13 +43,17 @@ async function processBlock(height) {
             Logger.info(`Successfully processed block ${height}`)
 
         } else {
-            Logger.error(null, `Unable to retrieve header of block ${height}`)
-            return Promise.reject()
+            const error = `Unable to retrieve header of block ${height}`
+
+            Logger.error(null, error)
+            throw error
         }
 
     } else {
-        Logger.error(null, `Unable to find hash of block ${height}`)
-        return Promise.reject()
+        const error = `Unable to find hash of block ${height}`
+
+        Logger.error(null, error)
+        throw error
     }
 }
 

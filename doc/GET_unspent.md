@@ -28,7 +28,7 @@ Support of [BIP47](https://github.com/bitcoin/bips/blob/master/bip-0047.mediawik
 The `POST` version of unspent is identical, except the parameters are in the POST body.
 
 
-```
+```http request
 GET /unspent?active=...&new=...&bip49=...&bip84=...&pubkey=...
 ```
 
@@ -42,7 +42,7 @@ GET /unspent?active=...&new=...&bip49=...&bip84=...&pubkey=...
 
 ### Examples
 
-```
+```http request
 GET /unspent?active=xpub0123456789&new=address2|address3&pubkey=pubkey4
 GET /unspent?active=xpub0123456789|address1|address2|pubkey4
 ```

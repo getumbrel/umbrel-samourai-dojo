@@ -3,7 +3,7 @@
 Request details about a single Bitcoin transaction. Pass `?fees=1` to scan the previous outputs and compute the fees paid in this transaction.
 
 
-```
+```http request
 GET /tx/:txid
 GET /tx/:txid?fees=1
 ```
@@ -15,7 +15,7 @@ GET /tx/:txid?fees=1
 
 ### Examples
 
-```
+```http request
 GET /tx/abcdef
 GET /tx/abcdef?fees=1
 ```
