@@ -10,12 +10,9 @@ RUN     set -ex && \
 # Install Tor
 ENV     WHIRLPOOL_TOR_URL             https://dist.torproject.org
 ENV     WHIRLPOOL_TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     WHIRLPOOL_TOR_VERSION         0.4.6.9
+ENV     WHIRLPOOL_TOR_VERSION         0.4.7.7
 ENV     WHIRLPOOL_TOR_GPG_KS_URI      hkps://keyserver.ubuntu.com:443
-ENV     WHIRLPOOL_TOR_GPG_KEY1        0xEB5A896A28988BF5
-ENV     WHIRLPOOL_TOR_GPG_KEY2        0xC218525819F78451
-ENV     WHIRLPOOL_TOR_GPG_KEY3        0x21194EBB165733EA
-ENV     WHIRLPOOL_TOR_GPG_KEY4        0x6AFEE6D49E92B601
+ENV     WHIRLPOOL_TOR_GPG_KEYS        0xEB5A896A28988BF5 0xC218525819F78451 0x21194EBB165733EA 0x6AFEE6D49E92B601 B74417EDDF22AC9F9E90F49142E86A2A11F48D36 514102454D0A87DB0767A1EBBE6A0531C18A9179
 
 RUN     set -ex && \
         mkdir -p /usr/local/src/ && \
@@ -26,12 +23,18 @@ RUN     set -ex && \
           wget -qO "tor-$WHIRLPOOL_TOR_VERSION.tar.gz" "$WHIRLPOOL_TOR_MIRROR_URL/tor-$WHIRLPOOL_TOR_VERSION.tar.gz"; \
         fi && \
         res=0; \
-        wget -qO "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.asc" "$WHIRLPOOL_TOR_URL/tor-$WHIRLPOOL_TOR_VERSION.tar.gz.asc" || res=$?; \
+        wget -qO "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum" "$WHIRLPOOL_TOR_URL/tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum" || res=$?; \
         if [ $res -gt 0 ]; then \
-          wget -qO "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.asc" "$WHIRLPOOL_TOR_MIRROR_URL/tor-$WHIRLPOOL_TOR_VERSION.tar.gz.asc" ; \
+          wget -qO "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum" "$WHIRLPOOL_TOR_MIRROR_URL/tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum"; \
         fi && \
-        gpg --batch --keyserver "$WHIRLPOOL_TOR_GPG_KS_URI" --recv-keys $WHIRLPOOL_TOR_GPG_KEY1 $WHIRLPOOL_TOR_GPG_KEY2 $WHIRLPOOL_TOR_GPG_KEY3 $WHIRLPOOL_TOR_GPG_KEY4 && \
-        gpg --verify "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.asc" && \
+        res=0; \
+        wget -qO "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum.asc" "$WHIRLPOOL_TOR_URL/tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum.asc" || res=$?; \
+        if [ $res -gt 0 ]; then \
+          wget -qO "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum.asc" "$WHIRLPOOL_TOR_MIRROR_URL/tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum.asc"; \
+        fi && \
+        gpg --batch --keyserver "$WHIRLPOOL_TOR_GPG_KS_URI" --recv-keys $WHIRLPOOL_TOR_GPG_KEYS && \
+        gpg --verify "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum.asc" && \
+        sha256sum --ignore-missing --check "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum" && \
         tar -xzvf "tor-$WHIRLPOOL_TOR_VERSION.tar.gz" -C /usr/local/src && \
         cd "/usr/local/src/tor-$WHIRLPOOL_TOR_VERSION" && \
         ./configure \
@@ -41,8 +44,7 @@ RUN     set -ex && \
         make && make install && \
         cd .. && \
         rm -rf "tor-$WHIRLPOOL_TOR_VERSION" && \
-        rm "tor-$WHIRLPOOL_TOR_VERSION.tar.gz" && \
-        rm "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.asc"
+        rm "tor-$WHIRLPOOL_TOR_VERSION.tar.gz" "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum" "tor-$WHIRLPOOL_TOR_VERSION.tar.gz.sha256sum.asc"
 
 # Install whirlpool-cli
 ENV     WHIRLPOOL_URL                 https://code.samourai.io/whirlpool/whirlpool-client-cli/uploads
