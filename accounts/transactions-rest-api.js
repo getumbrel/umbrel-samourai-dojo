@@ -41,6 +41,13 @@ class TransactionsRestApi {
         )
 
         this.httpServer.app.get(
+            '/tx/:txid/hex',
+            authMgr.checkAuthentication.bind(authMgr),
+            this.validateArgsGetTransactionHex.bind(this),
+            this.getTransactionHex.bind(this),
+        )
+
+        this.httpServer.app.get(
             '/txs',
             authMgr.checkAuthentication.bind(authMgr),
             apiHelper.validateEntitiesParams.bind(apiHelper),
@@ -50,7 +57,7 @@ class TransactionsRestApi {
     }
 
     /**
-     * Retrieve the transaction for a given tiid
+     * Retrieve the transaction for a given txid
      * @param {object} req - http request object
      * @param {object} res - http response object
      */
@@ -67,6 +74,22 @@ class TransactionsRestApi {
         }
     }
 
+    /**
+     * Retrieve raw transaction for a given txid
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     */
+    async getTransactionHex(req, res) {
+        try {
+            const rawTx = await rpcTxns.getTransactionHex(req.params.txid)
+
+            HttpServer.sendOkData(res, rawTx)
+        } catch (error) {
+            HttpServer.sendError(res, error)
+        } finally {
+            debugApi && Logger.info(`API : Completed GET /tx/${req.params.txid}/hex`)
+        }
+    }
 
     /**
      * Retrieve a page of transactions related to a wallet
@@ -130,6 +153,26 @@ class TransactionsRestApi {
                 'API : HeadersRestApi.validateArgsGetTransaction() : Invalid arguments'
             )
             Logger.error(req.query, '')
+        }
+    }
+
+    /**
+     * Validate arguments of /tx/:txid/hex requests
+     * @param {object} req - http request object
+     * @param {object} res - http response object
+     * @param {function} next - next tiny-http middleware
+     */
+    validateArgsGetTransactionHex(req, res, next) {
+        const isValidTxid = validator.isHash(req.params.txid, 'sha256')
+
+        if (isValidTxid) {
+            next()
+        } else {
+            HttpServer.sendError(res, errors.body.INVDATA)
+            Logger.error(
+                req.params,
+                'API : HeadersRestApi.validateArgsGetTransactionHex() : Invalid arguments'
+            )
         }
     }
 
