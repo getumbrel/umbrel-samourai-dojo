@@ -1,11 +1,9 @@
 FROM    debian:buster-slim AS builder
 
-ENV     INDEXER_VERSION       1.6.0
+ENV     INDEXER_VERSION       1.7.0
 ENV     INDEXER_URL           https://github.com/cculianu/Fulcrum/releases/download
 ENV     INDEXER_BUILD_AMD64   x86_64-linux
 ENV     INDEXER_BUILD_ARM64   arm64-linux
-ENV     INDEXER_SHASUMS       ${INDEXER_FILE}.sha256sum
-ENV     INDEXER_ASC           ${INDEXER_FILE}.asc
 ENV     INDEXER_FILES         /var/fulcrum
 
 RUN     apt-get update && \
@@ -32,10 +30,9 @@ RUN     set -ex && \
         wget -qO ${INDEXER_FILE}.sha256sum "$INDEXER_URL/v$INDEXER_VERSION/$INDEXER_SHASUMS" && \
         wget -qO ${INDEXER_FILE}.asc "$INDEXER_URL/v$INDEXER_VERSION/$INDEXER_ASC" && \
         curl https://raw.githubusercontent.com/Electron-Cash/keys-n-hashes/master/pubkeys/calinkey.txt | gpg --import && \
-        gpg --verify ${INDEXER_FILE}.asc && \
-        sha256sum -c ${INDEXER_FILE}.sha256sum && \
-        tar -xzvf ${INDEXER_FILE} -C "$INDEXER_FILES" --strip-components 1 && \
-        rm ${INDEXER_FILE} ${INDEXER_FILE}.sha256sum ${INDEXER_FILE}.asc
+        gpg --verify $INDEXER_ASC && \
+        sha256sum -c $INDEXER_SHASUMS && \
+        tar -xzvf ${INDEXER_FILE} -C "$INDEXER_FILES" --strip-components 1
 
 FROM    debian:buster-slim
 
