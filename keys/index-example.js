@@ -167,7 +167,9 @@ export default {
                 port: 50001,
                 // Support of batch requests
                 // Values: active | inactive
-                batchRequests: 'inactive'
+                batchRequests: 'inactive',
+                // Protocol for communication (TCP or TLS)
+                protocol: 'tcp'
             },
             // Use a SOCKS5 proxy for all communications with external services
             // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy
