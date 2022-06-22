@@ -106,7 +106,7 @@ stop() {
     # Stop the bitcoin daemon
     $( docker exec -it bitcoind  bitcoin-cli \
       -rpcconnect=bitcoind \
-      --rpcport=28256 \
+      --rpcport="$BITCOIND_RPC_PORT" \
       --rpcuser="$BITCOIND_RPC_USER" \
       --rpcpassword="$BITCOIND_RPC_PASSWORD" \
       stop ) &> /dev/null
@@ -120,12 +120,12 @@ stop() {
       # Check if bitcoind rpc api is responding
       $( timeout -k 12 10 docker exec -it bitcoind  bitcoin-cli \
         -rpcconnect=bitcoind \
-        --rpcport=28256 \
+        --rpcport="$BITCOIND_RPC_PORT" \
         --rpcuser="$BITCOIND_RPC_USER" \
         --rpcpassword="$BITCOIND_RPC_PASSWORD" \
         getblockchaininfo &> /dev/null ) &> /dev/null
       # rpc api is down
-      if [[ $? > 0 ]]; then
+      if [[ $? -gt 0 ]]; then
         echo "Bitcoin server stopped."
         break
       fi
@@ -158,7 +158,7 @@ install() {
 
   # Extract install options from arguments
   if [ $# -gt 0 ]; then
-    for option in $@
+    for option in "$@"
     do
       case "$option" in
         --auto )    auto=0 ;;
@@ -240,7 +240,7 @@ uninstall() {
 
   # Extract install options from arguments
   if [ $# -gt 0 ]; then
-    for option in $@
+    for option in "$@"
     do
       case "$option" in
         --auto )    auto=0 ;;
@@ -304,7 +304,7 @@ upgrade() {
 
   # Extract upgrade options from arguments
   if [ $# -gt 0 ]; then
-    for option in $@
+    for option in "$@"
     do
       case "$option" in
         --auto )      auto=0 ;;
@@ -616,7 +616,7 @@ case "$subcommand" in
     if [ "$BITCOIND_INSTALL" == "on" ]; then
       docker exec -it bitcoind bitcoin-cli \
         -rpcconnect=bitcoind \
-        --rpcport=28256 \
+        --rpcport="$BITCOIND_RPC_PORT" \
         --rpcuser="$BITCOIND_RPC_USER" \
         --rpcpassword="$BITCOIND_RPC_PASSWORD" \
         $1 $2 $3 $4 $5
