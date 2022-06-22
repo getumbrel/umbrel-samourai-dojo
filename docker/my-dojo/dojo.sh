@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Use Docker buildkit
+export DOCKER_BUILDKIT=1
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 
 # Source a file
