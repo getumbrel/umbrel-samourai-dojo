@@ -26,6 +26,9 @@ services:
         max-size: "20m"
         max-file: "10"
     stop_grace_period: 1m
+    depends_on:
+      - tor
+      - node
     networks:
       dojonet:
         ipv4_address: ${NET_DOJO_INDEXER_IPV4}

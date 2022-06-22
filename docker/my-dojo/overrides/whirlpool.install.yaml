@@ -24,6 +24,8 @@ services:
       options:
         max-size: "20m"
         max-file: "10"
+    depends_on:
+      - node
     networks:
       whirlnet:
         ipv4_address: ${NET_WHIRL_WHIRLPOOL_IPV4}
