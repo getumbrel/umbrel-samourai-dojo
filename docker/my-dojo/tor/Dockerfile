@@ -94,13 +94,6 @@ RUN     chown tor:tor /restart.sh && \
         chmod u+x /restart.sh && \
         chmod g+x /restart.sh
 
-# Copy wait-for-it script
-COPY    ./wait-for-it.sh /wait-for-it.sh
-
-RUN     chown tor:tor /wait-for-it.sh && \
-        chmod u+x /wait-for-it.sh && \
-        chmod g+x /wait-for-it.sh
-
 # Expose socks port
 EXPOSE  ${TOR_SOCKS_PORT}
 

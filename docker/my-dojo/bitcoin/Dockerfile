@@ -99,13 +99,6 @@ COPY    ./restart.sh /restart.sh
 RUN     chown bitcoin:bitcoin /restart.sh && \
         chmod 777 /restart.sh
 
-# Copy wait-for-it script
-COPY    ./wait-for-it.sh /wait-for-it.sh
-
-RUN     chown bitcoin:bitcoin /wait-for-it.sh && \
-        chmod u+x /wait-for-it.sh && \
-        chmod g+x /wait-for-it.sh
-
 # Copy rpcauth.py script
 COPY    ./rpcauth.py /rpcauth.py
 

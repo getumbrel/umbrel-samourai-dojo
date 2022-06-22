@@ -64,12 +64,6 @@ COPY    ./fulcrum.conf /etc/fulcrum.conf
 RUN     chown fulcrum:fulcrum /etc/fulcrum.conf && \
         chmod 777 /etc/fulcrum.conf
 
-# Copy wait-for-it script
-COPY    ./wait-for-it.sh /wait-for-it.sh
-RUN     chown fulcrum:fulcrum /wait-for-it.sh && \
-        chmod u+x /wait-for-it.sh && \
-        chmod g+x /wait-for-it.sh
-
 USER    fulcrum
 
 EXPOSE  50001

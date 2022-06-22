@@ -20,4 +20,4 @@ else
   indexer_options+=(--network="mainnet")
 fi
 
-addrindexrs "${indexer_options[@]}"
+exec addrindexrs "${indexer_options[@]}"
