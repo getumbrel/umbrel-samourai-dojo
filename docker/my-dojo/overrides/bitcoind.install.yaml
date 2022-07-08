@@ -16,7 +16,7 @@ services:
       - ./conf/docker-bitcoind.conf
       - ./conf/docker-tor.conf
     restart: always
-    command: "/wait-for-it.sh tor:${TOR_SOCKS_PORT} --timeout=720 --strict -- /restart.sh"
+    command: /restart.sh
     expose:
       - "8333"
       - "28256"
@@ -33,6 +33,7 @@ services:
     depends_on:
       - db
       - tor
+    stop_grace_period: 1m
     networks:
       dojonet:
         ipv4_address: ${NET_DOJO_BITCOIND_IPV4}

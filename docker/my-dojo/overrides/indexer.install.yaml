@@ -14,9 +14,8 @@ services:
       - ./conf/docker-common.conf
       - ./conf/docker-bitcoind.conf
       - ./conf/docker-indexer.conf
-      - ./conf/docker-tor.conf
     restart: on-failure
-    command: "/wait-for-it.sh tor:${TOR_SOCKS_PORT} --timeout=360 --strict -- /restart.sh"
+    command: /restart.sh
     expose:
       - "50001"
       - "8080"
@@ -28,7 +27,7 @@ services:
         max-size: "20m"
         max-file: "10"
     depends_on:
-      - tor
+      - node
     networks:
       dojonet:
         ipv4_address: ${NET_DOJO_INDEXER_IPV4}

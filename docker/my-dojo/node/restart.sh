@@ -10,6 +10,8 @@ forever start -c 'node --unhandled-rejections=strict' -a -l /dev/stdout -o /dev/
 cd /home/node/app/tracker
 forever start -c 'node --unhandled-rejections=strict' -a -l /dev/stdout -o /dev/null -e /dev/null index.js
 
+trap "forever stopall && exit 0" SIGINT
+
 # Keep the container up
 while true
 do

@@ -37,12 +37,6 @@ COPY    ./restart.sh /restart.sh
 RUN     chown indexer:indexer /restart.sh && \
         chmod 777 /restart.sh
 
-# Copy wait-for-it script
-COPY    ./wait-for-it.sh /wait-for-it.sh
-RUN     chown indexer:indexer /wait-for-it.sh && \
-        chmod u+x /wait-for-it.sh && \
-        chmod g+x /wait-for-it.sh
-
 USER    indexer
 
 EXPOSE  50001

@@ -42,4 +42,4 @@ if [ "$WHIRLPOOL_DEBUG_CLIENT" == "on" ]; then
 fi
 
 cd /home/whirlpool/.whirlpool-cli
-java -jar /usr/local/whirlpool-cli/whirlpool-client-cli-run.jar "${whirlpool_options[@]}"
+exec java -jar /usr/local/whirlpool-cli/whirlpool-client-cli-run.jar "${whirlpool_options[@]}"

@@ -13,7 +13,7 @@ services:
       - ./conf/docker-indexer.conf
       - ./conf/docker-explorer.conf
     restart: always
-    command: "/home/node/app/restart.sh"
+    command: /home/node/app/restart.sh
     expose:
       - "3002"
     logging:

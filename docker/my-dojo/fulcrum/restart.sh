@@ -9,4 +9,4 @@ fulcrum_options=(
 )
 
 cd "$INDEXER_HOME"/.fulcrum
-./Fulcrum "${fulcrum_options[@]}" /etc/fulcrum.conf
+exec ./Fulcrum "${fulcrum_options[@]}" /etc/fulcrum.conf

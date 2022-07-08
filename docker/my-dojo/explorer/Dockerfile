@@ -43,3 +43,5 @@ RUN     chown -R node:node "$APP_DIR"
 EXPOSE  3002
 
 USER    node
+
+STOPSIGNAL SIGKILL

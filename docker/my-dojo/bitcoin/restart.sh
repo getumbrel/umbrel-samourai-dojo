@@ -51,10 +51,4 @@ if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
   bitcoind_options+=(-testnet)
 fi
 
-bitcoind "${bitcoind_options[@]}" || true
-
-# Keep the container up
-while true
-do
-  sleep 1
-done
+exec bitcoind "${bitcoind_options[@]}"
