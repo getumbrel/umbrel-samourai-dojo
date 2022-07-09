@@ -55,3 +55,5 @@ RUN     chmod u+x "$APP_DIR/wait-for-it.sh" && \
 RUN     chown -R node:node "$APP_DIR"
 
 USER    node
+
+STOPSIGNAL SIGINT

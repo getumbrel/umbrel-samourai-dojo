@@ -16,7 +16,7 @@ export default {
         /*
          * Dojo version
          */
-        dojoVersion: '1.15.0',
+        dojoVersion: '1.16.0',
         /*
          * Bitcoind
          */
@@ -167,7 +167,9 @@ export default {
                 port: 50001,
                 // Support of batch requests
                 // Values: active | inactive
-                batchRequests: 'inactive'
+                batchRequests: 'inactive',
+                // Protocol for communication (TCP or TLS)
+                protocol: 'tcp'
             },
             // Use a SOCKS5 proxy for all communications with external services
             // Values: null if no socks5 proxy used, otherwise the url of the socks5 proxy
@@ -233,7 +235,7 @@ export default {
    * Testnet parameters
    */
     testnet: {
-        dojoVersion: '1.15.0',
+        dojoVersion: '1.16.0',
         bitcoind: {
             rpc: {
                 user: 'user',

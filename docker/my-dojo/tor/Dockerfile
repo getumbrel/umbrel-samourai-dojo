@@ -2,12 +2,9 @@ FROM    golang:1.16.6-buster AS builder
 
 ENV     TOR_URL             https://dist.torproject.org
 ENV     TOR_MIRROR_URL      https://tor.eff.org/dist
-ENV     TOR_VERSION         0.4.6.9
+ENV     TOR_VERSION         0.4.7.8
 ENV     TOR_GPG_KS_URI      hkps://keyserver.ubuntu.com:443
-ENV     TOR_GPG_KEY1        0xEB5A896A28988BF5
-ENV     TOR_GPG_KEY2        0xC218525819F78451
-ENV     TOR_GPG_KEY3        0x21194EBB165733EA
-ENV     TOR_GPG_KEY4        0x6AFEE6D49E92B601
+ENV     TOR_GPG_KEYS        0xEB5A896A28988BF5 0xC218525819F78451 0x21194EBB165733EA 0x6AFEE6D49E92B601 B74417EDDF22AC9F9E90F49142E86A2A11F48D36 514102454D0A87DB0767A1EBBE6A0531C18A9179
 
 ENV     OBFS4_URL           https://github.com/Yawning/obfs4.git
 ENV     OBFS4_VERSION       0.0.13
@@ -25,12 +22,18 @@ RUN     set -ex && \
           wget -qO "tor-$TOR_VERSION.tar.gz" "$TOR_MIRROR_URL/tor-$TOR_VERSION.tar.gz"; \
         fi && \
         res=0; \
-        wget -qO "tor-$TOR_VERSION.tar.gz.asc" "$TOR_URL/tor-$TOR_VERSION.tar.gz.asc" || res=$?; \
+        wget -qO "tor-$TOR_VERSION.tar.gz.sha256sum" "$TOR_URL/tor-$TOR_VERSION.tar.gz.sha256sum" || res=$?; \
         if [ $res -gt 0 ]; then \
-          wget -qO "tor-$TOR_VERSION.tar.gz.asc" "$TOR_MIRROR_URL/tor-$TOR_VERSION.tar.gz.asc"; \
+          wget -qO "tor-$TOR_VERSION.tar.gz.sha256sum" "$TOR_MIRROR_URL/tor-$TOR_VERSION.tar.gz.sha256sum"; \
         fi && \
-        gpg --batch --keyserver "$TOR_GPG_KS_URI" --recv-keys $TOR_GPG_KEY1 $TOR_GPG_KEY2 $TOR_GPG_KEY3 $TOR_GPG_KEY4 && \
-        gpg --verify "tor-$TOR_VERSION.tar.gz.asc" && \
+        res=0; \
+        wget -qO "tor-$TOR_VERSION.tar.gz.sha256sum.asc" "$TOR_URL/tor-$TOR_VERSION.tar.gz.sha256sum.asc" || res=$?; \
+        if [ $res -gt 0 ]; then \
+          wget -qO "tor-$TOR_VERSION.tar.gz.sha256sum.asc" "$TOR_MIRROR_URL/tor-$TOR_VERSION.tar.gz.sha256sum.asc"; \
+        fi && \
+        gpg --batch --keyserver "$TOR_GPG_KS_URI" --recv-keys $TOR_GPG_KEYS && \
+        gpg --verify "tor-$TOR_VERSION.tar.gz.sha256sum.asc" && \
+        sha256sum --ignore-missing --check "tor-$TOR_VERSION.tar.gz.sha256sum" && \
         tar -xzvf "tor-$TOR_VERSION.tar.gz" -C /usr/local/src && \
         cd "/usr/local/src/tor-$TOR_VERSION" && \
         ./configure \
@@ -40,8 +43,7 @@ RUN     set -ex && \
         make && make install && \
         cd .. && \
         rm -rf "tor-$TOR_VERSION" && \
-        rm "tor-$TOR_VERSION.tar.gz" && \
-        rm "tor-$TOR_VERSION.tar.gz.asc"
+        rm "tor-$TOR_VERSION.tar.gz" "tor-$TOR_VERSION.tar.gz.sha256sum" "tor-$TOR_VERSION.tar.gz.sha256sum.asc"
 
 # Install Golang & OBFS4 proxy
 RUN     git clone "$OBFS4_URL" /usr/local/src/obfs4proxy && \
@@ -91,13 +93,6 @@ COPY    ./restart.sh /restart.sh
 RUN     chown tor:tor /restart.sh && \
         chmod u+x /restart.sh && \
         chmod g+x /restart.sh
-
-# Copy wait-for-it script
-COPY    ./wait-for-it.sh /wait-for-it.sh
-
-RUN     chown tor:tor /wait-for-it.sh && \
-        chmod u+x /wait-for-it.sh && \
-        chmod g+x /wait-for-it.sh
 
 # Expose socks port
 EXPOSE  ${TOR_SOCKS_PORT}
