@@ -17,7 +17,7 @@ indexer_options=(
 if [ "$COMMON_BTC_NETWORK" == "testnet" ]; then
   indexer_options+=(--network="testnet")
 else
-  indexer_options+=(--network="mainnet")
+  indexer_options+=(--network="bitcoin")
 fi
 
 exec addrindexrs "${indexer_options[@]}"
