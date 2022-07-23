@@ -3,6 +3,7 @@
 
 ## Releases ##
 
+- [v1.16.1](#samourai-dojo-v1161)
 - [v1.16.0](#samourai-dojo-v1160)
 - [v1.15.0](#samourai-dojo-v1150)
 - [v1.14.0](#samourai-dojo-v1140)
@@ -23,6 +24,15 @@
 - [v1.3.0](#samourai-dojo-v130)
 - [v1.2.0](#samourai-dojo-v120)
 - [v1.1.0](#samourai-dojo-v110)
+
+
+## Samourai Dojo v1.16.1 ##
+
+### Change log ###
+
+#### Bugfixes ####
+- [d4098ee7](https://code.samourai.io/dojo/samourai-dojo/-/commit/d4098ee7) - fix import of socks-proxy-agent
+- [f7fcde06](https://code.samourai.io/dojo/samourai-dojo/-/commit/f7fcde06) - fix network setting for indexer
 
 ## Samourai Dojo v1.16.0 ##
 
